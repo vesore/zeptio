@@ -102,7 +102,7 @@ export default function LoginPage() {
               <label
                 htmlFor="email"
                 className="text-xs font-mono tracking-widest uppercase"
-                style={{ color: '#9ca3af' }}
+                style={{ color: '#ffffff' }}
               >
                 Email
               </label>
@@ -119,10 +119,11 @@ export default function LoginPage() {
                   if (state === 'error') setState('idle')
                 }}
                 disabled={state === 'loading'}
-                className="w-full rounded-xl px-4 py-3 text-sm text-white placeholder:text-white/20 outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#E8FF47]"
+                className="w-full rounded-xl px-4 py-3 text-lg placeholder:text-white/50 outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#E8FF47]"
                 style={{
                   backgroundColor: '#1a1a2e',
                   border: `1.5px solid ${state === 'error' ? '#f87171' : 'rgba(255,255,255,0.1)'}`,
+                  color: '#ffffff',
                 }}
                 onFocus={(e) => { if (state !== 'error') e.target.style.borderColor = '#E8FF47' }}
                 onBlur={(e)  => { if (state !== 'error') e.target.style.borderColor = 'rgba(255,255,255,0.1)' }}
