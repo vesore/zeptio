@@ -44,23 +44,6 @@ Player's response: ${user_prompt}`
     max_tokens: 1024,
     system: systemPrompt,
     messages: [{ role: 'user', content: userMessage }],
-    output_config: {
-      format: {
-        type: 'json_schema',
-        name: 'score_result',
-        schema: {
-          type: 'object',
-          properties: {
-            score: { type: 'integer' },
-            xp_earned: { type: 'integer' },
-            feedback: { type: 'string' },
-          },
-          required: ['score', 'xp_earned', 'feedback'],
-          additionalProperties: false,
-        },
-        strict: true,
-      },
-    },
   })
 
   const textBlock = response.content.find((b) => b.type === 'text')
@@ -68,7 +51,12 @@ Player's response: ${user_prompt}`
     throw new Error('Scoring engine returned no text content')
   }
 
-  const parsed = JSON.parse(textBlock.text) as ScoreResult
+  const jsonMatch = textBlock.text.match(/\{[\s\S]*\}/)
+  if (!jsonMatch) {
+    throw new Error('Scoring engine response contained no JSON object')
+  }
+
+  const parsed = JSON.parse(jsonMatch[0]) as ScoreResult
 
   // Clamp to valid ranges
   parsed.score = Math.max(0, Math.min(100, Math.round(parsed.score)))

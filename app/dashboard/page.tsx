@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/src/lib/supabase/server'
 
@@ -8,12 +9,13 @@ async function signOut() {
   redirect('/auth/login')
 }
 
-const WORLDS = [
+const WORLDS: { id: string; name: string; description: string; icon: string; href?: string }[] = [
   {
     id: 'clarity',
     name: 'Clarity',
     description: 'Cut through ambiguity. Define the problem before you solve it.',
     icon: '◎',
+    href: '/dashboard/clarity',
   },
   {
     id: 'constraints',
@@ -79,32 +81,39 @@ export default async function DashboardPage() {
 
         {/* 2×2 World Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {WORLDS.map((world) => (
-            <button
-              key={world.id}
-              className="group relative text-left rounded-2xl border border-white/10 bg-white/5 p-7 transition-all duration-200 hover:border-[#E8FF47]/60 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E8FF47]"
-            >
-              {/* Lime accent bar */}
-              <span className="absolute inset-x-7 top-0 h-px bg-gradient-to-r from-[#E8FF47]/0 via-[#E8FF47]/60 to-[#E8FF47]/0 opacity-0 transition-opacity duration-200 group-hover:opacity-100" />
-
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <p className="font-mono text-2xl text-[#E8FF47] mb-1 leading-none">
-                    {world.icon}
-                  </p>
-                  <h2 className="text-xl font-semibold mt-3 mb-2 group-hover:text-[#E8FF47] transition-colors duration-200">
-                    {world.name}
-                  </h2>
-                  <p className="text-white/50 text-sm leading-relaxed">
-                    {world.description}
-                  </p>
+          {WORLDS.map((world) => {
+            const cardClass = "group relative text-left rounded-2xl border border-white/10 bg-white/5 p-7 transition-all duration-200 hover:border-[#E8FF47]/60 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E8FF47]"
+            const inner = (
+              <>
+                <span className="absolute inset-x-7 top-0 h-px bg-gradient-to-r from-[#E8FF47]/0 via-[#E8FF47]/60 to-[#E8FF47]/0 opacity-0 transition-opacity duration-200 group-hover:opacity-100" />
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <p className="font-mono text-2xl text-[#E8FF47] mb-1 leading-none">
+                      {world.icon}
+                    </p>
+                    <h2 className="text-xl font-semibold mt-3 mb-2 group-hover:text-[#E8FF47] transition-colors duration-200">
+                      {world.name}
+                    </h2>
+                    <p className="text-white/50 text-sm leading-relaxed">
+                      {world.description}
+                    </p>
+                  </div>
+                  <span className="mt-1 text-white/20 group-hover:text-[#E8FF47] transition-colors duration-200 text-lg shrink-0">
+                    →
+                  </span>
                 </div>
-                <span className="mt-1 text-white/20 group-hover:text-[#E8FF47] transition-colors duration-200 text-lg shrink-0">
-                  →
-                </span>
-              </div>
-            </button>
-          ))}
+              </>
+            )
+            return world.href ? (
+              <Link key={world.id} href={world.href} className={cardClass}>
+                {inner}
+              </Link>
+            ) : (
+              <button key={world.id} className={cardClass}>
+                {inner}
+              </button>
+            )
+          })}
         </div>
       </div>
     </main>
