@@ -27,13 +27,7 @@ export async function proxy(request: NextRequest) {
 
   // Refresh the session — must not run any logic between createServerClient
   // and getUser() that could cause an early return.
-  const { data: { user } } = await supabase.auth.getUser()
-
-  // Protect /dashboard and all sub-routes; everything else (including "/") is public
-  const { pathname } = request.nextUrl
-  if (pathname.startsWith('/dashboard') && !user) {
-    return NextResponse.redirect(new URL('/auth/login', request.url))
-  }
+  await supabase.auth.getUser()
 
   return supabaseResponse
 }
