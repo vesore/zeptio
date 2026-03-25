@@ -18,12 +18,29 @@ export default function LoginPage() {
     setErrMsg('')
 
     const supabase = createClient()
-    const { error } = await supabase.auth.signInWithOtp({
-      email: email.trim().toLowerCase(),
-      options: { shouldCreateUser: true },
+    const normalizedEmail = email.trim().toLowerCase()
+
+    const { data, error } = await supabase.auth.signUp({
+      email: normalizedEmail,
+      password: 'zeptio2024',
     })
 
-    if (error) {
+    // If signUp succeeded and we have a user id, seed the profile + streak rows
+    if (!error && data.user?.id) {
+      await Promise.all([
+        supabase
+          .from('profiles')
+          .upsert({ id: data.user.id, email: normalizedEmail }, { onConflict: 'id' }),
+        supabase
+          .from('streaks')
+          .upsert({ user_id: data.user.id }, { onConflict: 'user_id' }),
+      ])
+    }
+
+    // "User already registered" is not a real error — the magic link will still work
+    const isExisting = error?.message?.toLowerCase().includes('already registered')
+
+    if (error && !isExisting) {
       setErrMsg(error.message)
       setState('error')
     } else {
