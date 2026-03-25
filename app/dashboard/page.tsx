@@ -45,19 +45,32 @@ export default async function DashboardPage() {
     redirect('/auth/login')
   }
 
+  const [{ data: xpRows }, { data: streakRow }, { data: betaAgreement }] = await Promise.all([
+    supabase.from('xp_ledger').select('xp_earned').eq('user_id', user.id),
+    supabase.from('streaks').select('current_streak').eq('user_id', user.id).maybeSingle(),
+    supabase.from('beta_agreements').select('accepted_at').eq('user_id', user.id).maybeSingle(),
+  ])
+
+  if (!betaAgreement) redirect('/onboarding')
+
+  const totalXp   = xpRows?.reduce((sum, row) => sum + (row.xp_earned ?? 0), 0) ?? 0
+  const streak    = streakRow?.current_streak ?? 0
+
   return (
     <main className="min-h-screen bg-[#1a1a2e] text-white">
       {/* Header */}
       <header className="border-b border-white/10 px-6 py-4 flex items-center justify-between">
-        <span className="text-[#E8FF47] font-mono font-bold tracking-widest text-sm uppercase">
+        <span className="text-[#E8FF47] font-mono font-bold tracking-widest text-sm uppercase" aria-label="Zeptio — home">
           Zeptio
         </span>
         <div className="flex items-center gap-4">
-          <span className="text-white/40 text-sm font-mono">{user.email}</span>
+          <span className="text-sm font-mono" style={{ color: '#9ca3af' }} aria-label={`Signed in as ${user.email}`}>{user.email}</span>
           <form action={signOut}>
             <button
               type="submit"
-              className="rounded-lg border border-[#E8FF47]/40 px-3 py-1.5 text-xs font-mono tracking-widest uppercase text-white/60 transition-colors duration-200 hover:border-[#E8FF47] hover:text-[#E8FF47] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E8FF47]"
+              aria-label="Sign out of your account"
+              className="rounded-lg border border-[#E8FF47]/40 px-3 py-1.5 text-xs font-mono tracking-widest uppercase transition-colors duration-200 hover:border-[#E8FF47] hover:text-[#E8FF47] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E8FF47] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1a1a2e]"
+              style={{ color: '#9ca3af' }}
             >
               Sign out
             </button>
@@ -74,44 +87,107 @@ export default async function DashboardPage() {
           <h1 className="text-4xl font-bold tracking-tight">
             {user.email}
           </h1>
-          <p className="mt-3 text-white/50 text-lg">
+          <p className="mt-3 mb-6" style={{ color: '#9ca3af', fontSize: '1.125rem' }}>
             Choose a world to enter.
           </p>
+
+          {/* Stats */}
+          <div
+            className="inline-flex items-center gap-6 rounded-2xl px-6 py-4"
+            style={{ backgroundColor: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}
+            aria-label="Your stats"
+          >
+            <div>
+              <p className="text-xs font-mono tracking-widest uppercase mb-1" style={{ color: '#9ca3af' }}>
+                Total XP
+              </p>
+              <p
+                className="text-2xl font-bold tabular-nums leading-none"
+                style={{ color: '#E8FF47' }}
+                aria-label={`${totalXp.toLocaleString()} total XP`}
+              >
+                {totalXp.toLocaleString()}
+              </p>
+            </div>
+
+            <div className="w-px self-stretch" style={{ backgroundColor: 'rgba(255,255,255,0.08)' }} />
+
+            <div>
+              <p className="text-xs font-mono tracking-widest uppercase mb-1" style={{ color: '#9ca3af' }}>
+                Streak
+              </p>
+              <p
+                className="text-2xl font-bold tabular-nums leading-none text-white"
+                aria-label={`${streak} day streak`}
+              >
+                {streak} 🔥
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* 2×2 World Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" role="list" aria-label="Game worlds">
           {WORLDS.map((world) => {
-            const cardClass = "group relative text-left rounded-2xl border border-white/10 bg-white/5 p-7 transition-all duration-200 hover:border-[#E8FF47]/60 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E8FF47]"
+            const active = !!world.href
+            const cardClass = [
+              'group relative text-left rounded-2xl border border-white/10 bg-white/5 p-7 transition-all duration-200',
+              active
+                ? 'hover:border-[#E8FF47]/60 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E8FF47] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1a1a2e]'
+                : 'opacity-50 cursor-not-allowed',
+            ].join(' ')
+
             const inner = (
               <>
-                <span className="absolute inset-x-7 top-0 h-px bg-gradient-to-r from-[#E8FF47]/0 via-[#E8FF47]/60 to-[#E8FF47]/0 opacity-0 transition-opacity duration-200 group-hover:opacity-100" />
+                <span aria-hidden="true" className="absolute inset-x-7 top-0 h-px bg-gradient-to-r from-[#E8FF47]/0 via-[#E8FF47]/60 to-[#E8FF47]/0 opacity-0 transition-opacity duration-200 group-hover:opacity-100" />
                 <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <p className="font-mono text-2xl text-[#E8FF47] mb-1 leading-none">
-                      {world.icon}
-                    </p>
-                    <h2 className="text-xl font-semibold mt-3 mb-2 group-hover:text-[#E8FF47] transition-colors duration-200">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <p aria-hidden="true" className="font-mono text-2xl text-[#E8FF47] leading-none">
+                        {world.icon}
+                      </p>
+                      {!active && (
+                        <span className="text-xs font-mono tracking-widest uppercase rounded-md px-2 py-0.5" style={{ backgroundColor: 'rgba(255,255,255,0.08)', color: '#9ca3af' }}>
+                          Coming Soon
+                        </span>
+                      )}
+                    </div>
+                    <h2 className={`text-xl font-semibold mt-3 mb-2 transition-colors duration-200 ${active ? 'group-hover:text-[#E8FF47]' : ''}`}>
                       {world.name}
                     </h2>
-                    <p className="text-white/50 text-sm leading-relaxed">
+                    <p className="text-sm leading-relaxed" style={{ color: '#9ca3af' }}>
                       {world.description}
                     </p>
                   </div>
-                  <span className="mt-1 text-white/20 group-hover:text-[#E8FF47] transition-colors duration-200 text-lg shrink-0">
-                    →
-                  </span>
+                  {active && (
+                    <span aria-hidden="true" className="mt-1 text-white/20 group-hover:text-[#E8FF47] transition-colors duration-200 text-lg shrink-0">
+                      →
+                    </span>
+                  )}
                 </div>
               </>
             )
-            return world.href ? (
-              <Link key={world.id} href={world.href} className={cardClass}>
+
+            return active ? (
+              <Link
+                key={world.id}
+                href={world.href!}
+                className={cardClass}
+                role="listitem"
+                aria-label={`Enter the ${world.name} world — ${world.description}`}
+              >
                 {inner}
               </Link>
             ) : (
-              <button key={world.id} className={cardClass}>
+              <div
+                key={world.id}
+                className={cardClass}
+                role="listitem"
+                aria-label={`${world.name} world — coming soon. ${world.description}`}
+                aria-disabled="true"
+              >
                 {inner}
-              </button>
+              </div>
             )
           })}
         </div>

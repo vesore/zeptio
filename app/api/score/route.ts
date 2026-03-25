@@ -33,6 +33,55 @@ export async function POST(request: NextRequest) {
   // Call the scoring engine
   try {
     const result = await scoreResponse(user_prompt, level_config as LevelConfig)
+
+    // Persist XP and update streak — non-blocking; never fail the score response
+    const { world, level } = level_config as LevelConfig
+    const todayUTC = new Date().toISOString().split('T')[0]
+
+    try {
+      const [, { data: existing }] = await Promise.all([
+        supabase.from('xp_ledger').insert({
+          user_id: user.id,
+          xp_earned: result.xp_earned,
+          score: result.score,
+          world,
+          level,
+        }),
+        supabase
+          .from('streaks')
+          .select('current_streak, last_activity_date')
+          .eq('user_id', user.id)
+          .maybeSingle(),
+      ])
+
+      let newStreak = 1
+      if (existing?.last_activity_date) {
+        if (existing.last_activity_date === todayUTC) {
+          newStreak = existing.current_streak // already played today
+        } else {
+          const yesterday = new Date()
+          yesterday.setUTCDate(yesterday.getUTCDate() - 1)
+          const yesterdayUTC = yesterday.toISOString().split('T')[0]
+          newStreak =
+            existing.last_activity_date === yesterdayUTC
+              ? existing.current_streak + 1
+              : 1
+        }
+      }
+
+      await supabase.from('streaks').upsert(
+        {
+          user_id: user.id,
+          current_streak: newStreak,
+          last_activity_date: todayUTC,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: 'user_id' }
+      )
+    } catch (dbErr) {
+      console.error('[score] Failed to persist XP/streak:', dbErr)
+    }
+
     return NextResponse.json(result)
   } catch (error) {
     if (error instanceof Anthropic.AuthenticationError) {
