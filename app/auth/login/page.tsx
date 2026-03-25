@@ -52,6 +52,22 @@ export default function LoginPage() {
       password: DEFAULT_PASSWORD,
     })
 
+    // "User already registered" means the account exists but OTP + password both failed
+    // (e.g. confirmation still pending). Try password sign-in one more time.
+    if (signUpError?.message?.toLowerCase().includes('user already registered')) {
+      const { error: retryError } = await supabase.auth.signInWithPassword({
+        email: trimmed,
+        password: DEFAULT_PASSWORD,
+      })
+      if (!retryError) {
+        router.push('/dashboard')
+        return
+      }
+      setErrMsg(retryError.message)
+      setState('error')
+      return
+    }
+
     if (signUpError) {
       setErrMsg(signUpError.message)
       setState('error')
