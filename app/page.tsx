@@ -101,7 +101,7 @@ export default function LandingPage() {
                   )}
                 </div>
               </div>
-              <span className="text-sm leading-relaxed" style={{ color: agreed ? 'rgba(255,255,255,0.65)' : 'rgba(255,255,255,0.35)' }}>
+              <span className="text-sm leading-relaxed" style={{ color: '#ffffff' }}>
                 I agree to keep this beta confidential and not share screenshots publicly.
               </span>
             </label>
