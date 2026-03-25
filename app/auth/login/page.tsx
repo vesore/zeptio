@@ -74,12 +74,24 @@ export default function LoginPage() {
       return
     }
 
-    const { error: signInAfterSignUpError } = await supabase.auth.signInWithPassword({
+    // Sign in to get the session (and user id) immediately after signup
+    const { data: signInData, error: signInAfterSignUpError } = await supabase.auth.signInWithPassword({
       email: trimmed,
       password: DEFAULT_PASSWORD,
     })
 
-    if (!signInAfterSignUpError) {
+    if (!signInAfterSignUpError && signInData.user) {
+      const newUserId = signInData.user.id
+      await Promise.all([
+        supabase.from('profiles').upsert(
+          { id: newUserId, email: trimmed },
+          { onConflict: 'id' }
+        ),
+        supabase.from('streaks').upsert(
+          { user_id: newUserId },
+          { onConflict: 'user_id' }
+        ),
+      ])
       router.push('/dashboard')
       return
     }
