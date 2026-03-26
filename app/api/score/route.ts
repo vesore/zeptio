@@ -44,10 +44,10 @@ export async function POST(request: NextRequest) {
       const [{ data: bestRecord }, { data: existing }] = await Promise.all([
         supabase
           .from('xp_ledger')
-          .select('score')
+          .select('amount')
           .eq('user_id', user.id)
           .eq('level_id', resolvedLevelId)
-          .order('score', { ascending: false })
+          .order('amount', { ascending: false })
           .limit(1)
           .maybeSingle(),
         supabase
@@ -57,7 +57,9 @@ export async function POST(request: NextRequest) {
           .maybeSingle(),
       ])
 
-      if (!bestRecord || result.score > bestRecord.score) {
+      console.log('[score] existing best:', bestRecord?.amount ?? null, '| new score:', result.score)
+
+      if (!bestRecord || result.score > bestRecord.amount) {
         await supabase.from('xp_ledger').insert({
           user_id: user.id,
           xp_earned: result.xp_earned,
