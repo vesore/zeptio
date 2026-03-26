@@ -212,6 +212,12 @@ export default async function DashboardPage() {
             )
           })}
         </div>
+        {/* Footer */}
+        <div className="mt-20 pt-6 flex gap-5 text-xs" style={{ borderTop: '1px solid rgba(255,255,255,0.07)', color: 'rgba(255,255,255,0.25)' }}>
+          <a href="/privacy" className="hover:text-[#E8FF47] transition-colors duration-200">Privacy</a>
+          <a href="/terms" className="hover:text-[#E8FF47] transition-colors duration-200">Terms</a>
+          <a href="/support" className="hover:text-[#E8FF47] transition-colors duration-200">Support</a>
+        </div>
       </div>
     </main>
   )

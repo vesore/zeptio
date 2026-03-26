@@ -42,6 +42,13 @@ export default async function LandingPage({ searchParams }: Props) {
 
         <WaitlistForm />
 
+        {/* Footer links */}
+        <div className="flex gap-5 text-xs" style={{ color: 'rgba(255,255,255,0.3)' }}>
+          <a href="/privacy" className="hover:text-[#E8FF47] transition-colors duration-200">Privacy</a>
+          <a href="/terms" className="hover:text-[#E8FF47] transition-colors duration-200">Terms</a>
+          <a href="/support" className="hover:text-[#E8FF47] transition-colors duration-200">Support</a>
+        </div>
+
       </div>
     </main>
   )
