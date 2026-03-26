@@ -128,22 +128,22 @@ export default async function DashboardPage() {
           {/* Stats pills */}
           <div className="flex items-center justify-between" aria-label="Your stats">
             <div
-              className="inline-flex items-center gap-4 rounded-full px-8 py-4"
+              className="inline-flex items-center gap-3 rounded-full px-10 py-5 min-w-[160px]"
               style={{ background: 'rgba(232,255,71,0.12)', border: '1px solid rgba(232,255,71,0.25)' }}
-              aria-label={`${totalXp.toLocaleString()} total XP`}
+              aria-label={`Score ${totalXp.toLocaleString()}`}
             >
-              <span className="text-sm font-mono font-bold tracking-widest uppercase" style={{ color: 'rgba(232,255,71,0.6)' }}>XP</span>
-              <span className="text-2xl font-black tabular-nums" style={{ color: '#E8FF47' }}>
+              <span className="text-xl font-bold" style={{ color: 'rgba(232,255,71,0.6)' }}>Score</span>
+              <span className="text-xl font-bold tabular-nums" style={{ color: '#E8FF47' }}>
                 {totalXp.toLocaleString()}
               </span>
             </div>
             <div
-              className="inline-flex items-center gap-4 rounded-full px-8 py-4 glass"
+              className="inline-flex items-center gap-3 rounded-full px-10 py-5 min-w-[160px] glass"
               aria-label={`${streak} day streak`}
             >
-              <span className="text-2xl font-black tabular-nums text-white">{streak}</span>
               <span className="text-xl">🔥</span>
-              <span className="text-sm font-mono font-bold tracking-widest uppercase" style={{ color: 'rgba(255,255,255,0.4)' }}>streak</span>
+              <span className="text-xl font-bold tabular-nums text-white">{streak}</span>
+              <span className="text-xl font-bold" style={{ color: 'rgba(255,255,255,0.4)' }}>Day Streak</span>
             </div>
           </div>
         </div>
