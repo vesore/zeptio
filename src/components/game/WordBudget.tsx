@@ -29,20 +29,39 @@ function countWords(text: string): number {
   return text.trim() === '' ? 0 : text.trim().split(/\s+/).length
 }
 
+function getCongratulatoryMessage(score: number): string {
+  if (score === 100) return 'Perfect score!'
+  if (score >= 80)   return 'Excellent!'
+  if (score >= 60)   return 'Nice work!'
+  if (score >= 40)   return 'Getting there!'
+  return 'Keep practicing!'
+}
+
 export default function WordBudget({ goal, wordLimit, levelId: _levelId, levelConfig, nextLevelUrl }: WordBudgetProps) {
-  const [prompt, setPrompt] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
-  const [result, setResult] = useState<ScoreResult | null>(null)
-  const [error, setError] = useState<string | null>(null)
+  const [prompt, setPrompt]             = useState('')
+  const [isLoading, setIsLoading]       = useState(false)
+  const [result, setResult]             = useState<ScoreResult | null>(null)
+  const [error, setError]               = useState<string | null>(null)
   const [displayScore, setDisplayScore] = useState(0)
+  const [scoreLanded, setScoreLanded]   = useState(false)
+  const [feedbackVisible, setFeedbackVisible] = useState(false)
   const [announcement, setAnnouncement] = useState('')
+  const [displayedGoal, setDisplayedGoal] = useState('')
   const animationRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
-  const wordCount = countWords(prompt)
-  const isOverLimit = wordCount > wordLimit
-  const isSubmitDisabled = isOverLimit || isLoading || prompt.trim() === ''
+  // Typing animation for goal text on mount
+  useEffect(() => {
+    setDisplayedGoal('')
+    let i = 0
+    const timer = setInterval(() => {
+      i++
+      setDisplayedGoal(goal.slice(0, i))
+      if (i >= goal.length) clearInterval(timer)
+    }, 22)
+    return () => clearInterval(timer)
+  }, [goal])
 
-  // Announce final score to screen readers after result arrives
+  // Screen reader announcement
   useEffect(() => {
     if (result) {
       setAnnouncement(
@@ -53,23 +72,33 @@ export default function WordBudget({ goal, wordLimit, levelId: _levelId, levelCo
     }
   }, [result])
 
+  // Score count-up over 1.5s, then reveal feedback
   useEffect(() => {
-    if (result === null) return
+    if (result === null) {
+      setScoreLanded(false)
+      setFeedbackVisible(false)
+      return
+    }
 
     const target = result.score
-    const duration = 1000
-    const steps = 40
-    const increment = target / steps
+    const duration = 1500
+    const steps = 60
     const intervalMs = duration / steps
+    const increment = target / steps
     let current = 0
 
     if (animationRef.current) clearInterval(animationRef.current)
+    setScoreLanded(false)
+    setFeedbackVisible(false)
 
     animationRef.current = setInterval(() => {
       current += increment
       if (current >= target) {
         setDisplayScore(target)
+        setScoreLanded(true)
         if (animationRef.current) clearInterval(animationRef.current)
+        // Fade in feedback after glow pulse settles
+        setTimeout(() => setFeedbackVisible(true), 600)
       } else {
         setDisplayScore(Math.round(current))
       }
@@ -86,6 +115,8 @@ export default function WordBudget({ goal, wordLimit, levelId: _levelId, levelCo
     setError(null)
     setResult(null)
     setDisplayScore(0)
+    setScoreLanded(false)
+    setFeedbackVisible(false)
 
     try {
       const res = await fetch('/api/score', {
@@ -117,15 +148,49 @@ export default function WordBudget({ goal, wordLimit, levelId: _levelId, levelCo
     setResult(null)
     setError(null)
     setDisplayScore(0)
+    setScoreLanded(false)
+    setFeedbackVisible(false)
     setAnnouncement('')
   }
 
+  const wordCount = countWords(prompt)
+  const isOverLimit = wordCount > wordLimit
+  const isSubmitDisabled = isOverLimit || isLoading || prompt.trim() === ''
+
+  // Color bands: red <40, yellow 40-59, lime 60-79, white 80-100
   const scoreColor =
-    displayScore >= 80 ? '#E8FF47' : displayScore >= 50 ? '#facc15' : '#f87171'
+    displayScore >= 80 ? '#ffffff'
+    : displayScore >= 60 ? '#E8FF47'
+    : displayScore >= 40 ? '#facc15'
+    : '#f87171'
 
   return (
     <div className="min-h-screen flex items-center justify-center p-6" style={{ backgroundColor: '#1a1a2e' }}>
-      {/* Screen-reader live region for score announcements */}
+      <style>{`
+        @keyframes scorePulse {
+          0%   { text-shadow: 0 0 0px transparent; }
+          40%  { text-shadow: 0 0 32px rgba(232,255,71,0.8), 0 0 64px rgba(232,255,71,0.4); }
+          100% { text-shadow: 0 0 10px rgba(232,255,71,0.2); }
+        }
+        .score-glow {
+          animation: scorePulse 0.9s ease-out forwards;
+        }
+        @keyframes cursorBlink {
+          0%, 100% { opacity: 1; }
+          50%       { opacity: 0; }
+        }
+        .typing-cursor::after {
+          content: '|';
+          margin-left: 1px;
+          animation: cursorBlink 0.8s step-end infinite;
+          color: #E8FF47;
+        }
+        .typing-cursor-done::after {
+          content: '';
+        }
+      `}</style>
+
+      {/* Screen-reader live region */}
       <div className="sr-only" aria-live="polite" aria-atomic="true">
         {announcement}
       </div>
@@ -144,8 +209,12 @@ export default function WordBudget({ goal, wordLimit, levelId: _levelId, levelCo
           >
             Goal
           </p>
-          <p className="text-white text-base leading-relaxed" aria-labelledby="goal-label">
-            {goal}
+          <p
+            className={`text-white text-base leading-relaxed ${displayedGoal.length < goal.length ? 'typing-cursor' : 'typing-cursor-done'}`}
+            aria-labelledby="goal-label"
+            aria-label={goal}
+          >
+            {displayedGoal}
           </p>
         </div>
 
@@ -178,12 +247,8 @@ export default function WordBudget({ goal, wordLimit, levelId: _levelId, levelCo
             aria-describedby="word-counter"
             aria-invalid={isOverLimit}
             aria-label="Your prompt response"
-            onFocus={(e) => {
-              if (!isOverLimit) e.target.style.borderColor = '#E8FF47'
-            }}
-            onBlur={(e) => {
-              e.target.style.borderColor = isOverLimit ? '#f87171' : '#2a2a4a'
-            }}
+            onFocus={(e) => { if (!isOverLimit) e.target.style.borderColor = '#E8FF47' }}
+            onBlur={(e)  => { e.target.style.borderColor = isOverLimit ? '#f87171' : '#2a2a4a' }}
           />
 
           {/* Word counter */}
@@ -252,28 +317,37 @@ export default function WordBudget({ goal, wordLimit, levelId: _levelId, levelCo
         {result !== null && (
           <div className="flex flex-col gap-5 animate-in fade-in duration-500">
             {/* Score display */}
-            <div
-              className="flex flex-col items-center gap-1 py-4"
-              aria-hidden="true"
-            >
+            <div className="flex flex-col items-center gap-1 py-4" aria-hidden="true">
               <span
-                className="text-7xl font-black tabular-nums leading-none transition-colors duration-300"
+                className={`text-7xl font-black tabular-nums leading-none transition-colors duration-300 ${scoreLanded ? 'score-glow' : ''}`}
                 style={{ color: scoreColor }}
               >
                 {displayScore}
               </span>
-              <span className="text-xs uppercase tracking-widest" style={{ color: '#9ca3af' }}>
+              <span className="text-xs uppercase tracking-widest mt-1" style={{ color: '#9ca3af' }}>
                 out of 100
               </span>
+              {scoreLanded && (
+                <span
+                  className="text-sm font-bold mt-2 animate-in fade-in duration-300"
+                  style={{ color: scoreColor }}
+                >
+                  {getCongratulatoryMessage(result.score)}
+                </span>
+              )}
               <span className="text-xs mt-1" style={{ color: '#E8FF47' }}>
                 +{result.xp_earned} XP
               </span>
             </div>
 
-            {/* Feedback */}
+            {/* Feedback — fades in after score animation */}
             <div
-              className="rounded-xl p-5"
-              style={{ backgroundColor: '#1a1a2e', border: '1px solid #2a2a4a' }}
+              className="rounded-xl p-5 transition-opacity duration-500"
+              style={{
+                backgroundColor: '#1a1a2e',
+                border: '1px solid #2a2a4a',
+                opacity: feedbackVisible ? 1 : 0,
+              }}
             >
               <p
                 className="text-xs font-semibold uppercase tracking-widest mb-2"
@@ -291,26 +365,19 @@ export default function WordBudget({ goal, wordLimit, levelId: _levelId, levelCo
               </p>
             </div>
 
-            {/* Actions */}
-            <div className="flex flex-col gap-3">
+            {/* Actions — also wait for feedback */}
+            <div
+              className="flex flex-col gap-3 transition-opacity duration-500"
+              style={{ opacity: feedbackVisible ? 1 : 0 }}
+            >
               {result.score >= 60 && nextLevelUrl ? (
                 <>
                   <Link
                     href={nextLevelUrl}
                     className="w-full rounded-xl py-3 px-6 font-semibold text-sm tracking-wide text-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E8FF47] focus-visible:ring-offset-2 focus-visible:ring-offset-[#12122a]"
-                    style={{
-                      backgroundColor: '#1a1a2e',
-                      border: '1.5px solid #E8FF47',
-                      color: '#E8FF47',
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = '#E8FF47'
-                      e.currentTarget.style.color = '#1a1a2e'
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = '#1a1a2e'
-                      e.currentTarget.style.color = '#E8FF47'
-                    }}
+                    style={{ backgroundColor: '#1a1a2e', border: '1.5px solid #E8FF47', color: '#E8FF47' }}
+                    onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#E8FF47'; e.currentTarget.style.color = '#1a1a2e' }}
+                    onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#1a1a2e'; e.currentTarget.style.color = '#E8FF47' }}
                   >
                     Next Level →
                   </Link>
@@ -318,20 +385,9 @@ export default function WordBudget({ goal, wordLimit, levelId: _levelId, levelCo
                     onClick={handleReset}
                     aria-label="Try again — clear your prompt and start over"
                     className="w-full rounded-xl py-3 px-6 font-semibold text-sm tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E8FF47] focus-visible:ring-offset-2 focus-visible:ring-offset-[#12122a]"
-                    style={{
-                      backgroundColor: '#1a1a2e',
-                      border: '1.5px solid rgba(232,255,71,0.3)',
-                      color: 'rgba(232,255,71,0.5)',
-                      cursor: 'pointer',
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.borderColor = '#E8FF47'
-                      e.currentTarget.style.color = '#E8FF47'
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.borderColor = 'rgba(232,255,71,0.3)'
-                      e.currentTarget.style.color = 'rgba(232,255,71,0.5)'
-                    }}
+                    style={{ backgroundColor: '#1a1a2e', border: '1.5px solid rgba(232,255,71,0.3)', color: 'rgba(232,255,71,0.5)', cursor: 'pointer' }}
+                    onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#E8FF47'; e.currentTarget.style.color = '#E8FF47' }}
+                    onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(232,255,71,0.3)'; e.currentTarget.style.color = 'rgba(232,255,71,0.5)' }}
                   >
                     Try Again
                   </button>
@@ -347,20 +403,9 @@ export default function WordBudget({ goal, wordLimit, levelId: _levelId, levelCo
                     onClick={handleReset}
                     aria-label="Try again — clear your prompt and start over"
                     className="w-full rounded-xl py-3 px-6 font-semibold text-sm tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E8FF47] focus-visible:ring-offset-2 focus-visible:ring-offset-[#12122a]"
-                    style={{
-                      backgroundColor: '#1a1a2e',
-                      border: '1.5px solid #E8FF47',
-                      color: '#E8FF47',
-                      cursor: 'pointer',
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = '#E8FF47'
-                      e.currentTarget.style.color = '#1a1a2e'
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = '#1a1a2e'
-                      e.currentTarget.style.color = '#E8FF47'
-                    }}
+                    style={{ backgroundColor: '#1a1a2e', border: '1.5px solid #E8FF47', color: '#E8FF47', cursor: 'pointer' }}
+                    onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#E8FF47'; e.currentTarget.style.color = '#1a1a2e' }}
+                    onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#1a1a2e'; e.currentTarget.style.color = '#E8FF47' }}
                   >
                     Try Again
                   </button>

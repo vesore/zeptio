@@ -19,11 +19,15 @@ export default async function DashboardPage() {
     redirect('/auth/login')
   }
 
-  const [{ data: xpRows }, { data: streakRow }, { data: clarityScoreRows }] = await Promise.all([
+  const [{ data: xpRows }, { data: streakRow }, { data: clarityScoreRows }, { data: profile }] = await Promise.all([
     supabase.from('xp_ledger').select('level_id, amount').eq('user_id', user.id),
     supabase.from('streaks').select('current_streak').eq('user_id', user.id).maybeSingle(),
     supabase.from('xp_ledger').select('level, score').eq('user_id', user.id).eq('world', 'clarity'),
+    supabase.from('profiles').select('name').eq('id', user.id).maybeSingle(),
   ])
+
+  const displayName = profile?.name ?? user.email ?? ''
+  const firstName = displayName.split(' ')[0]
 
   // Sum of best score (amount) per level
   const bestPerLevel = new Map<number, number>()
@@ -113,11 +117,8 @@ export default async function DashboardPage() {
       <div className="max-w-4xl mx-auto px-6 py-16">
         {/* Welcome */}
         <div className="mb-14">
-          <p className="text-[#E8FF47] font-mono text-sm tracking-widest uppercase mb-3">
-            Welcome back
-          </p>
-          <h1 className="text-4xl font-bold tracking-tight">
-            {user.email}
+          <h1 className="text-4xl font-bold tracking-tight mb-3">
+            Welcome back, <span style={{ color: '#E8FF47' }}>{firstName}</span>!
           </h1>
           <p className="mt-3 mb-6" style={{ color: '#9ca3af', fontSize: '1.125rem' }}>
             Choose a world to enter.
