@@ -41,15 +41,12 @@ export async function POST(request: NextRequest) {
     try {
       const resolvedLevelId = typeof level_id === 'number' ? level_id : level
 
-      const [{ data: bestRecord }, { data: existing }] = await Promise.all([
+      const [{ data: existingRows }, { data: existing }] = await Promise.all([
         supabase
           .from('xp_ledger')
           .select('amount')
           .eq('user_id', user.id)
-          .eq('level_id', resolvedLevelId)
-          .order('amount', { ascending: false })
-          .limit(1)
-          .maybeSingle(),
+          .eq('level_id', resolvedLevelId),
         supabase
           .from('streaks')
           .select('current_streak, last_activity_date')
@@ -57,9 +54,13 @@ export async function POST(request: NextRequest) {
           .maybeSingle(),
       ])
 
-      console.log('[score] existing best:', bestRecord?.amount ?? null, '| new score:', result.score)
+      const existingMax = existingRows && existingRows.length > 0
+        ? Math.max(...existingRows.map((r) => r.amount ?? 0))
+        : null
 
-      if (!bestRecord || result.score > bestRecord.amount) {
+      console.log('[score] existing max:', existingMax, '| new score:', result.score)
+
+      if (existingMax === null || result.score > existingMax) {
         await supabase.from('xp_ledger').insert({
           user_id: user.id,
           xp_earned: result.xp_earned,
