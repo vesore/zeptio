@@ -95,12 +95,12 @@ export default async function DashboardPage() {
   return (
     <main className="min-h-screen text-white">
       {/* Header */}
-      <header className="border-b border-white/10 px-6 py-4 flex items-center justify-between backdrop-blur-sm" style={{ background: 'rgba(31,43,107,0.6)' }}>
+      <header className="border-b border-white/10 px-4 sm:px-6 py-4 flex items-center justify-between backdrop-blur-sm" style={{ background: 'rgba(31,43,107,0.6)' }}>
         <span className="text-[#E86A4A] font-mono font-bold tracking-widest text-sm uppercase" aria-label="Zeptio — home">
           Zeptio
         </span>
-        <div className="flex items-center gap-4">
-          <span className="text-sm font-mono" style={{ color: 'rgba(255,255,255,0.4)' }} aria-label={`Signed in as ${user.email}`}>{user.email}</span>
+        <div className="flex items-center gap-3 min-w-0">
+          <span className="hidden sm:block text-sm font-mono truncate max-w-[200px]" style={{ color: 'rgba(255,255,255,0.4)' }} aria-label={`Signed in as ${user.email}`}>{user.email}</span>
           <form action={signOut}>
             <button
               type="submit"
@@ -114,10 +114,10 @@ export default async function DashboardPage() {
         </div>
       </header>
 
-      <div className="max-w-4xl mx-auto px-6 py-16 lime-radial-glow">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-10 sm:py-16 lime-radial-glow">
         {/* Welcome */}
-        <div className="mb-14">
-          <h1 className="text-5xl font-black tracking-tight mb-4">
+        <div className="mb-10 sm:mb-14">
+          <h1 className="text-4xl sm:text-5xl font-black tracking-tight mb-4">
             Welcome back,{' '}
             <span style={{ color: '#E86A4A' }}>{firstName}</span>!
           </h1>
@@ -126,24 +126,24 @@ export default async function DashboardPage() {
           </p>
 
           {/* Stats pills */}
-          <div className="flex items-center justify-between" aria-label="Your stats">
-            <div className="flex items-center rounded-full bg-white/10 border border-white/20 px-8 py-4">
-              <span className="text-white text-xl font-bold">Score</span>
-              <span className="text-[#E86A4A] text-xl font-bold" style={{marginLeft: '20px'}}>{totalXp}</span>
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:justify-between" aria-label="Your stats">
+            <div className="flex items-center justify-between sm:justify-start rounded-full bg-white/10 border border-white/20 px-6 sm:px-8 py-3 sm:py-4">
+              <span className="text-white text-lg sm:text-xl font-bold">Score</span>
+              <span className="text-[#E86A4A] text-lg sm:text-xl font-bold" style={{marginLeft: '20px'}}>{totalXp}</span>
             </div>
-            <div className="flex items-center rounded-full bg-white/10 border border-white/20 px-8 py-4">
-              <span className="text-white text-xl font-bold">🔥 Streak</span>
-              <span className="text-[#E86A4A] text-xl font-bold" style={{marginLeft: '20px'}}>{streak}</span>
+            <div className="flex items-center justify-between sm:justify-start rounded-full bg-white/10 border border-white/20 px-6 sm:px-8 py-3 sm:py-4">
+              <span className="text-white text-lg sm:text-xl font-bold">🔥 Streak</span>
+              <span className="text-[#E86A4A] text-lg sm:text-xl font-bold" style={{marginLeft: '20px'}}>{streak}</span>
             </div>
           </div>
         </div>
 
         {/* 2×2 World Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5" role="list" aria-label="Game worlds">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5" role="list" aria-label="Game worlds">
           {WORLDS.map((world) => {
             const active = !!world.href
             const cardClass = [
-              'group relative text-left rounded-3xl p-7 transition-all duration-300 glass',
+              'group relative text-left rounded-3xl p-5 sm:p-7 transition-all duration-300 glass',
               active
                 ? 'hover:border-[#E86A4A]/40 lime-glow-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E86A4A] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent'
                 : 'opacity-40 cursor-not-allowed',

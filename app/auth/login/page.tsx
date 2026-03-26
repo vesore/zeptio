@@ -105,7 +105,7 @@ export default function LoginPage() {
   const ready = !!email.trim() && !!password && state !== 'loading'
 
   return (
-    <main className="min-h-screen flex items-center justify-center px-4 lime-radial-glow">
+    <main className="min-h-screen flex items-center justify-center px-4 py-8 lime-radial-glow">
       <div className="w-full max-w-sm">
         <p
           className="text-center font-mono font-bold tracking-widest text-sm uppercase mb-8"
@@ -114,7 +114,7 @@ export default function LoginPage() {
           Zeptio
         </p>
 
-        <div className="rounded-3xl p-8 glass">
+        <div className="rounded-3xl p-6 sm:p-8 glass">
           <h1 className="text-3xl font-black tracking-tight text-white mb-1">Let&apos;s play.</h1>
           <p className="text-sm mb-6" style={{ color: 'rgba(255,255,255,0.5)' }}>
             Sign in or create your account.
@@ -124,7 +124,7 @@ export default function LoginPage() {
           <button
             type="button"
             onClick={handleGoogleSignIn}
-            className="w-full flex items-center justify-center gap-3 rounded-full py-3.5 font-bold text-sm tracking-wide transition-all duration-200 hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E86A4A]"
+            className="w-full flex items-center justify-center gap-3 rounded-full py-4 font-bold text-sm tracking-wide transition-all duration-200 hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E86A4A]"
             style={{ backgroundColor: '#ffffff', color: '#1a1a1a' }}
           >
             <span
@@ -162,7 +162,7 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => { setEmail(e.target.value); if (state === 'error') setState('idle') }}
                 disabled={state === 'loading'}
-                className="w-full rounded-2xl px-4 py-3 text-base placeholder:text-white/30 outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#E86A4A] glass"
+                className="w-full rounded-2xl px-4 py-3.5 text-base placeholder:text-white/30 outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#E86A4A] glass"
                 style={{
                   border: `1.5px solid ${state === 'error' ? '#f87171' : 'rgba(255,255,255,0.1)'}`,
                   color: '#0066CC',
@@ -189,7 +189,7 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => { setPassword(e.target.value); if (state === 'error') setState('idle') }}
                 disabled={state === 'loading'}
-                className="w-full rounded-2xl px-4 py-3 text-base placeholder:text-white/30 outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#E86A4A] glass"
+                className="w-full rounded-2xl px-4 py-3.5 text-base placeholder:text-white/30 outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#E86A4A] glass"
                 style={{
                   border: `1.5px solid ${state === 'error' ? '#f87171' : 'rgba(255,255,255,0.1)'}`,
                   color: '#0066CC',
@@ -213,7 +213,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={!ready}
-              className="w-full py-3.5 text-sm font-bold tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E86A4A] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent btn-primary"
+              className="w-full py-4 text-sm font-bold tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E86A4A] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent btn-primary"
             >
               {state === 'loading' ? (
                 <span className="flex items-center justify-center gap-2">

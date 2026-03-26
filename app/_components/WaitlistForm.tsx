@@ -5,7 +5,7 @@ import { createClient } from '@/src/lib/supabase/client'
 
 type State = 'idle' | 'loading' | 'success' | 'error'
 
-const inputClass = "w-full rounded-2xl px-4 py-3 text-base placeholder:text-white/30 outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#E86A4A] glass"
+const inputClass = "w-full rounded-2xl px-4 py-3.5 text-base placeholder:text-white/30 outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#E86A4A] glass"
 const inputStyle = (hasError: boolean) => ({
   border: `1.5px solid ${hasError ? '#f87171' : 'rgba(255,255,255,0.1)'}`,
   color: '#0066CC',
@@ -83,7 +83,7 @@ export default function WaitlistForm() {
         <form onSubmit={handleSubmit} className="w-full flex flex-col gap-4" noValidate>
 
           {/* Name row */}
-          <div className="flex gap-3">
+          <div className="flex flex-col sm:flex-row gap-3">
             <input
               type="text"
               autoComplete="given-name"
@@ -174,7 +174,7 @@ export default function WaitlistForm() {
           <button
             type="submit"
             disabled={!ready}
-            className="w-full py-3.5 text-sm font-bold tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E86A4A] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent btn-primary"
+            className="w-full py-4 text-sm font-bold tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E86A4A] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent btn-primary"
           >
             {state === 'loading' ? (
               <span className="flex items-center justify-center gap-2">

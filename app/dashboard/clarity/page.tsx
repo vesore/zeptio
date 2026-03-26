@@ -33,7 +33,7 @@ export default async function ClarityPage() {
 
   return (
     <main className="min-h-screen pb-20">
-      <div className="max-w-lg mx-auto px-6 pt-8">
+      <div className="max-w-lg mx-auto px-4 sm:px-6 pt-6 sm:pt-8">
 
         {/* Back link */}
         <Link
@@ -120,16 +120,16 @@ export default async function ClarityPage() {
                         </p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3 shrink-0">
+                    <div className="flex items-center gap-2 shrink-0 ml-2">
                       {best !== undefined ? (
                         <span
-                          className="text-sm font-black tabular-nums font-mono"
+                          className="text-xs sm:text-sm font-black tabular-nums font-mono"
                           style={{ color: best >= 80 ? '#E86A4A' : best >= 60 ? '#facc15' : '#f87171' }}
                         >
                           Best: {best}/100
                         </span>
                       ) : (
-                        <span className="text-xs font-mono" style={{ color: 'rgba(255,255,255,0.3)' }}>
+                        <span className="text-xs font-mono hidden sm:inline" style={{ color: 'rgba(255,255,255,0.3)' }}>
                           Not played yet
                         </span>
                       )}

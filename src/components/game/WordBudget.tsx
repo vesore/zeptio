@@ -162,11 +162,11 @@ export default function WordBudget({ goal, wordLimit, levelId: _levelId, levelCo
     : '#f87171'
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6">
+    <div className="min-h-screen flex items-center justify-center p-4 sm:p-6">
       {/* Screen-reader live region */}
       <div className="sr-only" aria-live="polite" aria-atomic="true">{announcement}</div>
 
-      <div className="w-full max-w-xl rounded-3xl p-8 flex flex-col gap-6 glass" role="main">
+      <div className="w-full max-w-xl rounded-3xl p-5 sm:p-8 flex flex-col gap-5 sm:gap-6 glass" role="main">
 
         {/* Goal */}
         <div>
@@ -174,7 +174,7 @@ export default function WordBudget({ goal, wordLimit, levelId: _levelId, levelCo
             Goal
           </p>
           <p
-            className={`text-lg font-bold text-white leading-relaxed ${displayedGoal.length < goal.length ? 'typing-cursor' : 'typing-cursor-done'}`}
+            className={`text-base sm:text-lg font-bold text-white leading-relaxed ${displayedGoal.length < goal.length ? 'typing-cursor' : 'typing-cursor-done'}`}
             aria-labelledby="goal-label"
             aria-label={goal}
           >
@@ -195,7 +195,7 @@ export default function WordBudget({ goal, wordLimit, levelId: _levelId, levelCo
             className="w-full rounded-2xl p-4 text-sm resize-none outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#E86A4A] placeholder:text-white/30 glass"
             style={{
               border: `1.5px solid ${isOverLimit ? '#f87171' : 'rgba(255,255,255,0.1)'}`,
-              minHeight: '140px',
+              minHeight: '120px',
               caretColor: '#E86A4A',
               color: '#0066CC',
               fontWeight: 700,
@@ -240,7 +240,7 @@ export default function WordBudget({ goal, wordLimit, levelId: _levelId, levelCo
               : isOverLimit ? 'Cannot submit: prompt exceeds word limit'
               : 'Submit your prompt for scoring'
             }
-            className="w-full py-3.5 font-bold text-sm tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E86A4A] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent btn-primary"
+            className="w-full py-4 font-bold text-sm tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E86A4A] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent btn-primary"
           >
             {isLoading ? (
               <span className="flex items-center justify-center gap-2">
@@ -269,7 +269,7 @@ export default function WordBudget({ goal, wordLimit, levelId: _levelId, levelCo
             {/* Score display */}
             <div className="flex flex-col items-center gap-2 py-6" aria-hidden="true">
               <span
-                className={`text-8xl font-black tabular-nums leading-none transition-colors duration-300 ${scoreLanded ? 'score-glow' : ''}`}
+                className={`text-7xl sm:text-8xl font-black tabular-nums leading-none transition-colors duration-300 ${scoreLanded ? 'score-glow' : ''}`}
                 style={{ color: scoreColor }}
               >
                 {displayScore}
@@ -317,14 +317,14 @@ export default function WordBudget({ goal, wordLimit, levelId: _levelId, levelCo
                 <>
                   <Link
                     href={nextLevelUrl}
-                    className="w-full py-3.5 font-bold text-sm tracking-wide text-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E86A4A] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent btn-primary"
+                    className="w-full py-4 font-bold text-sm tracking-wide text-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E86A4A] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent btn-primary"
                   >
                     Next Level →
                   </Link>
                   <button
                     onClick={handleReset}
                     aria-label="Try again — clear your prompt and start over"
-                    className="w-full rounded-full py-3.5 font-bold text-sm tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E86A4A]"
+                    className="w-full rounded-full py-4 font-bold text-sm tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E86A4A]"
                     style={{ border: '1.5px solid rgba(232,106,74,0.3)', color: 'rgba(232,106,74,0.5)', cursor: 'pointer' }}
                     onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#E86A4A'; e.currentTarget.style.color = '#E86A4A' }}
                     onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(232,106,74,0.3)'; e.currentTarget.style.color = 'rgba(232,106,74,0.5)' }}
@@ -342,7 +342,7 @@ export default function WordBudget({ goal, wordLimit, levelId: _levelId, levelCo
                   <button
                     onClick={handleReset}
                     aria-label="Try again — clear your prompt and start over"
-                    className="w-full py-3.5 font-bold text-sm tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E86A4A] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent btn-primary"
+                    className="w-full py-4 font-bold text-sm tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E86A4A] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent btn-primary"
                   >
                     Try Again
                   </button>
