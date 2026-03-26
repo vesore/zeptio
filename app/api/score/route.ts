@@ -39,22 +39,35 @@ export async function POST(request: NextRequest) {
     const todayUTC = new Date().toISOString().split('T')[0]
 
     try {
-      const [, { data: existing }] = await Promise.all([
-        supabase.from('xp_ledger').insert({
-          user_id: user.id,
-          xp_earned: result.xp_earned,
-          score: result.score,
-          amount: result.score,
-          world,
-          level,
-          level_id: typeof level_id === 'number' ? level_id : level,
-        }),
+      const resolvedLevelId = typeof level_id === 'number' ? level_id : level
+
+      const [{ data: bestRecord }, { data: existing }] = await Promise.all([
+        supabase
+          .from('xp_ledger')
+          .select('score')
+          .eq('user_id', user.id)
+          .eq('level_id', resolvedLevelId)
+          .order('score', { ascending: false })
+          .limit(1)
+          .maybeSingle(),
         supabase
           .from('streaks')
           .select('current_streak, last_activity_date')
           .eq('user_id', user.id)
           .maybeSingle(),
       ])
+
+      if (!bestRecord || result.score > bestRecord.score) {
+        await supabase.from('xp_ledger').insert({
+          user_id: user.id,
+          xp_earned: result.xp_earned,
+          score: result.score,
+          amount: result.score,
+          world,
+          level,
+          level_id: resolvedLevelId,
+        })
+      }
 
       let newStreak = 1
       if (existing?.last_activity_date) {
