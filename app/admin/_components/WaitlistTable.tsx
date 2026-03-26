@@ -23,7 +23,7 @@ export default function WaitlistTable({ rows: initialRows }: { rows: WaitlistRow
       const res = await fetch('/api/admin/approve', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ waitlist_id: row.id, email: row.email }),
+        body: JSON.stringify({ email: row.email }),
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error ?? 'Failed')

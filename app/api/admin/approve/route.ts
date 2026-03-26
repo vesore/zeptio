@@ -13,25 +13,23 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
 
-  let body: { waitlist_id?: unknown; email?: unknown }
+  let body: { email?: unknown }
   try {
     body = await request.json()
   } catch {
     return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
   }
 
-  const { waitlist_id, email } = body
+  const { email } = body
 
-  if (typeof waitlist_id !== 'number' || typeof email !== 'string') {
-    return NextResponse.json({ error: 'waitlist_id and email are required' }, { status: 400 })
+  if (typeof email !== 'string' || !email.trim()) {
+    return NextResponse.json({ error: 'email is required' }, { status: 400 })
   }
 
   const adminClient = createAdminClient()
 
   // Invite the user — sends a magic-link style invite email
-  const { error: inviteError } = await adminClient.auth.admin.inviteUserByEmail(email, {
-    redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL ?? 'https://zeptio.app'}/auth/callback`,
-  })
+  const { error: inviteError } = await adminClient.auth.admin.inviteUserByEmail(email)
 
   if (inviteError && !inviteError.message.includes('already been registered')) {
     console.error('[admin/approve] invite error:', inviteError)
@@ -42,7 +40,7 @@ export async function POST(request: NextRequest) {
   const { error: updateError } = await supabase
     .from('waitlist')
     .update({ status: 'approved' })
-    .eq('id', waitlist_id)
+    .eq('email', email)
 
   if (updateError) {
     console.error('[admin/approve] update error:', updateError)
