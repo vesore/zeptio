@@ -45,13 +45,10 @@ export default async function DashboardPage() {
     redirect('/auth/login')
   }
 
-  const [{ data: xpRows }, { data: streakRow }, { data: betaAgreement }] = await Promise.all([
+  const [{ data: xpRows }, { data: streakRow }] = await Promise.all([
     supabase.from('xp_ledger').select('xp_earned').eq('user_id', user.id),
     supabase.from('streaks').select('current_streak').eq('user_id', user.id).maybeSingle(),
-    supabase.from('beta_agreements').select('accepted_at').eq('user_id', user.id).maybeSingle(),
   ])
-
-  if (!betaAgreement) redirect('/onboarding')
 
   const totalXp   = xpRows?.reduce((sum, row) => sum + (row.xp_earned ?? 0), 0) ?? 0
   const streak    = streakRow?.current_streak ?? 0
