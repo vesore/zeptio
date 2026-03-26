@@ -97,10 +97,7 @@ export default function LoginPage() {
   const ready = !!email.trim() && !!password && state !== 'loading'
 
   return (
-    <main
-      className="min-h-screen flex items-center justify-center px-4"
-      style={{ backgroundColor: '#1a1a2e' }}
-    >
+    <main className="min-h-screen flex items-center justify-center px-4 lime-radial-glow">
       <div className="w-full max-w-sm">
         <p
           className="text-center font-mono font-bold tracking-widest text-sm uppercase mb-8"
@@ -109,12 +106,9 @@ export default function LoginPage() {
           Zeptio
         </p>
 
-        <div
-          className="rounded-2xl p-8"
-          style={{ backgroundColor: '#12122a', border: '1px solid rgba(255,255,255,0.08)' }}
-        >
-          <h1 className="text-xl font-bold text-white mb-1">Let&apos;s play.</h1>
-          <p className="text-sm mb-6" style={{ color: '#9ca3af' }}>
+        <div className="rounded-3xl p-8 glass">
+          <h1 className="text-3xl font-black tracking-tight text-white mb-1">Let&apos;s play.</h1>
+          <p className="text-sm mb-6" style={{ color: 'rgba(255,255,255,0.5)' }}>
             Sign in or create your account.
           </p>
 
@@ -124,7 +118,7 @@ export default function LoginPage() {
               <label
                 htmlFor="email"
                 className="text-xs font-mono tracking-widest uppercase"
-                style={{ color: '#ffffff' }}
+                style={{ color: 'rgba(255,255,255,0.5)' }}
               >
                 Email
               </label>
@@ -137,9 +131,8 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => { setEmail(e.target.value); if (state === 'error') setState('idle') }}
                 disabled={state === 'loading'}
-                className="w-full rounded-xl px-4 py-3 text-lg placeholder:text-white/50 outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#E8FF47]"
+                className="w-full rounded-2xl px-4 py-3 text-base placeholder:text-white/30 outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#E8FF47] glass"
                 style={{
-                  backgroundColor: '#1a1a2e',
                   border: `1.5px solid ${state === 'error' ? '#f87171' : 'rgba(255,255,255,0.1)'}`,
                   color: '#ffffff',
                 }}
@@ -153,7 +146,7 @@ export default function LoginPage() {
               <label
                 htmlFor="password"
                 className="text-xs font-mono tracking-widest uppercase"
-                style={{ color: '#ffffff' }}
+                style={{ color: 'rgba(255,255,255,0.5)' }}
               >
                 Password
               </label>
@@ -164,9 +157,8 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => { setPassword(e.target.value); if (state === 'error') setState('idle') }}
                 disabled={state === 'loading'}
-                className="w-full rounded-xl px-4 py-3 text-lg placeholder:text-white/50 outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#E8FF47]"
+                className="w-full rounded-2xl px-4 py-3 text-base placeholder:text-white/30 outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#E8FF47] glass"
                 style={{
-                  backgroundColor: '#1a1a2e',
                   border: `1.5px solid ${state === 'error' ? '#f87171' : 'rgba(255,255,255,0.1)'}`,
                   color: '#ffffff',
                 }}
@@ -178,8 +170,8 @@ export default function LoginPage() {
             {state === 'error' && (
               <p
                 role="alert"
-                className="text-xs rounded-lg px-3 py-2 font-mono break-all"
-                style={{ backgroundColor: '#2d1515', color: '#f87171' }}
+                className="text-xs rounded-2xl px-4 py-3 font-mono break-all"
+                style={{ backgroundColor: 'rgba(248,113,113,0.1)', color: '#f87171', border: '1px solid rgba(248,113,113,0.2)' }}
               >
                 {errMsg}
               </p>
@@ -188,12 +180,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={!ready}
-              className="w-full rounded-xl py-3 text-sm font-bold tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E8FF47] focus-visible:ring-offset-2 focus-visible:ring-offset-[#12122a]"
-              style={{
-                backgroundColor: ready ? '#E8FF47' : 'rgba(232,255,71,0.12)',
-                color:           ready ? '#1a1a2e' : 'rgba(232,255,71,0.35)',
-                cursor:          ready ? 'pointer'  : 'not-allowed',
-              }}
+              className="w-full py-3.5 text-sm font-bold tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E8FF47] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent btn-primary"
             >
               {state === 'loading' ? (
                 <span className="flex items-center justify-center gap-2">

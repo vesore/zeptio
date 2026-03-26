@@ -3,19 +3,93 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --bg-gradient: linear-gradient(135deg, #0d0d1a 0%, #1a1a2e 50%, #0d1f3c 100%);
+  --lime: #E8FF47;
+  --foreground: #ffffff;
 }
 
 body {
-  background: var(--background);
+  background: var(--bg-gradient);
+  background-attachment: fixed;
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  min-height: 100vh;
+}
+
+/* Glassmorphism card */
+.glass {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Lime glow on hover for interactive elements */
+.lime-glow-hover:hover {
+  box-shadow: 0 0 24px rgba(232, 255, 71, 0.25), 0 0 48px rgba(232, 255, 71, 0.1);
+}
+
+/* Primary button glow */
+.btn-primary {
+  background-color: #E8FF47;
+  color: #0d0d1a;
+  border-radius: 9999px;
+  font-weight: 700;
+  transition: all 0.2s;
+}
+.btn-primary:hover {
+  box-shadow: 0 0 20px rgba(232, 255, 71, 0.5), 0 0 40px rgba(232, 255, 71, 0.2);
+  transform: translateY(-1px);
+}
+.btn-primary:disabled {
+  background-color: rgba(232, 255, 71, 0.12);
+  color: rgba(232, 255, 71, 0.35);
+  box-shadow: none;
+  transform: none;
+  cursor: not-allowed;
+}
+
+/* Radial lime glow behind hero elements */
+.lime-radial-glow {
+  position: relative;
+}
+.lime-radial-glow::before {
+  content: '';
+  position: absolute;
+  inset: -40%;
+  background: radial-gradient(ellipse at center, rgba(232, 255, 71, 0.04) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+.lime-radial-glow > * {
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes scorePulse {
+  0%   { text-shadow: 0 0 0px transparent; }
+  40%  { text-shadow: 0 0 32px rgba(232,255,71,0.8), 0 0 64px rgba(232,255,71,0.4); }
+  100% { text-shadow: 0 0 10px rgba(232,255,71,0.2); }
+}
+.score-glow {
+  animation: scorePulse 0.9s ease-out forwards;
+}
+
+@keyframes cursorBlink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+.typing-cursor::after {
+  content: '|';
+  margin-left: 1px;
+  animation: cursorBlink 0.8s step-end infinite;
+  color: #E8FF47;
+}
+.typing-cursor-done::after {
+  content: '';
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
 }

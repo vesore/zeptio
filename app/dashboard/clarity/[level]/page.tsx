@@ -45,21 +45,21 @@ export default async function ClarityLevelPage({ params }: Props) {
   const nextLevelUrl = isLastLevel ? undefined : `/dashboard/clarity/${levelId + 1}`
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#1a1a2e' }}>
+    <div className="min-h-screen">
       {/* Nav bar */}
       <div className="max-w-xl mx-auto px-6 pt-6 flex items-center justify-between">
         <div className="flex items-center gap-4">
           <Link
             href="/dashboard"
             className="inline-flex items-center gap-2 text-sm font-mono transition-colors duration-200 hover:text-[#E8FF47]"
-            style={{ color: 'rgba(255,255,255,0.5)' }}
+            style={{ color: 'rgba(255,255,255,0.4)' }}
           >
             ← Dashboard
           </Link>
           <Link
             href="/dashboard/clarity"
             className="inline-flex items-center gap-2 text-sm font-mono transition-colors duration-200 hover:text-[#E8FF47]"
-            style={{ color: 'rgba(255,255,255,0.5)' }}
+            style={{ color: 'rgba(255,255,255,0.4)' }}
           >
             All Levels
           </Link>
@@ -68,7 +68,7 @@ export default async function ClarityLevelPage({ params }: Props) {
           <span className="text-xs font-mono" style={{ color: 'rgba(255,255,255,0.3)' }}>
             {level.concept}
           </span>
-          <span className="text-xs font-mono px-2 py-0.5 rounded" style={{ backgroundColor: 'rgba(232,255,71,0.1)', color: 'rgba(232,255,71,0.7)' }}>
+          <span className="text-xs font-mono rounded-full px-3 py-1" style={{ background: 'rgba(232,255,71,0.1)', color: 'rgba(232,255,71,0.7)' }}>
             Level {String(levelId).padStart(2, '0')}
           </span>
         </div>

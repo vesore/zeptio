@@ -93,20 +93,20 @@ export default async function DashboardPage() {
   ]
 
   return (
-    <main className="min-h-screen bg-[#1a1a2e] text-white">
+    <main className="min-h-screen text-white">
       {/* Header */}
-      <header className="border-b border-white/10 px-6 py-4 flex items-center justify-between">
+      <header className="border-b border-white/10 px-6 py-4 flex items-center justify-between backdrop-blur-sm" style={{ background: 'rgba(13,13,26,0.6)' }}>
         <span className="text-[#E8FF47] font-mono font-bold tracking-widest text-sm uppercase" aria-label="Zeptio — home">
           Zeptio
         </span>
         <div className="flex items-center gap-4">
-          <span className="text-sm font-mono" style={{ color: '#9ca3af' }} aria-label={`Signed in as ${user.email}`}>{user.email}</span>
+          <span className="text-sm font-mono" style={{ color: 'rgba(255,255,255,0.4)' }} aria-label={`Signed in as ${user.email}`}>{user.email}</span>
           <form action={signOut}>
             <button
               type="submit"
               aria-label="Sign out of your account"
-              className="rounded-lg border border-[#E8FF47]/40 px-3 py-1.5 text-xs font-mono tracking-widest uppercase transition-colors duration-200 hover:border-[#E8FF47] hover:text-[#E8FF47] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E8FF47] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1a1a2e]"
-              style={{ color: '#9ca3af' }}
+              className="rounded-full border border-white/20 px-4 py-1.5 text-xs font-mono tracking-widest uppercase transition-all duration-200 hover:border-[#E8FF47]/60 hover:text-[#E8FF47] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E8FF47]"
+              style={{ color: 'rgba(255,255,255,0.4)' }}
             >
               Sign out
             </button>
@@ -114,86 +114,84 @@ export default async function DashboardPage() {
         </div>
       </header>
 
-      <div className="max-w-4xl mx-auto px-6 py-16">
+      <div className="max-w-4xl mx-auto px-6 py-16 lime-radial-glow">
         {/* Welcome */}
         <div className="mb-14">
-          <h1 className="text-4xl font-bold tracking-tight mb-3">
-            Welcome back, <span style={{ color: '#E8FF47' }}>{firstName}</span>!
+          <h1 className="text-5xl font-black tracking-tight mb-4">
+            Welcome back,{' '}
+            <span style={{ color: '#E8FF47' }}>{firstName}</span>!
           </h1>
-          <p className="mt-3 mb-6" style={{ color: '#9ca3af', fontSize: '1.125rem' }}>
+          <p className="mb-8 text-lg" style={{ color: 'rgba(255,255,255,0.5)' }}>
             Choose a world to enter.
           </p>
 
-          {/* Stats */}
-          <div
-            className="inline-flex items-center gap-6 rounded-2xl px-6 py-4"
-            style={{ backgroundColor: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}
-            aria-label="Your stats"
-          >
-            <div>
-              <p className="text-xs font-mono tracking-widest uppercase mb-1" style={{ color: '#9ca3af' }}>
-                Total XP
-              </p>
-              <p
-                className="text-2xl font-bold tabular-nums leading-none"
-                style={{ color: '#E8FF47' }}
-                aria-label={`${totalXp.toLocaleString()} total XP`}
-              >
+          {/* Stats pills */}
+          <div className="flex items-center gap-3 flex-wrap" aria-label="Your stats">
+            <div
+              className="inline-flex items-center gap-2 rounded-full px-5 py-2.5"
+              style={{ background: 'rgba(232,255,71,0.12)', border: '1px solid rgba(232,255,71,0.25)' }}
+              aria-label={`${totalXp.toLocaleString()} total XP`}
+            >
+              <span className="text-xs font-mono tracking-widest uppercase" style={{ color: 'rgba(232,255,71,0.6)' }}>XP</span>
+              <span className="text-lg font-black tabular-nums" style={{ color: '#E8FF47' }}>
                 {totalXp.toLocaleString()}
-              </p>
+              </span>
             </div>
-
-            <div className="w-px self-stretch" style={{ backgroundColor: 'rgba(255,255,255,0.08)' }} />
-
-            <div>
-              <p className="text-xs font-mono tracking-widest uppercase mb-1" style={{ color: '#9ca3af' }}>
-                Streak
-              </p>
-              <p
-                className="text-2xl font-bold tabular-nums leading-none text-white"
-                aria-label={`${streak} day streak`}
-              >
-                {streak} 🔥
-              </p>
+            <div
+              className="inline-flex items-center gap-2 rounded-full px-5 py-2.5 glass"
+              aria-label={`${streak} day streak`}
+            >
+              <span className="text-lg font-black tabular-nums text-white">{streak}</span>
+              <span>🔥</span>
+              <span className="text-xs font-mono tracking-widest uppercase" style={{ color: 'rgba(255,255,255,0.4)' }}>streak</span>
             </div>
           </div>
         </div>
 
         {/* 2×2 World Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" role="list" aria-label="Game worlds">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5" role="list" aria-label="Game worlds">
           {WORLDS.map((world) => {
             const active = !!world.href
             const cardClass = [
-              'group relative text-left rounded-2xl border border-white/10 bg-white/5 p-7 transition-all duration-200',
+              'group relative text-left rounded-3xl p-7 transition-all duration-300 glass',
               active
-                ? 'hover:border-[#E8FF47]/60 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E8FF47] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1a1a2e]'
-                : 'opacity-50 cursor-not-allowed',
+                ? 'hover:border-[#E8FF47]/40 lime-glow-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E8FF47] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent'
+                : 'opacity-40 cursor-not-allowed',
             ].join(' ')
 
             const inner = (
               <>
-                <span aria-hidden="true" className="absolute inset-x-7 top-0 h-px bg-gradient-to-r from-[#E8FF47]/0 via-[#E8FF47]/60 to-[#E8FF47]/0 opacity-0 transition-opacity duration-200 group-hover:opacity-100" />
-                <div className="flex items-start justify-between gap-4">
+                {/* Top shimmer line on hover */}
+                <span aria-hidden="true" className="absolute inset-x-7 top-0 h-px bg-gradient-to-r from-[#E8FF47]/0 via-[#E8FF47]/50 to-[#E8FF47]/0 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                {/* Radial glow behind active cards */}
+                {active && (
+                  <span aria-hidden="true" className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" style={{ background: 'radial-gradient(ellipse at top left, rgba(232,255,71,0.06) 0%, transparent 60%)' }} />
+                )}
+                <div className="flex items-start justify-between gap-4 relative">
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <p aria-hidden="true" className="font-mono text-2xl text-[#E8FF47] leading-none">
+                    <div className="flex items-center gap-3 mb-4">
+                      <span
+                        aria-hidden="true"
+                        className="w-10 h-10 rounded-2xl flex items-center justify-center text-lg font-mono"
+                        style={{ background: active ? 'rgba(232,255,71,0.12)' : 'rgba(255,255,255,0.05)', color: active ? '#E8FF47' : 'rgba(255,255,255,0.3)' }}
+                      >
                         {world.icon}
-                      </p>
+                      </span>
                       {world.locked && (
-                        <span className="text-xs font-mono tracking-widest uppercase rounded-md px-2 py-0.5" style={{ backgroundColor: 'rgba(255,255,255,0.08)', color: '#9ca3af' }}>
+                        <span className="text-xs font-mono tracking-widest uppercase rounded-full px-3 py-1" style={{ background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.3)' }}>
                           {world.lockMessage}
                         </span>
                       )}
                     </div>
-                    <h2 className={`text-xl font-semibold mt-3 mb-2 transition-colors duration-200 ${active ? 'group-hover:text-[#E8FF47]' : ''}`}>
+                    <h2 className={`text-2xl font-black tracking-tight mb-2 transition-colors duration-200 ${active ? 'group-hover:text-[#E8FF47]' : 'text-white/40'}`}>
                       {world.name}
                     </h2>
-                    <p className="text-sm leading-relaxed" style={{ color: '#9ca3af' }}>
+                    <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.45)' }}>
                       {world.description}
                     </p>
                   </div>
                   {active && (
-                    <span aria-hidden="true" className="mt-1 text-white/20 group-hover:text-[#E8FF47] transition-colors duration-200 text-lg shrink-0">
+                    <span aria-hidden="true" className="mt-1 transition-all duration-200 text-xl shrink-0" style={{ color: 'rgba(255,255,255,0.15)' }}>
                       →
                     </span>
                   )}
