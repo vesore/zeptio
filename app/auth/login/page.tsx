@@ -134,7 +134,8 @@ export default function LoginPage() {
                 className="w-full rounded-2xl px-4 py-3 text-base placeholder:text-white/30 outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#E8FF47] glass"
                 style={{
                   border: `1.5px solid ${state === 'error' ? '#f87171' : 'rgba(255,255,255,0.1)'}`,
-                  color: '#ffffff',
+                  color: '#00D4FF',
+                  fontWeight: 700,
                 }}
                 onFocus={(e) => { if (state !== 'error') e.target.style.borderColor = '#E8FF47' }}
                 onBlur={(e)  => { if (state !== 'error') e.target.style.borderColor = 'rgba(255,255,255,0.1)' }}

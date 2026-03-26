@@ -197,7 +197,8 @@ export default function WordBudget({ goal, wordLimit, levelId: _levelId, levelCo
               border: `1.5px solid ${isOverLimit ? '#f87171' : 'rgba(255,255,255,0.1)'}`,
               minHeight: '140px',
               caretColor: '#E8FF47',
-              color: '#ffffff',
+              color: '#00D4FF',
+              fontWeight: 700,
             }}
             placeholder="Write your prompt here…"
             value={prompt}
