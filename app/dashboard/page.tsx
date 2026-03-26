@@ -97,10 +97,10 @@ export default async function DashboardPage() {
           <Link
             href="/profile"
             aria-label="View your profile"
-            className="w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 hover:border-[#E86A4A]/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E86A4A]"
-            style={{ background: 'rgba(232,106,74,0.12)', border: '1px solid rgba(232,106,74,0.25)', color: '#E86A4A', fontSize: '14px' }}
+            className="w-12 h-12 rounded-full flex items-center justify-center shrink-0 transition-all duration-200 hover:scale-105 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E86A4A] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
+            style={{ background: '#E86A4A', border: '2px solid rgba(255,255,255,0.2)', color: '#ffffff', fontSize: '16px', fontWeight: 800, letterSpacing: '0.02em' }}
           >
-            {firstName.charAt(0).toUpperCase()}
+            {displayName.split(' ').map((n: string) => n[0]).slice(0, 2).join('').toUpperCase()}
           </Link>
         </div>
       </header>
