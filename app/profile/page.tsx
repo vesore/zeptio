@@ -11,6 +11,51 @@ async function signOut() {
   redirect('/auth/login')
 }
 
+// ─── Badge definitions ───────────────────────────────────────────────────────
+interface BadgeDef {
+  id: string
+  icon: string
+  name: string
+  description: string
+}
+
+const BADGE_DEFS: BadgeDef[] = [
+  { id: 'first_step',      icon: '🎯', name: 'First Step',      description: 'Complete your first level'       },
+  { id: 'getting_warm',    icon: '🔥', name: 'Getting Warm',    description: 'Score 60+ on any level'          },
+  { id: 'sharp_mind',      icon: '🧠', name: 'Sharp Mind',      description: 'Score 80+ on any level'          },
+  { id: 'perfect',         icon: '⭐', name: 'Perfect',         description: 'Score 100 on any level'          },
+  { id: 'on_a_roll',       icon: '🎮', name: 'On a Roll',       description: 'Complete 3 levels in a row'      },
+  { id: 'clarity_master',  icon: '🏆', name: 'Clarity Master',  description: 'Complete all 10 Clarity levels'  },
+]
+
+function computeEarnedBadges(
+  clarityBest: Map<number, number>,
+  completedCount: number,
+): Set<string> {
+  const earned = new Set<string>()
+  const scores = Array.from(clarityBest.values())
+
+  if (completedCount >= 1)                          earned.add('first_step')
+  if (scores.some(s => s >= 60))                    earned.add('getting_warm')
+  if (scores.some(s => s >= 80))                    earned.add('sharp_mind')
+  if (scores.some(s => s >= 100))                   earned.add('perfect')
+  if (completedCount === CLARITY_LEVELS.length)     earned.add('clarity_master')
+
+  // "On a Roll" — any 3 consecutive levels all completed (score >= 60)
+  for (let i = 1; i <= CLARITY_LEVELS.length - 2; i++) {
+    if (
+      (clarityBest.get(i)     ?? 0) >= 60 &&
+      (clarityBest.get(i + 1) ?? 0) >= 60 &&
+      (clarityBest.get(i + 2) ?? 0) >= 60
+    ) {
+      earned.add('on_a_roll')
+      break
+    }
+  }
+
+  return earned
+}
+
 export default async function ProfilePage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -44,10 +89,18 @@ export default async function ProfilePage() {
     const cur = clarityBest.get(row.level) ?? 0
     if ((row.score ?? 0) > cur) clarityBest.set(row.level, row.score)
   }
+
   const completedCount = CLARITY_LEVELS.filter(l => (clarityBest.get(l.id) ?? 0) >= 60).length
+  const completedScores = CLARITY_LEVELS
+    .filter(l => (clarityBest.get(l.id) ?? 0) >= 60)
+    .map(l => clarityBest.get(l.id)!)
+  const avgScore = completedScores.length > 0
+    ? Math.round(completedScores.reduce((a, b) => a + b, 0) / completedScores.length)
+    : null
+
+  const earnedBadges = computeEarnedBadges(clarityBest, completedCount)
 
   const displayName = profile?.name ?? user.email ?? ''
-
   const memberSince = profile?.created_at
     ? new Date(profile.created_at).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
     : null
@@ -68,10 +121,10 @@ export default async function ProfilePage() {
         </span>
       </header>
 
-      <div className="w-full max-w-2xl mx-auto px-4 sm:px-6 py-10 sm:py-14">
+      <div className="w-full max-w-2xl mx-auto px-4 sm:px-6 py-10 sm:py-14 flex flex-col gap-8">
 
         {/* Name + meta */}
-        <div className="mb-10">
+        <div>
           <p className="text-xs font-mono font-semibold uppercase tracking-widest mb-3" style={{ color: '#E86A4A' }}>
             Profile
           </p>
@@ -87,7 +140,7 @@ export default async function ProfilePage() {
         </div>
 
         {/* Stats row */}
-        <div className="flex flex-col sm:flex-row gap-3 mb-10">
+        <div className="flex flex-col sm:flex-row gap-3">
           <div
             className="flex-1 flex items-center justify-between rounded-2xl px-5 py-4 glass"
             style={{ border: '1px solid rgba(232,106,74,0.2)' }}
@@ -115,23 +168,21 @@ export default async function ProfilePage() {
         </div>
 
         {/* Clarity Progress */}
-        <div className="rounded-3xl glass p-6 sm:p-7 mb-8" style={{ border: '1px solid rgba(255,255,255,0.08)' }}>
-          <div className="flex items-center justify-between mb-5">
-            <div>
-              <p className="text-xs font-mono font-semibold uppercase tracking-widest mb-1" style={{ color: '#E86A4A' }}>
-                Clarity World
-              </p>
-              <p className="text-lg font-black text-white">
-                Level {completedCount} of {CLARITY_LEVELS.length} complete
-              </p>
-            </div>
-            <span
-              className="text-sm font-black tabular-nums rounded-full px-3 py-1 shrink-0"
-              style={{ background: 'rgba(232,106,74,0.1)', color: 'rgba(232,106,74,0.8)' }}
-            >
-              {completedCount}/{CLARITY_LEVELS.length}
-            </span>
+        <div className="rounded-3xl glass p-6 sm:p-7" style={{ border: '1px solid rgba(255,255,255,0.08)' }}>
+          {/* Header */}
+          <div className="flex items-start justify-between mb-1">
+            <p className="text-xs font-mono font-semibold uppercase tracking-widest" style={{ color: '#E86A4A' }}>
+              Clarity World
+            </p>
+            {avgScore !== null && (
+              <span className="text-xs font-mono" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                Avg {avgScore}/100
+              </span>
+            )}
           </div>
+          <p className="text-lg font-black text-white mb-5">
+            {completedCount}/{CLARITY_LEVELS.length} Levels Complete
+          </p>
 
           {/* Progress bar */}
           <div className="h-2 rounded-full overflow-hidden mb-6" style={{ backgroundColor: 'rgba(255,255,255,0.07)' }}>
@@ -144,9 +195,47 @@ export default async function ProfilePage() {
             />
           </div>
 
-          {/* Level list */}
-          <div className="flex flex-col gap-2">
+          {/* Level circles */}
+          <div className="flex flex-wrap gap-2 mb-6">
             {CLARITY_LEVELS.map(level => {
+              const best = clarityBest.get(level.id)
+              const passed = (best ?? 0) >= 60
+              const played = best !== undefined
+
+              return (
+                <div key={level.id} className="flex flex-col items-center gap-1">
+                  <div
+                    className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-black font-mono transition-all duration-200"
+                    style={{
+                      background: passed
+                        ? '#E86A4A'
+                        : played
+                          ? 'rgba(250,204,21,0.12)'
+                          : 'rgba(255,255,255,0.05)',
+                      border: passed
+                        ? '2px solid #E86A4A'
+                        : played
+                          ? '2px solid rgba(250,204,21,0.4)'
+                          : '2px solid rgba(255,255,255,0.12)',
+                      color: passed ? '#1F2B6B' : played ? '#facc15' : 'rgba(255,255,255,0.25)',
+                      boxShadow: passed ? '0 0 10px rgba(232,106,74,0.35)' : 'none',
+                    }}
+                  >
+                    {passed ? '✓' : level.id}
+                  </div>
+                  {played && (
+                    <span className="text-[10px] font-mono tabular-nums" style={{ color: passed ? 'rgba(232,106,74,0.7)' : 'rgba(250,204,21,0.6)' }}>
+                      {best}
+                    </span>
+                  )}
+                </div>
+              )
+            })}
+          </div>
+
+          {/* Level detail list */}
+          <div className="flex flex-col gap-0">
+            {CLARITY_LEVELS.map((level, i) => {
               const best = clarityBest.get(level.id)
               const played = best !== undefined
               const passed = (best ?? 0) >= 60
@@ -155,11 +244,11 @@ export default async function ProfilePage() {
                 <div
                   key={level.id}
                   className="flex items-center justify-between py-2.5 px-1"
-                  style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}
+                  style={{ borderBottom: i < CLARITY_LEVELS.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none' }}
                 >
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-3 min-w-0">
                     <span
-                      className="w-7 h-7 rounded-xl flex items-center justify-center text-xs font-black font-mono shrink-0"
+                      className="w-6 h-6 rounded-lg flex items-center justify-center text-[10px] font-black font-mono shrink-0"
                       style={{
                         backgroundColor: passed ? '#E86A4A' : played ? 'rgba(250,204,21,0.12)' : 'rgba(255,255,255,0.06)',
                         color: passed ? '#1F2B6B' : played ? '#facc15' : 'rgba(255,255,255,0.25)',
@@ -167,20 +256,64 @@ export default async function ProfilePage() {
                     >
                       {passed ? '✓' : level.id}
                     </span>
-                    <span className="text-sm font-medium" style={{ color: played ? 'rgba(255,255,255,0.85)' : 'rgba(255,255,255,0.35)' }}>
+                    <span className="text-sm font-medium truncate" style={{ color: played ? 'rgba(255,255,255,0.8)' : 'rgba(255,255,255,0.3)' }}>
                       {level.title}
                     </span>
                   </div>
                   {played ? (
                     <span
-                      className="text-xs font-black tabular-nums font-mono"
+                      className="text-xs font-black tabular-nums font-mono shrink-0 ml-3"
                       style={{ color: (best ?? 0) >= 80 ? '#E86A4A' : (best ?? 0) >= 60 ? '#facc15' : '#f87171' }}
                     >
                       {best}/100
                     </span>
                   ) : (
-                    <span className="text-xs font-mono" style={{ color: 'rgba(255,255,255,0.2)' }}>—</span>
+                    <span className="text-xs font-mono shrink-0 ml-3" style={{ color: 'rgba(255,255,255,0.2)' }}>—</span>
                   )}
+                </div>
+              )
+            })}
+          </div>
+        </div>
+
+        {/* Badges */}
+        <div>
+          <p className="text-xs font-mono font-semibold uppercase tracking-widest mb-4" style={{ color: '#E86A4A' }}>
+            Badges
+          </p>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            {BADGE_DEFS.map(badge => {
+              const earned = earnedBadges.has(badge.id)
+              return (
+                <div
+                  key={badge.id}
+                  className="rounded-2xl p-4 flex flex-col gap-2 transition-all duration-200"
+                  style={{
+                    background: earned ? 'rgba(232,106,74,0.07)' : 'rgba(255,255,255,0.03)',
+                    border: earned ? '1px solid rgba(232,106,74,0.25)' : '1px solid rgba(255,255,255,0.07)',
+                    boxShadow: earned ? '0 0 16px rgba(232,106,74,0.08)' : 'none',
+                    opacity: earned ? 1 : 0.45,
+                  }}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-2xl" role="img" aria-label={badge.name}>
+                      {earned ? badge.icon : '🔒'}
+                    </span>
+                    {earned && (
+                      <span
+                        className="text-[10px] font-bold font-mono rounded-full px-2 py-0.5 uppercase tracking-wider"
+                        style={{ background: 'rgba(232,106,74,0.15)', color: '#E86A4A' }}
+                      >
+                        Earned
+                      </span>
+                    )}
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-white leading-tight">{badge.name}</p>
+                    <p className="text-xs mt-0.5 leading-snug" style={{ color: 'rgba(255,255,255,0.45)' }}>
+                      {badge.description}
+                    </p>
+                  </div>
                 </div>
               )
             })}
