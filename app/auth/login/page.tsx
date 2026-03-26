@@ -34,7 +34,28 @@ export default function LoginPage() {
       return
     }
 
-    // Sign-in failed — try signing up, then sign in
+    // Sign-in failed — only attempt sign-up for "Invalid login credentials"
+    if (!signInError.message.toLowerCase().includes('invalid login credentials')) {
+      setErrMsg(signInError.message)
+      setState('error')
+      return
+    }
+
+    // Check if this email already has a profile (i.e. user exists in auth.users)
+    const { data: existingProfile } = await supabase
+      .from('profiles')
+      .select('id')
+      .eq('email', normalizedEmail)
+      .maybeSingle()
+
+    if (existingProfile) {
+      // User exists but credentials are wrong — don't attempt sign-up
+      setErrMsg('Invalid login credentials')
+      setState('error')
+      return
+    }
+
+    // New user — attempt sign-up
     const { data, error: signUpError } = await supabase.auth.signUp({
       email: normalizedEmail,
       password,
@@ -58,7 +79,7 @@ export default function LoginPage() {
       ])
     }
 
-    // Now sign in with the newly created account
+    // Sign in with the newly created account
     const { error: finalSignInError } = await supabase.auth.signInWithPassword({
       email: normalizedEmail,
       password,
