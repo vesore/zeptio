@@ -126,7 +126,7 @@ export default async function DashboardPage() {
           </p>
 
           {/* Stats pills */}
-          <div className="flex items-center gap-6 flex-wrap" aria-label="Your stats">
+          <div className="flex items-center justify-between" aria-label="Your stats">
             <div
               className="inline-flex items-center gap-3 rounded-full px-6 py-3"
               style={{ background: 'rgba(232,255,71,0.12)', border: '1px solid rgba(232,255,71,0.25)' }}
