@@ -37,9 +37,18 @@ export default function WaitlistForm() {
   return (
     <>
       {state === 'success' ? (
-        <p className="text-base" style={{ color: 'rgba(255,255,255,0.6)' }}>
-          You&apos;re in. We&apos;ll send you access soon.
-        </p>
+        <div className="flex flex-col items-center gap-3">
+          <p className="text-base" style={{ color: 'rgba(255,255,255,0.6)' }}>
+            You&apos;re on the list! We&apos;ll be in touch soon.
+          </p>
+          <a
+            href="/auth/login"
+            className="text-sm"
+            style={{ color: '#E8FF47' }}
+          >
+            Already have access? Log in →
+          </a>
+        </div>
       ) : (
         <form onSubmit={handleSubmit} className="w-full flex flex-col gap-4" noValidate>
 
