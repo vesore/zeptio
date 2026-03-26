@@ -13,14 +13,14 @@ export async function POST(request: NextRequest) {
   }
 
   // Parse and validate body
-  let body: { user_prompt?: unknown; level_config?: unknown }
+  let body: { user_prompt?: unknown; level_config?: unknown; level_id?: unknown }
   try {
     body = await request.json()
   } catch {
     return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 })
   }
 
-  const { user_prompt, level_config } = body
+  const { user_prompt, level_config, level_id } = body
 
   if (typeof user_prompt !== 'string' || !user_prompt.trim()) {
     return NextResponse.json({ error: 'user_prompt must be a non-empty string' }, { status: 400 })
@@ -44,8 +44,10 @@ export async function POST(request: NextRequest) {
           user_id: user.id,
           xp_earned: result.xp_earned,
           score: result.score,
+          amount: result.score,
           world,
           level,
+          level_id: typeof level_id === 'number' ? level_id : level,
         }),
         supabase
           .from('streaks')

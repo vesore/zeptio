@@ -94,6 +94,7 @@ export default function WordBudget({ goal, wordLimit, levelId: _levelId, levelCo
         body: JSON.stringify({
           user_prompt: prompt,
           level_config: levelConfig,
+          level_id: levelConfig.level,
         }),
       })
 
