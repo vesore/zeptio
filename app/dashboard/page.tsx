@@ -9,33 +9,7 @@ async function signOut() {
   redirect('/auth/login')
 }
 
-const WORLDS: { id: string; name: string; description: string; icon: string; href?: string }[] = [
-  {
-    id: 'clarity',
-    name: 'Clarity',
-    description: 'Cut through ambiguity. Define the problem before you solve it.',
-    icon: '◎',
-    href: '/dashboard/clarity',
-  },
-  {
-    id: 'constraints',
-    name: 'Constraints',
-    description: 'Work within limits. Great solutions thrive under pressure.',
-    icon: '⬡',
-  },
-  {
-    id: 'structure',
-    name: 'Structure',
-    description: 'Build with intention. Organize thinking into lasting systems.',
-    icon: '▦',
-  },
-  {
-    id: 'debug',
-    name: 'Debug',
-    description: 'Find the break. Trace errors back to their root cause.',
-    icon: '⟁',
-  },
-]
+const CLARITY_LEVEL_COUNT = 10
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -45,13 +19,67 @@ export default async function DashboardPage() {
     redirect('/auth/login')
   }
 
-  const [{ data: xpRows }, { data: streakRow }] = await Promise.all([
+  const [{ data: xpRows }, { data: streakRow }, { data: clarityScoreRows }] = await Promise.all([
     supabase.from('xp_ledger').select('xp_earned').eq('user_id', user.id),
     supabase.from('streaks').select('current_streak').eq('user_id', user.id).maybeSingle(),
+    supabase.from('xp_ledger').select('level, score').eq('user_id', user.id).eq('world', 'clarity'),
   ])
 
-  const totalXp   = xpRows?.reduce((sum, row) => sum + (row.xp_earned ?? 0), 0) ?? 0
-  const streak    = streakRow?.current_streak ?? 0
+  const totalXp = xpRows?.reduce((sum, row) => sum + (row.xp_earned ?? 0), 0) ?? 0
+  const streak  = streakRow?.current_streak ?? 0
+
+  // Best score per clarity level
+  const clarityBest = new Map<number, number>()
+  for (const row of clarityScoreRows ?? []) {
+    const cur = clarityBest.get(row.level) ?? 0
+    if ((row.score ?? 0) > cur) clarityBest.set(row.level, row.score)
+  }
+
+  // Constraints unlocks when all 10 clarity levels have an average best score >= 80
+  const clarityCompleted = clarityBest.size === CLARITY_LEVEL_COUNT
+  const clarityAvg = clarityCompleted
+    ? Array.from(clarityBest.values()).reduce((a, b) => a + b, 0) / CLARITY_LEVEL_COUNT
+    : 0
+  const constraintsUnlocked = clarityCompleted && clarityAvg >= 80
+
+  const WORLDS = [
+    {
+      id: 'clarity',
+      name: 'Clarity',
+      description: 'Cut through ambiguity. Define the problem before you solve it.',
+      icon: '◎',
+      href: '/dashboard/clarity',
+      locked: false,
+      lockMessage: '',
+    },
+    {
+      id: 'constraints',
+      name: 'Constraints',
+      description: 'Work within limits. Great solutions thrive under pressure.',
+      icon: '⬡',
+      href: constraintsUnlocked ? '/dashboard/constraints' : undefined,
+      locked: !constraintsUnlocked,
+      lockMessage: 'Complete Clarity with 80+ avg to unlock',
+    },
+    {
+      id: 'structure',
+      name: 'Structure',
+      description: 'Build with intention. Organize thinking into lasting systems.',
+      icon: '▦',
+      href: undefined,
+      locked: true,
+      lockMessage: 'Coming soon',
+    },
+    {
+      id: 'debug',
+      name: 'Debug',
+      description: 'Find the break. Trace errors back to their root cause.',
+      icon: '⟁',
+      href: undefined,
+      locked: true,
+      lockMessage: 'Coming soon',
+    },
+  ]
 
   return (
     <main className="min-h-screen bg-[#1a1a2e] text-white">
@@ -143,9 +171,9 @@ export default async function DashboardPage() {
                       <p aria-hidden="true" className="font-mono text-2xl text-[#E8FF47] leading-none">
                         {world.icon}
                       </p>
-                      {!active && (
+                      {world.locked && (
                         <span className="text-xs font-mono tracking-widest uppercase rounded-md px-2 py-0.5" style={{ backgroundColor: 'rgba(255,255,255,0.08)', color: '#9ca3af' }}>
-                          Coming Soon
+                          {world.lockMessage}
                         </span>
                       )}
                     </div>
@@ -180,7 +208,7 @@ export default async function DashboardPage() {
                 key={world.id}
                 className={cardClass}
                 role="listitem"
-                aria-label={`${world.name} world — coming soon. ${world.description}`}
+                aria-label={`${world.name} world — ${world.lockMessage}. ${world.description}`}
                 aria-disabled="true"
               >
                 {inner}

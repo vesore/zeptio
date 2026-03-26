@@ -292,7 +292,7 @@ export default function WordBudget({ goal, wordLimit, levelId: _levelId, levelCo
 
             {/* Actions */}
             <div className="flex flex-col gap-3">
-              {result.score >= 50 && nextLevelUrl ? (
+              {result.score >= 60 && nextLevelUrl ? (
                 <>
                   <Link
                     href={nextLevelUrl}
@@ -337,9 +337,9 @@ export default function WordBudget({ goal, wordLimit, levelId: _levelId, levelCo
                 </>
               ) : (
                 <>
-                  {result.score < 50 && (
+                  {result.score < 60 && (
                     <p className="text-xs text-center font-mono" style={{ color: '#9ca3af' }}>
-                      Keep going — you need 50+ to advance.
+                      Score 60 or higher to advance to the next level.
                     </p>
                   )}
                   <button
