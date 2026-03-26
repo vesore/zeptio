@@ -2,6 +2,15 @@ import { createClient } from '@/src/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
 import { type EmailOtpType } from '@supabase/supabase-js'
 
+async function checkWaitlistApproval(supabase: Awaited<ReturnType<typeof createClient>>, email: string): Promise<boolean> {
+  const { data } = await supabase
+    .from('waitlist')
+    .select('accepted_nda')
+    .eq('email', email.toLowerCase())
+    .maybeSingle()
+  return !!(data?.accepted_nda)
+}
+
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = request.nextUrl
   const supabase = await createClient()
@@ -10,7 +19,17 @@ export async function GET(request: NextRequest) {
   const code = searchParams.get('code')
   if (code) {
     const { error } = await supabase.auth.exchangeCodeForSession(code)
-    if (!error) return NextResponse.redirect(`${origin}/dashboard`)
+    if (!error) {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user?.email) {
+        const approved = await checkWaitlistApproval(supabase, user.email)
+        if (!approved) {
+          await supabase.auth.signOut()
+          return NextResponse.redirect(`${origin}/?error=access_required`)
+        }
+      }
+      return NextResponse.redirect(`${origin}/dashboard`)
+    }
   }
 
   // OTP / magic-link flow
