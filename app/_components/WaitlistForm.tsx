@@ -52,8 +52,9 @@ export default function WaitlistForm() {
             value={email}
             onChange={(e) => { setEmail(e.target.value); if (state === 'error') setState('idle') }}
             disabled={state === 'loading'}
-            className="w-full rounded-xl px-4 py-3 text-base placeholder:text-white/30 outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#E8FF47]"
+            className="w-full rounded-xl px-4 py-3 placeholder:text-white/30 outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#E8FF47]"
             style={{
+              fontSize: '20px',
               backgroundColor: 'rgba(255,255,255,0.05)',
               border: `1.5px solid ${state === 'error' ? '#f87171' : 'rgba(255,255,255,0.1)'}`,
               color: '#ffffff',
