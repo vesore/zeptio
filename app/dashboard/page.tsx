@@ -128,7 +128,7 @@ export default async function DashboardPage() {
           {/* Stats pills */}
           <div className="flex items-center justify-between" aria-label="Your stats">
             <div
-              className="inline-flex items-center gap-3 rounded-full px-10 py-5 min-w-[160px]"
+              className="inline-flex items-center gap-2 rounded-full px-10 py-5 min-w-[160px]"
               style={{ background: 'rgba(232,255,71,0.12)', border: '1px solid rgba(232,255,71,0.25)' }}
               aria-label={`Score ${totalXp.toLocaleString()}`}
             >
@@ -138,12 +138,12 @@ export default async function DashboardPage() {
               </span>
             </div>
             <div
-              className="inline-flex items-center gap-3 rounded-full px-10 py-5 min-w-[160px] glass"
+              className="inline-flex items-center gap-2 rounded-full px-10 py-5 min-w-[160px] glass"
               aria-label={`${streak} day streak`}
             >
               <span className="text-xl">🔥</span>
-              <span className="text-xl font-bold tabular-nums text-white">{streak}</span>
-              <span className="text-xl font-bold" style={{ color: 'rgba(255,255,255,0.4)' }}>Day Streak</span>
+              <span className="text-xl font-bold" style={{ color: 'rgba(255,255,255,0.5)' }}>Streak</span>
+              <span className="text-xl font-bold tabular-nums" style={{ color: '#E8FF47' }}>{streak}</span>
             </div>
           </div>
         </div>
