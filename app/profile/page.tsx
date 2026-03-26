@@ -191,10 +191,7 @@ export default async function ProfilePage() {
         <form action={signOut}>
           <button
             type="submit"
-            className="w-full rounded-full py-4 font-bold text-sm tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E86A4A]"
-            style={{ border: '1.5px solid rgba(248,113,113,0.3)', color: 'rgba(248,113,113,0.6)' }}
-            onMouseEnter={e => { e.currentTarget.style.borderColor = '#f87171'; e.currentTarget.style.color = '#f87171' }}
-            onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(248,113,113,0.3)'; e.currentTarget.style.color = 'rgba(248,113,113,0.6)' }}
+            className="w-full rounded-full py-4 font-bold text-sm tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E86A4A] border border-red-400/30 text-red-400/60 hover:border-red-400 hover:text-red-400"
           >
             Sign Out
           </button>
