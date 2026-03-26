@@ -27,7 +27,7 @@ export async function scoreResponse(
 
 Your job is to evaluate a player's response to a challenge and return a JSON object with exactly these fields:
 - "score": integer from 0 to 100
-- "xp_earned": integer (proportional to score, max is ${level_config.max_xp})
+- "xp_earned": integer (set this equal to the score)
 - "feedback": string (2–4 sentences explaining what worked and what to improve)
 
 Scoring criteria for the ${level_config.world} world:
@@ -58,9 +58,9 @@ Player's response: ${user_prompt}`
 
   const parsed = JSON.parse(jsonMatch[0]) as ScoreResult
 
-  // Clamp to valid ranges
+  // Clamp score and set xp_earned equal to score (1:1)
   parsed.score = Math.max(0, Math.min(100, Math.round(parsed.score)))
-  parsed.xp_earned = Math.max(0, Math.min(level_config.max_xp, Math.round(parsed.xp_earned)))
+  parsed.xp_earned = parsed.score
 
   return parsed
 }
