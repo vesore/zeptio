@@ -2,13 +2,6 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/src/lib/supabase/server'
 
-async function signOut() {
-  'use server'
-  const supabase = await createClient()
-  await supabase.auth.signOut()
-  redirect('/auth/login')
-}
-
 const CLARITY_LEVEL_COUNT = 10
 
 export default async function DashboardPage() {
@@ -101,16 +94,14 @@ export default async function DashboardPage() {
         </span>
         <div className="flex items-center gap-3 min-w-0">
           <span className="hidden sm:block text-sm font-mono truncate max-w-[200px]" style={{ color: 'rgba(255,255,255,0.4)' }} aria-label={`Signed in as ${user.email}`}>{user.email}</span>
-          <form action={signOut}>
-            <button
-              type="submit"
-              aria-label="Sign out of your account"
-              className="rounded-full border border-white/20 px-4 py-1.5 text-xs font-mono tracking-widest uppercase transition-all duration-200 hover:border-[#E86A4A]/60 hover:text-[#E86A4A] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E86A4A]"
-              style={{ color: 'rgba(255,255,255,0.4)' }}
-            >
-              Sign out
-            </button>
-          </form>
+          <Link
+            href="/profile"
+            aria-label="View your profile"
+            className="w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 hover:border-[#E86A4A]/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E86A4A]"
+            style={{ background: 'rgba(232,106,74,0.12)', border: '1px solid rgba(232,106,74,0.25)', color: '#E86A4A', fontSize: '14px' }}
+          >
+            {firstName.charAt(0).toUpperCase()}
+          </Link>
         </div>
       </header>
 
