@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/src/lib/supabase/server'
 import WaitlistTable from './_components/WaitlistTable'
 
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL
+const ADMIN_EMAIL = 'vesorestyle@gmail.com'
 
 export default async function AdminPage() {
   const supabase = await createClient()

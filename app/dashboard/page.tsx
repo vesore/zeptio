@@ -217,6 +217,9 @@ export default async function DashboardPage() {
           <a href="/privacy" className="hover:text-[#E86A4A] transition-colors duration-200">Privacy</a>
           <a href="/terms" className="hover:text-[#E86A4A] transition-colors duration-200">Terms</a>
           <a href="/support" className="hover:text-[#E86A4A] transition-colors duration-200">Support</a>
+          {user.email === 'vesorestyle@gmail.com' && (
+            <a href="/admin" className="hover:text-[#E86A4A] transition-colors duration-200">Admin</a>
+          )}
         </div>
       </div>
     </main>

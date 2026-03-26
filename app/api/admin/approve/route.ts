@@ -2,7 +2,7 @@ import { createClient } from '@/src/lib/supabase/server'
 import { createAdminClient } from '@/src/lib/supabase/admin'
 import { NextRequest, NextResponse } from 'next/server'
 
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL
+const ADMIN_EMAIL = 'vesorestyle@gmail.com'
 
 export async function POST(request: NextRequest) {
   // Auth check — only admin can call this
