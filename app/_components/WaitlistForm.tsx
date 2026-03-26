@@ -6,7 +6,8 @@ import { createClient } from '@/src/lib/supabase/client'
 type State = 'idle' | 'loading' | 'success' | 'error'
 
 export default function WaitlistForm() {
-  const [name, setName]     = useState('')
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName]   = useState('')
   const [email, setEmail]   = useState('')
   const [agreed, setAgreed] = useState(false)
   const [state, setState]   = useState<State>('idle')
@@ -14,14 +15,14 @@ export default function WaitlistForm() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (!name.trim() || !email.trim() || !agreed || state === 'loading') return
+    if (!firstName.trim() || !lastName.trim() || !email.trim() || !agreed || state === 'loading') return
 
     setState('loading')
     setErrMsg('')
 
     const supabase = createClient()
     const { error } = await supabase.from('waitlist').upsert(
-      { name: name.trim(), email: email.trim().toLowerCase(), accepted_nda: true },
+      { name: `${firstName.trim()} ${lastName.trim()}`, email: email.trim().toLowerCase(), accepted_nda: true },
       { onConflict: 'email' }
     )
 
@@ -33,7 +34,7 @@ export default function WaitlistForm() {
     }
   }
 
-  const ready = !!name.trim() && !!email.trim() && agreed && state !== 'loading'
+  const ready = !!firstName.trim() && !!lastName.trim() && !!email.trim() && agreed && state !== 'loading'
 
   return (
     <>
@@ -54,24 +55,43 @@ export default function WaitlistForm() {
         <form onSubmit={handleSubmit} className="w-full flex flex-col gap-4" noValidate>
 
           {/* Name */}
-          <input
-            type="text"
-            autoComplete="name"
-            autoFocus
-            placeholder="Your name"
-            value={name}
-            onChange={(e) => { setName(e.target.value); if (state === 'error') setState('idle') }}
-            disabled={state === 'loading'}
-            className="w-full rounded-xl px-4 py-3 placeholder:text-white/30 outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#E8FF47]"
-            style={{
-              fontSize: '20px',
-              backgroundColor: 'rgba(255,255,255,0.05)',
-              border: `1.5px solid ${state === 'error' ? '#f87171' : 'rgba(255,255,255,0.1)'}`,
-              color: '#ffffff',
-            }}
-            onFocus={(e) => { if (state !== 'error') e.target.style.borderColor = '#E8FF47' }}
-            onBlur={(e)  => { if (state !== 'error') e.target.style.borderColor = 'rgba(255,255,255,0.1)' }}
-          />
+          <div className="flex gap-3">
+            <input
+              type="text"
+              autoComplete="given-name"
+              autoFocus
+              placeholder="First Name"
+              value={firstName}
+              onChange={(e) => { setFirstName(e.target.value); if (state === 'error') setState('idle') }}
+              disabled={state === 'loading'}
+              className="w-full rounded-xl px-4 py-3 placeholder:text-white/30 outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#E8FF47]"
+              style={{
+                fontSize: '20px',
+                backgroundColor: 'rgba(255,255,255,0.05)',
+                border: `1.5px solid ${state === 'error' ? '#f87171' : 'rgba(255,255,255,0.1)'}`,
+                color: '#ffffff',
+              }}
+              onFocus={(e) => { if (state !== 'error') e.target.style.borderColor = '#E8FF47' }}
+              onBlur={(e)  => { if (state !== 'error') e.target.style.borderColor = 'rgba(255,255,255,0.1)' }}
+            />
+            <input
+              type="text"
+              autoComplete="family-name"
+              placeholder="Last Name"
+              value={lastName}
+              onChange={(e) => { setLastName(e.target.value); if (state === 'error') setState('idle') }}
+              disabled={state === 'loading'}
+              className="w-full rounded-xl px-4 py-3 placeholder:text-white/30 outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#E8FF47]"
+              style={{
+                fontSize: '20px',
+                backgroundColor: 'rgba(255,255,255,0.05)',
+                border: `1.5px solid ${state === 'error' ? '#f87171' : 'rgba(255,255,255,0.1)'}`,
+                color: '#ffffff',
+              }}
+              onFocus={(e) => { if (state !== 'error') e.target.style.borderColor = '#E8FF47' }}
+              onBlur={(e)  => { if (state !== 'error') e.target.style.borderColor = 'rgba(255,255,255,0.1)' }}
+            />
+          </div>
 
           {/* Email */}
           <input
