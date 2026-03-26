@@ -106,7 +106,7 @@ export default function LoginPage() {
 
   return (
     <main className="min-h-screen flex items-center justify-center lime-radial-glow">
-      <div className="w-full max-w-md mx-auto px-6 py-8">
+      <div className="w-full max-w-md mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <p
           className="text-center font-mono font-bold tracking-widest text-sm uppercase mb-8"
           style={{ color: '#E86A4A' }}
@@ -115,7 +115,7 @@ export default function LoginPage() {
         </p>
 
         <div className="rounded-3xl p-6 sm:p-8 glass">
-          <h1 className="text-3xl font-black tracking-tight text-white mb-1">Let&apos;s play.</h1>
+          <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white mb-1">Let&apos;s play.</h1>
           <p className="text-sm mb-6" style={{ color: 'rgba(255,255,255,0.5)' }}>
             Sign in or create your account.
           </p>

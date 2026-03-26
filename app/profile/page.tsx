@@ -121,7 +121,7 @@ export default async function ProfilePage() {
         </span>
       </header>
 
-      <div className="w-full max-w-2xl mx-auto px-4 sm:px-6 py-10 sm:py-14 flex flex-col gap-8">
+      <div className="w-full max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-14 flex flex-col gap-6 sm:gap-8">
 
         {/* Name + meta */}
         <div>
@@ -196,16 +196,16 @@ export default async function ProfilePage() {
           </div>
 
           {/* Level circles */}
-          <div className="flex flex-wrap gap-2 mb-6">
+          <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-6">
             {CLARITY_LEVELS.map(level => {
               const best = clarityBest.get(level.id)
               const passed = (best ?? 0) >= 60
               const played = best !== undefined
 
               return (
-                <div key={level.id} className="flex flex-col items-center gap-1">
+                <div key={level.id} className="flex flex-col items-center gap-0.5 sm:gap-1">
                   <div
-                    className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-black font-mono transition-all duration-200"
+                    className="w-7 h-7 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-[10px] sm:text-xs font-black font-mono transition-all duration-200"
                     style={{
                       background: passed
                         ? '#E86A4A'

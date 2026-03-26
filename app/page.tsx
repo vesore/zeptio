@@ -18,7 +18,7 @@ export default async function LandingPage({ searchParams }: Props) {
 
   return (
     <main className="min-h-screen flex items-center justify-center lime-radial-glow">
-      <div className="w-full max-w-md mx-auto px-6 flex flex-col items-center text-center gap-8">
+      <div className="w-full max-w-md mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center text-center gap-8">
 
         {/* Logo */}
         <p className="font-mono font-bold tracking-widest text-sm uppercase" style={{ color: '#E86A4A' }}>
@@ -26,7 +26,7 @@ export default async function LandingPage({ searchParams }: Props) {
         </p>
 
         {/* Tagline */}
-        <h1 className="text-4xl font-black tracking-tight text-white leading-tight">
+        <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white leading-tight">
           Learn AI prompting<br />through play.
         </h1>
 

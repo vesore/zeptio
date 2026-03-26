@@ -33,7 +33,7 @@ export default async function ClarityPage() {
 
   return (
     <main className="min-h-screen pb-20">
-      <div className="w-full max-w-2xl mx-auto px-4 sm:px-6 pt-6 sm:pt-8">
+      <div className="w-full max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8">
 
         {/* Back link */}
         <Link

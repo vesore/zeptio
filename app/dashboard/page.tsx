@@ -105,14 +105,14 @@ export default async function DashboardPage() {
         </div>
       </header>
 
-      <div className="w-full max-w-2xl mx-auto px-4 sm:px-6 py-10 sm:py-16 lime-radial-glow">
+      <div className="w-full max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16 lime-radial-glow">
         {/* Welcome */}
         <div className="mb-10 sm:mb-14">
-          <h1 className="text-4xl sm:text-5xl font-black tracking-tight mb-4">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight mb-3 sm:mb-4">
             Welcome back,{' '}
             <span style={{ color: '#E86A4A' }}>{firstName}</span>!
           </h1>
-          <p className="mb-8 text-lg" style={{ color: 'rgba(255,255,255,0.5)' }}>
+          <p className="mb-6 sm:mb-8 text-base sm:text-lg" style={{ color: 'rgba(255,255,255,0.5)' }}>
             Choose a world to enter.
           </p>
 

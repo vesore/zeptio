@@ -166,7 +166,7 @@ export default function WordBudget({ goal, wordLimit, levelId: _levelId, levelCo
       {/* Screen-reader live region */}
       <div className="sr-only" aria-live="polite" aria-atomic="true">{announcement}</div>
 
-      <div className="w-full max-w-2xl mx-auto px-4 sm:px-6 py-8">
+      <div className="w-full max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
       <div className="w-full rounded-3xl p-5 sm:p-8 flex flex-col gap-5 sm:gap-6 glass" role="main">
 
         {/* Goal */}

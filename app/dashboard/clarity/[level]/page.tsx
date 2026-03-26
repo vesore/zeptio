@@ -47,7 +47,7 @@ export default async function ClarityLevelPage({ params }: Props) {
   return (
     <div className="min-h-screen">
       {/* Nav bar */}
-      <div className="max-w-xl mx-auto px-6 pt-6 flex items-center justify-between">
+      <div className="w-full max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 flex items-center justify-between">
         <Link
           href="/dashboard"
           className="inline-flex items-center gap-2 text-sm font-mono transition-colors duration-200 hover:text-[#E86A4A]"
@@ -56,7 +56,7 @@ export default async function ClarityLevelPage({ params }: Props) {
           ← Home
         </Link>
         <div className="flex items-center gap-2">
-          <span className="text-xs font-mono" style={{ color: 'rgba(255,255,255,0.3)' }}>
+          <span className="hidden sm:inline text-xs font-mono" style={{ color: 'rgba(255,255,255,0.3)' }}>
             {level.concept}
           </span>
           <span className="text-xs font-mono rounded-full px-3 py-1" style={{ background: 'rgba(232,106,74,0.1)', color: 'rgba(232,106,74,0.7)' }}>
