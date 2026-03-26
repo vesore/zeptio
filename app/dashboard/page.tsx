@@ -114,7 +114,7 @@ export default async function DashboardPage() {
         </div>
       </header>
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-10 sm:py-16 lime-radial-glow">
+      <div className="w-full max-w-2xl mx-auto px-4 sm:px-6 py-10 sm:py-16 lime-radial-glow">
         {/* Welcome */}
         <div className="mb-10 sm:mb-14">
           <h1 className="text-4xl sm:text-5xl font-black tracking-tight mb-4">

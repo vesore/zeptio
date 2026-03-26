@@ -17,8 +17,8 @@ export default async function LandingPage({ searchParams }: Props) {
   const { error } = await searchParams
 
   return (
-    <main className="min-h-screen flex items-center justify-center px-6 lime-radial-glow">
-      <div className="w-full max-w-sm flex flex-col items-center text-center gap-8">
+    <main className="min-h-screen flex items-center justify-center lime-radial-glow">
+      <div className="w-full max-w-md mx-auto px-6 flex flex-col items-center text-center gap-8">
 
         {/* Logo */}
         <p className="font-mono font-bold tracking-widest text-sm uppercase" style={{ color: '#E86A4A' }}>

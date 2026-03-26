@@ -105,8 +105,8 @@ export default function LoginPage() {
   const ready = !!email.trim() && !!password && state !== 'loading'
 
   return (
-    <main className="min-h-screen flex items-center justify-center px-4 py-8 lime-radial-glow">
-      <div className="w-full max-w-sm">
+    <main className="min-h-screen flex items-center justify-center lime-radial-glow">
+      <div className="w-full max-w-md mx-auto px-6 py-8">
         <p
           className="text-center font-mono font-bold tracking-widest text-sm uppercase mb-8"
           style={{ color: '#E86A4A' }}

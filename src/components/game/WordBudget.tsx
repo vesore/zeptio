@@ -162,11 +162,12 @@ export default function WordBudget({ goal, wordLimit, levelId: _levelId, levelCo
     : '#f87171'
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 sm:p-6">
+    <div className="min-h-screen flex items-center justify-center">
       {/* Screen-reader live region */}
       <div className="sr-only" aria-live="polite" aria-atomic="true">{announcement}</div>
 
-      <div className="w-full max-w-xl rounded-3xl p-5 sm:p-8 flex flex-col gap-5 sm:gap-6 glass" role="main">
+      <div className="w-full max-w-2xl mx-auto px-4 sm:px-6 py-8">
+      <div className="w-full rounded-3xl p-5 sm:p-8 flex flex-col gap-5 sm:gap-6 glass" role="main">
 
         {/* Goal */}
         <div>
@@ -351,6 +352,7 @@ export default function WordBudget({ goal, wordLimit, levelId: _levelId, levelCo
             </div>
           </div>
         )}
+      </div>
       </div>
     </div>
   )
