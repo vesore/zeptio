@@ -41,6 +41,9 @@ export default async function ClarityLevelPage({ params }: Props) {
     max_xp: level.max_xp,
   }
 
+  const isLastLevel = levelId === CLARITY_LEVELS.length
+  const nextLevelUrl = isLastLevel ? undefined : `/dashboard/clarity/${levelId + 1}`
+
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#1a1a2e' }}>
       {/* Nav bar */}
@@ -67,6 +70,7 @@ export default async function ClarityLevelPage({ params }: Props) {
         wordLimit={level.wordLimit}
         levelId={level.id}
         levelConfig={levelConfig}
+        nextLevelUrl={nextLevelUrl}
       />
     </div>
   )

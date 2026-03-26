@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import Link from 'next/link'
 
 interface LevelConfig {
   world: 'clarity' | 'constraints' | 'structure' | 'debug'
@@ -21,13 +22,14 @@ interface WordBudgetProps {
   wordLimit: number
   levelId: number
   levelConfig: LevelConfig
+  nextLevelUrl?: string
 }
 
 function countWords(text: string): number {
   return text.trim() === '' ? 0 : text.trim().split(/\s+/).length
 }
 
-export default function WordBudget({ goal, wordLimit, levelId: _levelId, levelConfig }: WordBudgetProps) {
+export default function WordBudget({ goal, wordLimit, levelId: _levelId, levelConfig, nextLevelUrl }: WordBudgetProps) {
   const [prompt, setPrompt] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [result, setResult] = useState<ScoreResult | null>(null)
@@ -288,28 +290,82 @@ export default function WordBudget({ goal, wordLimit, levelId: _levelId, levelCo
               </p>
             </div>
 
-            {/* Try again */}
-            <button
-              onClick={handleReset}
-              aria-label="Try again — clear your prompt and start over"
-              className="w-full rounded-xl py-3 px-6 font-semibold text-sm tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E8FF47] focus-visible:ring-offset-2 focus-visible:ring-offset-[#12122a]"
-              style={{
-                backgroundColor: 'transparent',
-                border: '1.5px solid #E8FF47',
-                color: '#E8FF47',
-                cursor: 'pointer',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = '#E8FF47'
-                e.currentTarget.style.color = '#1a1a2e'
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = 'transparent'
-                e.currentTarget.style.color = '#E8FF47'
-              }}
-            >
-              Try Again
-            </button>
+            {/* Actions */}
+            <div className="flex flex-col gap-3">
+              {result.score >= 50 && nextLevelUrl ? (
+                <>
+                  <Link
+                    href={nextLevelUrl}
+                    className="w-full rounded-xl py-3 px-6 font-semibold text-sm tracking-wide text-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E8FF47] focus-visible:ring-offset-2 focus-visible:ring-offset-[#12122a]"
+                    style={{
+                      backgroundColor: '#1a1a2e',
+                      border: '1.5px solid #E8FF47',
+                      color: '#E8FF47',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = '#E8FF47'
+                      e.currentTarget.style.color = '#1a1a2e'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = '#1a1a2e'
+                      e.currentTarget.style.color = '#E8FF47'
+                    }}
+                  >
+                    Next Level →
+                  </Link>
+                  <button
+                    onClick={handleReset}
+                    aria-label="Try again — clear your prompt and start over"
+                    className="w-full rounded-xl py-3 px-6 font-semibold text-sm tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E8FF47] focus-visible:ring-offset-2 focus-visible:ring-offset-[#12122a]"
+                    style={{
+                      backgroundColor: '#1a1a2e',
+                      border: '1.5px solid rgba(232,255,71,0.3)',
+                      color: 'rgba(232,255,71,0.5)',
+                      cursor: 'pointer',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.borderColor = '#E8FF47'
+                      e.currentTarget.style.color = '#E8FF47'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor = 'rgba(232,255,71,0.3)'
+                      e.currentTarget.style.color = 'rgba(232,255,71,0.5)'
+                    }}
+                  >
+                    Try Again
+                  </button>
+                </>
+              ) : (
+                <>
+                  {result.score < 50 && (
+                    <p className="text-xs text-center font-mono" style={{ color: '#9ca3af' }}>
+                      Keep going — you need 50+ to advance.
+                    </p>
+                  )}
+                  <button
+                    onClick={handleReset}
+                    aria-label="Try again — clear your prompt and start over"
+                    className="w-full rounded-xl py-3 px-6 font-semibold text-sm tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E8FF47] focus-visible:ring-offset-2 focus-visible:ring-offset-[#12122a]"
+                    style={{
+                      backgroundColor: '#1a1a2e',
+                      border: '1.5px solid #E8FF47',
+                      color: '#E8FF47',
+                      cursor: 'pointer',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = '#E8FF47'
+                      e.currentTarget.style.color = '#1a1a2e'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = '#1a1a2e'
+                      e.currentTarget.style.color = '#E8FF47'
+                    }}
+                  >
+                    Try Again
+                  </button>
+                </>
+              )}
+            </div>
           </div>
         )}
       </div>
