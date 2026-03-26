@@ -5,11 +5,11 @@ import { createClient } from '@/src/lib/supabase/client'
 
 type State = 'idle' | 'loading' | 'success' | 'error'
 
-const inputClass = "w-full rounded-2xl px-4 py-3 placeholder:text-white/30 outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#E8FF47] glass"
+const inputClass = "w-full rounded-2xl px-4 py-3 text-base placeholder:text-white/30 outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#E8FF47] glass"
 const inputStyle = (hasError: boolean) => ({
-  fontSize: '18px',
   border: `1.5px solid ${hasError ? '#f87171' : 'rgba(255,255,255,0.1)'}`,
-  color: '#ffffff',
+  color: '#0066CC',
+  fontWeight: 700,
   background: 'rgba(255,255,255,0.05)',
 })
 
