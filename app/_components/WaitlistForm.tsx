@@ -79,8 +79,8 @@ export default function WaitlistForm() {
                   className="sr-only"
                 />
                 <div
-                  className="w-7 h-7 rounded flex items-center justify-center transition-all duration-150"
-                  style={{
+                  className="rounded flex items-center justify-center transition-all duration-150"
+                  style={{ width: '20px', height: '20px',
                     backgroundColor: agreed ? '#E8FF47' : 'rgba(255,255,255,0.05)',
                     border: `2px solid ${agreed ? '#E8FF47' : 'rgba(255,255,255,0.3)'}`,
                   }}
