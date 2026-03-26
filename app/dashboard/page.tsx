@@ -95,8 +95,8 @@ export default async function DashboardPage() {
   return (
     <main className="min-h-screen text-white">
       {/* Header */}
-      <header className="border-b border-white/10 px-6 py-4 flex items-center justify-between backdrop-blur-sm" style={{ background: 'rgba(13,13,26,0.6)' }}>
-        <span className="text-[#E8FF47] font-mono font-bold tracking-widest text-sm uppercase" aria-label="Zeptio — home">
+      <header className="border-b border-white/10 px-6 py-4 flex items-center justify-between backdrop-blur-sm" style={{ background: 'rgba(31,43,107,0.6)' }}>
+        <span className="text-[#E86A4A] font-mono font-bold tracking-widest text-sm uppercase" aria-label="Zeptio — home">
           Zeptio
         </span>
         <div className="flex items-center gap-4">
@@ -105,7 +105,7 @@ export default async function DashboardPage() {
             <button
               type="submit"
               aria-label="Sign out of your account"
-              className="rounded-full border border-white/20 px-4 py-1.5 text-xs font-mono tracking-widest uppercase transition-all duration-200 hover:border-[#E8FF47]/60 hover:text-[#E8FF47] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E8FF47]"
+              className="rounded-full border border-white/20 px-4 py-1.5 text-xs font-mono tracking-widest uppercase transition-all duration-200 hover:border-[#E86A4A]/60 hover:text-[#E86A4A] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E86A4A]"
               style={{ color: 'rgba(255,255,255,0.4)' }}
             >
               Sign out
@@ -119,7 +119,7 @@ export default async function DashboardPage() {
         <div className="mb-14">
           <h1 className="text-5xl font-black tracking-tight mb-4">
             Welcome back,{' '}
-            <span style={{ color: '#E8FF47' }}>{firstName}</span>!
+            <span style={{ color: '#E86A4A' }}>{firstName}</span>!
           </h1>
           <p className="mb-8 text-lg" style={{ color: 'rgba(255,255,255,0.5)' }}>
             Choose a world to enter.
@@ -129,11 +129,11 @@ export default async function DashboardPage() {
           <div className="flex items-center justify-between" aria-label="Your stats">
             <div className="flex items-center rounded-full bg-white/10 border border-white/20 px-8 py-4">
               <span className="text-white text-xl font-bold">Score</span>
-              <span className="text-[#E8FF47] text-xl font-bold" style={{marginLeft: '20px'}}>{totalXp}</span>
+              <span className="text-[#E86A4A] text-xl font-bold" style={{marginLeft: '20px'}}>{totalXp}</span>
             </div>
             <div className="flex items-center rounded-full bg-white/10 border border-white/20 px-8 py-4">
               <span className="text-white text-xl font-bold">🔥 Streak</span>
-              <span className="text-[#E8FF47] text-xl font-bold" style={{marginLeft: '20px'}}>{streak}</span>
+              <span className="text-[#E86A4A] text-xl font-bold" style={{marginLeft: '20px'}}>{streak}</span>
             </div>
           </div>
         </div>
@@ -145,17 +145,17 @@ export default async function DashboardPage() {
             const cardClass = [
               'group relative text-left rounded-3xl p-7 transition-all duration-300 glass',
               active
-                ? 'hover:border-[#E8FF47]/40 lime-glow-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E8FF47] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent'
+                ? 'hover:border-[#E86A4A]/40 lime-glow-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E86A4A] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent'
                 : 'opacity-40 cursor-not-allowed',
             ].join(' ')
 
             const inner = (
               <>
                 {/* Top shimmer line on hover */}
-                <span aria-hidden="true" className="absolute inset-x-7 top-0 h-px bg-gradient-to-r from-[#E8FF47]/0 via-[#E8FF47]/50 to-[#E8FF47]/0 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                <span aria-hidden="true" className="absolute inset-x-7 top-0 h-px bg-gradient-to-r from-[#E86A4A]/0 via-[#E86A4A]/50 to-[#E86A4A]/0 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
                 {/* Radial glow behind active cards */}
                 {active && (
-                  <span aria-hidden="true" className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" style={{ background: 'radial-gradient(ellipse at top left, rgba(232,255,71,0.06) 0%, transparent 60%)' }} />
+                  <span aria-hidden="true" className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" style={{ background: 'radial-gradient(ellipse at top left, rgba(232,106,74,0.06) 0%, transparent 60%)' }} />
                 )}
                 <div className="flex items-start justify-between gap-4 relative">
                   <div className="flex-1 min-w-0">
@@ -163,7 +163,7 @@ export default async function DashboardPage() {
                       <span
                         aria-hidden="true"
                         className="w-10 h-10 rounded-2xl flex items-center justify-center text-lg font-mono"
-                        style={{ background: active ? 'rgba(232,255,71,0.12)' : 'rgba(255,255,255,0.05)', color: active ? '#E8FF47' : 'rgba(255,255,255,0.3)' }}
+                        style={{ background: active ? 'rgba(232,106,74,0.12)' : 'rgba(255,255,255,0.05)', color: active ? '#E86A4A' : 'rgba(255,255,255,0.3)' }}
                       >
                         {world.icon}
                       </span>
@@ -173,7 +173,7 @@ export default async function DashboardPage() {
                         </span>
                       )}
                     </div>
-                    <h2 className={`text-2xl font-black tracking-tight mb-2 transition-colors duration-200 ${active ? 'group-hover:text-[#E8FF47]' : 'text-white/40'}`}>
+                    <h2 className={`text-2xl font-black tracking-tight mb-2 transition-colors duration-200 ${active ? 'group-hover:text-[#E86A4A]' : 'text-white/40'}`}>
                       {world.name}
                     </h2>
                     <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.45)' }}>
@@ -214,9 +214,9 @@ export default async function DashboardPage() {
         </div>
         {/* Footer */}
         <div className="mt-20 pt-6 flex gap-5 text-xs" style={{ borderTop: '1px solid rgba(255,255,255,0.07)', color: 'rgba(255,255,255,0.25)' }}>
-          <a href="/privacy" className="hover:text-[#E8FF47] transition-colors duration-200">Privacy</a>
-          <a href="/terms" className="hover:text-[#E8FF47] transition-colors duration-200">Terms</a>
-          <a href="/support" className="hover:text-[#E8FF47] transition-colors duration-200">Support</a>
+          <a href="/privacy" className="hover:text-[#E86A4A] transition-colors duration-200">Privacy</a>
+          <a href="/terms" className="hover:text-[#E86A4A] transition-colors duration-200">Terms</a>
+          <a href="/support" className="hover:text-[#E86A4A] transition-colors duration-200">Support</a>
         </div>
       </div>
     </main>

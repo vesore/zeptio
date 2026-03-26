@@ -157,7 +157,7 @@ export default function WordBudget({ goal, wordLimit, levelId: _levelId, levelCo
   // Color bands: red <40, yellow 40-59, lime 60-79, white 80-100
   const scoreColor =
     displayScore >= 80 ? '#ffffff'
-    : displayScore >= 60 ? '#E8FF47'
+    : displayScore >= 60 ? '#E86A4A'
     : displayScore >= 40 ? '#facc15'
     : '#f87171'
 
@@ -170,7 +170,7 @@ export default function WordBudget({ goal, wordLimit, levelId: _levelId, levelCo
 
         {/* Goal */}
         <div>
-          <p className="text-xs font-mono font-semibold uppercase tracking-widest mb-3" style={{ color: '#E8FF47' }} id="goal-label">
+          <p className="text-xs font-mono font-semibold uppercase tracking-widest mb-3" style={{ color: '#E86A4A' }} id="goal-label">
             Goal
           </p>
           <p
@@ -187,16 +187,16 @@ export default function WordBudget({ goal, wordLimit, levelId: _levelId, levelCo
 
         {/* Textarea + word counter */}
         <div className="flex flex-col gap-3">
-          <label htmlFor="prompt-textarea" className="text-xs font-mono font-semibold uppercase tracking-widest" style={{ color: '#E8FF47' }}>
+          <label htmlFor="prompt-textarea" className="text-xs font-mono font-semibold uppercase tracking-widest" style={{ color: '#E86A4A' }}>
             Your Prompt
           </label>
           <textarea
             id="prompt-textarea"
-            className="w-full rounded-2xl p-4 text-sm resize-none outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#E8FF47] placeholder:text-white/30 glass"
+            className="w-full rounded-2xl p-4 text-sm resize-none outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#E86A4A] placeholder:text-white/30 glass"
             style={{
               border: `1.5px solid ${isOverLimit ? '#f87171' : 'rgba(255,255,255,0.1)'}`,
               minHeight: '140px',
-              caretColor: '#E8FF47',
+              caretColor: '#E86A4A',
               color: '#0066CC',
               fontWeight: 700,
             }}
@@ -207,7 +207,7 @@ export default function WordBudget({ goal, wordLimit, levelId: _levelId, levelCo
             aria-describedby="word-counter"
             aria-invalid={isOverLimit}
             aria-label="Your prompt response"
-            onFocus={(e) => { if (!isOverLimit) e.target.style.borderColor = '#E8FF47' }}
+            onFocus={(e) => { if (!isOverLimit) e.target.style.borderColor = '#E86A4A' }}
             onBlur={(e)  => { e.target.style.borderColor = isOverLimit ? '#f87171' : 'rgba(255,255,255,0.1)' }}
           />
 
@@ -240,11 +240,11 @@ export default function WordBudget({ goal, wordLimit, levelId: _levelId, levelCo
               : isOverLimit ? 'Cannot submit: prompt exceeds word limit'
               : 'Submit your prompt for scoring'
             }
-            className="w-full py-3.5 font-bold text-sm tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E8FF47] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent btn-primary"
+            className="w-full py-3.5 font-bold text-sm tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E86A4A] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent btn-primary"
           >
             {isLoading ? (
               <span className="flex items-center justify-center gap-2">
-                <span aria-hidden="true" className="inline-block w-4 h-4 rounded-full border-2 animate-spin" style={{ borderColor: 'rgba(13,13,26,0.2)', borderTopColor: '#0d0d1a' }} />
+                <span aria-hidden="true" className="inline-block w-4 h-4 rounded-full border-2 animate-spin" style={{ borderColor: 'rgba(31,43,107,0.2)', borderTopColor: '#1F2B6B' }} />
                 Scoring…
               </span>
             ) : isOverLimit ? (
@@ -288,7 +288,7 @@ export default function WordBudget({ goal, wordLimit, levelId: _levelId, levelCo
               {scoreLanded && (
                 <span
                   className="rounded-full px-4 py-1.5 text-xs font-bold mt-1 animate-in fade-in duration-300"
-                  style={{ background: 'rgba(232,255,71,0.12)', color: '#E8FF47', border: '1px solid rgba(232,255,71,0.25)' }}
+                  style={{ background: 'rgba(232,106,74,0.12)', color: '#E86A4A', border: '1px solid rgba(232,106,74,0.25)' }}
                 >
                   +{result.xp_earned} XP
                 </span>
@@ -303,7 +303,7 @@ export default function WordBudget({ goal, wordLimit, levelId: _levelId, levelCo
                 border: '1px solid rgba(255,255,255,0.08)',
               }}
             >
-              <p className="text-xs font-mono font-semibold uppercase tracking-widest mb-3" style={{ color: '#E8FF47' }} id="feedback-label">
+              <p className="text-xs font-mono font-semibold uppercase tracking-widest mb-3" style={{ color: '#E86A4A' }} id="feedback-label">
                 Feedback
               </p>
               <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.75)' }} aria-labelledby="feedback-label">
@@ -317,17 +317,17 @@ export default function WordBudget({ goal, wordLimit, levelId: _levelId, levelCo
                 <>
                   <Link
                     href={nextLevelUrl}
-                    className="w-full py-3.5 font-bold text-sm tracking-wide text-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E8FF47] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent btn-primary"
+                    className="w-full py-3.5 font-bold text-sm tracking-wide text-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E86A4A] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent btn-primary"
                   >
                     Next Level →
                   </Link>
                   <button
                     onClick={handleReset}
                     aria-label="Try again — clear your prompt and start over"
-                    className="w-full rounded-full py-3.5 font-bold text-sm tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E8FF47]"
-                    style={{ border: '1.5px solid rgba(232,255,71,0.3)', color: 'rgba(232,255,71,0.5)', cursor: 'pointer' }}
-                    onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#E8FF47'; e.currentTarget.style.color = '#E8FF47' }}
-                    onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(232,255,71,0.3)'; e.currentTarget.style.color = 'rgba(232,255,71,0.5)' }}
+                    className="w-full rounded-full py-3.5 font-bold text-sm tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E86A4A]"
+                    style={{ border: '1.5px solid rgba(232,106,74,0.3)', color: 'rgba(232,106,74,0.5)', cursor: 'pointer' }}
+                    onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#E86A4A'; e.currentTarget.style.color = '#E86A4A' }}
+                    onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(232,106,74,0.3)'; e.currentTarget.style.color = 'rgba(232,106,74,0.5)' }}
                   >
                     Try Again
                   </button>
@@ -342,7 +342,7 @@ export default function WordBudget({ goal, wordLimit, levelId: _levelId, levelCo
                   <button
                     onClick={handleReset}
                     aria-label="Try again — clear your prompt and start over"
-                    className="w-full py-3.5 font-bold text-sm tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E8FF47] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent btn-primary"
+                    className="w-full py-3.5 font-bold text-sm tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E86A4A] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent btn-primary"
                   >
                     Try Again
                   </button>

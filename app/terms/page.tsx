@@ -5,11 +5,11 @@ export default function TermsPage() {
     <main className="min-h-screen py-16 px-6">
       <div className="max-w-2xl mx-auto">
 
-        <Link href="/" className="text-sm font-mono transition-colors duration-200 hover:text-[#E8FF47] mb-10 inline-block" style={{ color: 'rgba(255,255,255,0.4)' }}>
+        <Link href="/" className="text-sm font-mono transition-colors duration-200 hover:text-[#E86A4A] mb-10 inline-block" style={{ color: 'rgba(255,255,255,0.4)' }}>
           ← Back
         </Link>
 
-        <p className="font-mono font-bold tracking-widest text-sm uppercase mb-4" style={{ color: '#E8FF47' }}>Zeptio</p>
+        <p className="font-mono font-bold tracking-widest text-sm uppercase mb-4" style={{ color: '#E86A4A' }}>Zeptio</p>
         <h1 className="text-4xl font-black tracking-tight text-white mb-2">Terms of Service</h1>
         <p className="text-sm mb-12" style={{ color: 'rgba(255,255,255,0.4)' }}>Last updated: March 2026</p>
 
@@ -44,7 +44,7 @@ export default function TermsPage() {
             <h2 className="text-xl font-black tracking-tight text-white mb-3">Contact</h2>
             <p>
               Questions or concerns? Email us at{' '}
-              <a href="mailto:contact@zeptio.app" className="font-bold transition-colors duration-200 hover:opacity-80" style={{ color: '#E8FF47' }}>
+              <a href="mailto:contact@zeptio.app" className="font-bold transition-colors duration-200 hover:opacity-80" style={{ color: '#E86A4A' }}>
                 contact@zeptio.app
               </a>
             </p>
@@ -53,8 +53,8 @@ export default function TermsPage() {
         </div>
 
         <div className="mt-16 pt-8 flex gap-6 text-sm" style={{ borderTop: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.3)' }}>
-          <Link href="/privacy" className="hover:text-[#E8FF47] transition-colors duration-200">Privacy Policy</Link>
-          <Link href="/support" className="hover:text-[#E8FF47] transition-colors duration-200">Support</Link>
+          <Link href="/privacy" className="hover:text-[#E86A4A] transition-colors duration-200">Privacy Policy</Link>
+          <Link href="/support" className="hover:text-[#E86A4A] transition-colors duration-200">Support</Link>
         </div>
 
       </div>
