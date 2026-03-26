@@ -13,6 +13,14 @@ export default function LoginPage() {
   const [state, setState]       = useState<State>('idle')
   const [errMsg, setErrMsg]     = useState('')
 
+  async function handleGoogleSignIn() {
+    const supabase = createClient()
+    await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: 'https://zeptio.app/auth/callback' },
+    })
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!email.trim() || !password || state === 'loading') return
@@ -111,6 +119,29 @@ export default function LoginPage() {
           <p className="text-sm mb-6" style={{ color: 'rgba(255,255,255,0.5)' }}>
             Sign in or create your account.
           </p>
+
+          {/* Google Sign In */}
+          <button
+            type="button"
+            onClick={handleGoogleSignIn}
+            className="w-full flex items-center justify-center gap-3 rounded-full py-3.5 font-bold text-sm tracking-wide transition-all duration-200 hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E8FF47]"
+            style={{ backgroundColor: '#ffffff', color: '#1a1a1a' }}
+          >
+            <span
+              className="w-5 h-5 rounded-full flex items-center justify-center text-xs font-black"
+              style={{ backgroundColor: '#4285F4', color: '#ffffff' }}
+            >
+              G
+            </span>
+            Continue with Google
+          </button>
+
+          {/* Divider */}
+          <div className="flex items-center gap-3">
+            <div className="flex-1 h-px" style={{ backgroundColor: 'rgba(255,255,255,0.1)' }} />
+            <span className="text-xs font-mono tracking-widest uppercase" style={{ color: 'rgba(255,255,255,0.3)' }}>or</span>
+            <div className="flex-1 h-px" style={{ backgroundColor: 'rgba(255,255,255,0.1)' }} />
+          </div>
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
             {/* Email */}
