@@ -20,12 +20,19 @@ export default async function DashboardPage() {
   }
 
   const [{ data: xpRows }, { data: streakRow }, { data: clarityScoreRows }] = await Promise.all([
-    supabase.from('xp_ledger').select('xp_earned').eq('user_id', user.id),
+    supabase.from('xp_ledger').select('level_id, amount').eq('user_id', user.id),
     supabase.from('streaks').select('current_streak').eq('user_id', user.id).maybeSingle(),
     supabase.from('xp_ledger').select('level, score').eq('user_id', user.id).eq('world', 'clarity'),
   ])
 
-  const totalXp = xpRows?.reduce((sum, row) => sum + (row.xp_earned ?? 0), 0) ?? 0
+  // Sum of best score (amount) per level
+  const bestPerLevel = new Map<number, number>()
+  for (const row of xpRows ?? []) {
+    const cur = bestPerLevel.get(row.level_id) ?? 0
+    if ((row.amount ?? 0) > cur) bestPerLevel.set(row.level_id, row.amount ?? 0)
+  }
+  const totalXp = Array.from(bestPerLevel.values()).reduce((sum, v) => sum + v, 0)
+
   const streak  = streakRow?.current_streak ?? 0
 
   // Best score per clarity level

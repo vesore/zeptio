@@ -117,12 +117,16 @@ export default async function ClarityPage() {
                       </div>
                     </div>
                     <div className="flex items-center gap-3 shrink-0">
-                      {completed && best !== undefined && (
+                      {best !== undefined ? (
                         <span
                           className="text-sm font-black tabular-nums font-mono"
                           style={{ color: best >= 80 ? '#E8FF47' : best >= 60 ? '#facc15' : '#f87171' }}
                         >
-                          {best}
+                          Best: {best}/100
+                        </span>
+                      ) : (
+                        <span className="text-xs font-mono" style={{ color: 'rgba(255,255,255,0.3)' }}>
+                          Not played yet
                         </span>
                       )}
                       <span className="text-sm font-mono transition-colors duration-200" style={{ color: 'rgba(255,255,255,0.3)' }}>
