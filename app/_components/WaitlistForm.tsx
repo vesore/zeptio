@@ -5,10 +5,10 @@ import { createClient } from '@/src/lib/supabase/client'
 
 type State = 'idle' | 'loading' | 'success' | 'error'
 
-const inputClass = "w-full rounded-2xl px-4 py-3.5 text-base placeholder:text-white/30 outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#E86A4A] glass"
+const inputClass = "w-full rounded-2xl px-4 py-3.5 text-base placeholder:text-white/30 outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#B0E020] glass"
 const inputStyle = (hasError: boolean) => ({
   border: `1.5px solid ${hasError ? '#f87171' : 'rgba(255,255,255,0.1)'}`,
-  color: '#0066CC',
+  color: '#B0E020',
   fontWeight: 700,
   background: 'rgba(255,255,255,0.07)',
 })
@@ -50,7 +50,7 @@ export default function WaitlistForm() {
     if (hasError) setState('idle')
   }
   const onFocus = (e: React.FocusEvent<HTMLInputElement>) => {
-    if (!hasError) e.target.style.borderColor = '#E86A4A'
+    if (!hasError) e.target.style.borderColor = '#B0E020'
   }
   const onBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     if (!hasError) e.target.style.borderColor = 'rgba(255,255,255,0.1)'
@@ -62,7 +62,7 @@ export default function WaitlistForm() {
         <div className="flex flex-col items-center gap-4 py-4">
           <div
             className="rounded-3xl px-6 py-5 text-center glass"
-            style={{ border: '1px solid rgba(232,106,74,0.3)' }}
+            style={{ border: '1px solid rgba(176,224,32,0.3)' }}
           >
             <p className="text-base font-semibold text-white mb-2">
               You&apos;re on the list!
@@ -74,7 +74,7 @@ export default function WaitlistForm() {
           <a
             href="/auth/login"
             className="text-sm font-medium transition-colors duration-200 hover:opacity-80"
-            style={{ color: '#E86A4A' }}
+            style={{ color: '#B0E020' }}
           >
             Already have access? Log in →
           </a>
@@ -128,7 +128,7 @@ export default function WaitlistForm() {
           {/* NDA checkbox */}
           <div
             className="rounded-2xl p-4 flex flex-col gap-3 glass"
-            style={{ border: '1.5px solid rgba(232,106,74,0.4)' }}
+            style={{ border: '1.5px solid rgba(176,224,32,0.4)' }}
           >
             <p className="text-sm font-bold text-left text-white">
               Before you continue:
@@ -145,8 +145,8 @@ export default function WaitlistForm() {
                   className="rounded-md flex items-center justify-center transition-all duration-150"
                   style={{
                     width: '20px', height: '20px',
-                    backgroundColor: agreed ? '#E86A4A' : 'rgba(255,255,255,0.07)',
-                    border: `2px solid ${agreed ? '#E86A4A' : 'rgba(255,255,255,0.3)'}`,
+                    backgroundColor: agreed ? '#B0E020' : 'rgba(255,255,255,0.07)',
+                    border: `2px solid ${agreed ? '#B0E020' : 'rgba(255,255,255,0.3)'}`,
                   }}
                   aria-hidden="true"
                 >
@@ -174,7 +174,7 @@ export default function WaitlistForm() {
           <button
             type="submit"
             disabled={!ready}
-            className="w-full py-4 text-sm font-bold tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E86A4A] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent btn-primary"
+            className="w-full py-4 text-sm font-bold tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B0E020] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent btn-primary"
           >
             {state === 'loading' ? (
               <span className="flex items-center justify-center gap-2">

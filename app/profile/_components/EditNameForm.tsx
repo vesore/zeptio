@@ -46,7 +46,7 @@ export default function EditNameForm({ initialName }: { initialName: string }) {
           <span className="text-3xl sm:text-4xl font-black tracking-tight text-white">{name || '—'}</span>
           <button
             onClick={() => { setDraft(name); setEditing(true); setSaved(false) }}
-            className="rounded-full px-3 py-1 text-xs font-bold font-mono border border-[#E86A4A]/25 bg-[#E86A4A]/10 text-[#E86A4A] hover:bg-[#E86A4A]/20 hover:border-[#E86A4A] transition-all duration-200"
+            className="rounded-full px-3 py-1 text-xs font-bold font-mono border border-[#B0E020]/25 bg-[#B0E020]/10 text-[#B0E020] hover:bg-[#B0E020]/20 hover:border-[#B0E020] transition-all duration-200"
           >
             Edit
           </button>
@@ -70,14 +70,14 @@ export default function EditNameForm({ initialName }: { initialName: string }) {
           onChange={e => setDraft(e.target.value)}
           onKeyDown={e => { if (e.key === 'Enter') handleSave(); if (e.key === 'Escape') handleCancel() }}
           disabled={saving}
-          className="rounded-2xl px-4 py-2 text-lg font-bold outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#E86A4A] glass"
-          style={{ color: '#0066CC', border: '1.5px solid #E86A4A', minWidth: '180px' }}
+          className="rounded-2xl px-4 py-2 text-lg font-bold outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#B0E020] glass"
+          style={{ color: '#B0E020', border: '1.5px solid #B0E020', minWidth: '180px' }}
         />
         <button
           onClick={handleSave}
           disabled={saving || !draft.trim()}
           className="rounded-full px-4 py-2 text-xs font-bold transition-all duration-200"
-          style={{ background: '#E86A4A', color: '#1F2B6B', opacity: saving || !draft.trim() ? 0.5 : 1 }}
+          style={{ background: '#B0E020', color: '#1A1D2B', opacity: saving || !draft.trim() ? 0.5 : 1 }}
         >
           {saving ? 'Saving…' : 'Save'}
         </button>

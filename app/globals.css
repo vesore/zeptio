@@ -3,8 +3,8 @@
 @tailwind utilities;
 
 :root {
-  --bg-gradient: linear-gradient(135deg, #1F2B6B 0%, #2E3F99 50%, #1F2B6B 100%);
-  --coral: #E86A4A;
+  --bg-gradient: linear-gradient(135deg, #1A1D2B 0%, #2D3148 50%, #1A1D2B 100%);
+  --lime: #B0E020;
   --foreground: #ffffff;
 }
 
@@ -24,32 +24,32 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
-/* Coral glow on hover for interactive elements */
+/* Lime glow on hover for interactive elements */
 .lime-glow-hover:hover {
-  box-shadow: 0 0 24px rgba(232, 106, 74, 0.25), 0 0 48px rgba(232, 106, 74, 0.1);
+  box-shadow: 0 0 24px rgba(176, 224, 32, 0.25), 0 0 48px rgba(176, 224, 32, 0.1);
 }
 
 /* Primary button */
 .btn-primary {
-  background-color: #E86A4A;
-  color: #ffffff;
+  background-color: #B0E020;
+  color: #1A1D2B;
   border-radius: 9999px;
   font-weight: 700;
   transition: all 0.2s;
 }
 .btn-primary:hover {
-  box-shadow: 0 0 20px rgba(232, 106, 74, 0.5), 0 0 40px rgba(232, 106, 74, 0.2);
+  box-shadow: 0 0 20px rgba(176, 224, 32, 0.5), 0 0 40px rgba(176, 224, 32, 0.2);
   transform: translateY(-1px);
 }
 .btn-primary:disabled {
-  background-color: rgba(232, 106, 74, 0.15);
-  color: rgba(232, 106, 74, 0.4);
+  background-color: rgba(176, 224, 32, 0.15);
+  color: rgba(176, 224, 32, 0.4);
   box-shadow: none;
   transform: none;
   cursor: not-allowed;
 }
 
-/* Radial coral glow behind hero elements */
+/* Radial lime glow behind hero elements */
 .lime-radial-glow {
   position: relative;
 }
@@ -57,7 +57,7 @@ body {
   content: '';
   position: absolute;
   inset: -40%;
-  background: radial-gradient(ellipse at center, rgba(232, 106, 74, 0.06) 0%, transparent 70%);
+  background: radial-gradient(ellipse at center, rgba(176, 224, 32, 0.06) 0%, transparent 70%);
   pointer-events: none;
   z-index: 0;
 }
@@ -68,8 +68,8 @@ body {
 
 @keyframes scorePulse {
   0%   { text-shadow: 0 0 0px transparent; }
-  40%  { text-shadow: 0 0 32px rgba(232,106,74,0.8), 0 0 64px rgba(232,106,74,0.4); }
-  100% { text-shadow: 0 0 10px rgba(232,106,74,0.2); }
+  40%  { text-shadow: 0 0 32px rgba(176,224,32,0.8), 0 0 64px rgba(176,224,32,0.4); }
+  100% { text-shadow: 0 0 10px rgba(176,224,32,0.2); }
 }
 .score-glow {
   animation: scorePulse 0.9s ease-out forwards;
@@ -83,7 +83,7 @@ body {
   content: '|';
   margin-left: 1px;
   animation: cursorBlink 0.8s step-end infinite;
-  color: #E86A4A;
+  color: #B0E020;
 }
 .typing-cursor-done::after {
   content: '';

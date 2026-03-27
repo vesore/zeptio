@@ -50,9 +50,9 @@ export default function WaitlistTable({ rows: initialRows }: { rows: WaitlistRow
         <span
           className="rounded-full px-4 py-2 text-sm font-bold"
           style={{
-            background: pending > 0 ? 'rgba(232,106,74,0.12)' : 'rgba(255,255,255,0.06)',
-            color: pending > 0 ? '#E86A4A' : 'rgba(255,255,255,0.4)',
-            border: `1px solid ${pending > 0 ? 'rgba(232,106,74,0.3)' : 'rgba(255,255,255,0.1)'}`,
+            background: pending > 0 ? 'rgba(176,224,32,0.12)' : 'rgba(255,255,255,0.06)',
+            color: pending > 0 ? '#B0E020' : 'rgba(255,255,255,0.4)',
+            border: `1px solid ${pending > 0 ? 'rgba(176,224,32,0.3)' : 'rgba(255,255,255,0.1)'}`,
           }}
         >
           {pending} pending approval{pending !== 1 ? 's' : ''}
@@ -142,14 +142,14 @@ export default function WaitlistTable({ rows: initialRows }: { rows: WaitlistRow
                       disabled={loading === row.id}
                       className="rounded-full px-4 py-1.5 text-xs font-bold transition-all duration-200"
                       style={{
-                        background: 'rgba(232,106,74,0.1)',
-                        color: '#E86A4A',
-                        border: '1px solid rgba(232,106,74,0.3)',
+                        background: 'rgba(176,224,32,0.1)',
+                        color: '#B0E020',
+                        border: '1px solid rgba(176,224,32,0.3)',
                         cursor: loading === row.id ? 'not-allowed' : 'pointer',
                         opacity: loading === row.id ? 0.5 : 1,
                       }}
-                      onMouseEnter={e => { if (loading !== row.id) { e.currentTarget.style.background = 'rgba(232,106,74,0.2)'; e.currentTarget.style.borderColor = '#E86A4A' }}}
-                      onMouseLeave={e => { e.currentTarget.style.background = 'rgba(232,106,74,0.1)'; e.currentTarget.style.borderColor = 'rgba(232,106,74,0.3)' }}
+                      onMouseEnter={e => { if (loading !== row.id) { e.currentTarget.style.background = 'rgba(176,224,32,0.2)'; e.currentTarget.style.borderColor = '#B0E020' }}}
+                      onMouseLeave={e => { e.currentTarget.style.background = 'rgba(176,224,32,0.1)'; e.currentTarget.style.borderColor = 'rgba(176,224,32,0.3)' }}
                     >
                       {loading === row.id ? 'Sending…' : 'Approve'}
                     </button>

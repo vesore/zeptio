@@ -38,7 +38,7 @@ export default async function ClarityPage() {
         {/* Back link */}
         <Link
           href="/dashboard"
-          className="inline-flex items-center gap-2 text-sm font-mono transition-colors duration-200 hover:text-[#E86A4A] mb-8"
+          className="inline-flex items-center gap-2 text-sm font-mono transition-colors duration-200 hover:text-[#B0E020] mb-8"
           style={{ color: 'rgba(255,255,255,0.4)' }}
         >
           ← Home
@@ -51,12 +51,12 @@ export default async function ClarityPage() {
               <div className="flex items-center gap-2 mb-2">
                 <span
                   className="w-8 h-8 rounded-xl flex items-center justify-center text-base font-mono"
-                  style={{ background: 'rgba(232,106,74,0.12)', color: '#E86A4A' }}
+                  style={{ background: 'rgba(176,224,32,0.12)', color: '#B0E020' }}
                   aria-hidden="true"
                 >
                   ◎
                 </span>
-                <p className="text-xs font-mono tracking-widest uppercase" style={{ color: '#E86A4A' }}>
+                <p className="text-xs font-mono tracking-widest uppercase" style={{ color: '#B0E020' }}>
                   Clarity World
                 </p>
               </div>
@@ -67,7 +67,7 @@ export default async function ClarityPage() {
             </div>
             <span
               className="text-sm font-black tabular-nums rounded-full px-3 py-1 shrink-0 mt-1"
-              style={{ background: 'rgba(232,106,74,0.1)', color: 'rgba(232,106,74,0.7)' }}
+              style={{ background: 'rgba(176,224,32,0.1)', color: 'rgba(176,224,32,0.7)' }}
             >
               {completedCount}/{CLARITY_LEVELS.length}
             </span>
@@ -79,7 +79,7 @@ export default async function ClarityPage() {
               className="h-2 rounded-full transition-all duration-700"
               style={{
                 width: `${Math.round((completedCount / CLARITY_LEVELS.length) * 100)}%`,
-                background: 'linear-gradient(90deg, #E86A4A, #b8ff00)',
+                background: 'linear-gradient(90deg, #B0E020, #b8ff00)',
               }}
             />
           </div>
@@ -97,25 +97,25 @@ export default async function ClarityPage() {
                 <Link
                   key={level.id}
                   href={`/dashboard/clarity/${level.id}`}
-                  className="group rounded-3xl p-5 transition-all duration-200 hover:border-[#E86A4A]/40 lime-glow-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E86A4A] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent glass"
+                  className="group rounded-3xl p-5 transition-all duration-200 hover:border-[#B0E020]/40 lime-glow-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B0E020] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent glass"
                   style={{
-                    border: `1px solid ${completed ? 'rgba(232,106,74,0.2)' : 'rgba(255,255,255,0.08)'}`,
-                    background: completed ? 'rgba(232,106,74,0.04)' : 'rgba(255,255,255,0.03)',
+                    border: `1px solid ${completed ? 'rgba(176,224,32,0.2)' : 'rgba(255,255,255,0.08)'}`,
+                    background: completed ? 'rgba(176,224,32,0.04)' : 'rgba(255,255,255,0.03)',
                   }}
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
                       <span
                         className="w-10 h-10 rounded-2xl flex items-center justify-center text-sm font-black font-mono shrink-0"
-                        style={{ backgroundColor: completed ? '#E86A4A' : 'rgba(232,106,74,0.12)', color: completed ? '#1F2B6B' : '#E86A4A' }}
+                        style={{ backgroundColor: completed ? '#B0E020' : 'rgba(176,224,32,0.12)', color: completed ? '#1A1D2B' : '#B0E020' }}
                       >
                         {completed ? '✓' : level.id}
                       </span>
                       <div>
-                        <p className="text-sm font-bold text-white group-hover:text-[#E86A4A] transition-colors duration-200">
+                        <p className="text-sm font-bold text-white group-hover:text-[#B0E020] transition-colors duration-200">
                           {level.title}
                         </p>
-                        <p className="text-xs font-mono mt-0.5" style={{ color: 'rgba(232,106,74,0.5)' }}>
+                        <p className="text-xs font-mono mt-0.5" style={{ color: 'rgba(176,224,32,0.5)' }}>
                           {level.concept}
                         </p>
                       </div>
@@ -124,7 +124,7 @@ export default async function ClarityPage() {
                       {best !== undefined ? (
                         <span
                           className="text-xs sm:text-sm font-black tabular-nums font-mono"
-                          style={{ color: best >= 80 ? '#E86A4A' : best >= 60 ? '#facc15' : '#f87171' }}
+                          style={{ color: best >= 80 ? '#B0E020' : best >= 60 ? '#facc15' : '#f87171' }}
                         >
                           Best: {best}/100
                         </span>
