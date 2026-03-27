@@ -105,7 +105,7 @@ export default function LoginPage() {
   const ready = !!email.trim() && !!password && state !== 'loading'
 
   return (
-    <main className="min-h-screen flex items-center justify-center lime-radial-glow">
+    <main className="min-h-screen w-full max-w-full overflow-x-hidden flex items-center justify-center lime-radial-glow">
       <div className="w-full max-w-md mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <p
           className="text-center font-mono font-bold tracking-widest text-sm uppercase mb-8"

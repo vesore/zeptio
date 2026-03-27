@@ -162,7 +162,7 @@ export default function WordBudget({ goal, wordLimit, levelId: _levelId, levelCo
     : '#f87171'
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
+    <div className="min-h-screen w-full max-w-full overflow-x-hidden flex items-center justify-center">
       {/* Screen-reader live region */}
       <div className="sr-only" aria-live="polite" aria-atomic="true">{announcement}</div>
 

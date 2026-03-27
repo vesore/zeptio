@@ -17,7 +17,7 @@ export default async function LandingPage({ searchParams }: Props) {
   const { error } = await searchParams
 
   return (
-    <main className="min-h-screen flex items-center justify-center lime-radial-glow">
+    <main className="min-h-screen w-full max-w-full overflow-x-hidden flex items-center justify-center lime-radial-glow">
       <div className="w-full max-w-md mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center text-center gap-8">
 
         {/* Logo */}
