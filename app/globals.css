@@ -55,11 +55,15 @@ body {
 .lime-radial-glow {
   position: relative;
   overflow: hidden;
+  contain: layout;
 }
 .lime-radial-glow::before {
   content: '';
   position: absolute;
   inset: -40%;
+  left: 0;
+  right: 0;
+  max-width: 100%;
   background: radial-gradient(ellipse at center, rgba(176, 224, 32, 0.06) 0%, transparent 70%);
   pointer-events: none;
   z-index: 0;
