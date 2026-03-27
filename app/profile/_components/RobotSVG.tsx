@@ -21,16 +21,17 @@ export const DEFAULT_ROBOT_CONFIG: RobotConfig = {
 // Y coord of top edge of head for each style (used to position antenna / crown)
 const HEAD_TOP: Record<RobotStyle, number> = { 0: 38, 1: 33, 2: 30, 3: 28 }
 
-export function RobotSVG({ config, size = 140 }: { config: RobotConfig; size?: number }) {
+export function RobotSVG({ config, size = 140, headOnly = false }: { config: RobotConfig; size?: number; headOnly?: boolean }) {
   const accent   = config.goldBody ? '#f59e0b' : '#B0E020'
   const headFill = '#2D3148'
   const bodyFill = config.goldBody ? '#78350f' : '#2D3148'
   const eyeFill  = '#B0E020'
-  const ht       = HEAD_TOP[config.style]   // head top Y
-  const height   = Math.round(size * 170 / 120)
+  const ht       = HEAD_TOP[config.style]
+  const height   = headOnly ? size : Math.round(size * 170 / 120)
+  const viewBox  = headOnly ? '0 0 120 120' : '0 0 120 170'
 
   return (
-    <svg viewBox="0 0 120 170" width={size} height={height} aria-hidden="true">
+    <svg viewBox={viewBox} width={size} height={height} aria-hidden="true">
 
       {/* ── ANTENNA ───────────────────────────────── */}
       {config.antenna && (
@@ -168,14 +169,14 @@ export function RobotSVG({ config, size = 140 }: { config: RobotConfig; size?: n
         </>
       )}
 
-      {/* ── NECK ──────────────────────────────────── */}
-      {config.style === 0 && <rect x="52" y="104" width="16" height="14" fill={bodyFill} stroke={accent} strokeWidth="1.5" />}
-      {config.style === 1 && <rect x="54" y="113" width="12" height="11" rx="2" fill={bodyFill} stroke={accent} strokeWidth="1.5" />}
-      {config.style === 2 && <rect x="52" y="106" width="16" height="12" fill={bodyFill} stroke={accent} strokeWidth="1.5" />}
-      {config.style === 3 && <rect x="57" y="114" width="6"  height="8"  rx="2" fill={bodyFill} stroke={accent} strokeWidth="1.5" />}
+      {/* ── NECK + BODY (hidden when headOnly) ────── */}
+      {!headOnly && config.style === 0 && <rect x="52" y="104" width="16" height="14" fill={bodyFill} stroke={accent} strokeWidth="1.5" />}
+      {!headOnly && config.style === 1 && <rect x="54" y="113" width="12" height="11" rx="2" fill={bodyFill} stroke={accent} strokeWidth="1.5" />}
+      {!headOnly && config.style === 2 && <rect x="52" y="106" width="16" height="12" fill={bodyFill} stroke={accent} strokeWidth="1.5" />}
+      {!headOnly && config.style === 3 && <rect x="57" y="114" width="6"  height="8"  rx="2" fill={bodyFill} stroke={accent} strokeWidth="1.5" />}
 
       {/* ── BODY: STYLE 0 ─────────────────────────── */}
-      {config.style === 0 && (
+      {!headOnly && config.style === 0 && (
         <>
           <rect x="22" y="116" width="76" height="52" rx="8" fill={bodyFill} stroke={accent} strokeWidth="2" />
           {/* Central LED */}
@@ -189,7 +190,7 @@ export function RobotSVG({ config, size = 140 }: { config: RobotConfig; size?: n
       )}
 
       {/* ── BODY: STYLE 1 ─────────────────────────── */}
-      {config.style === 1 && (
+      {!headOnly && config.style === 1 && (
         <>
           <rect x="17" y="122" width="86" height="48" rx="24" fill={bodyFill} stroke={accent} strokeWidth="2" />
           <circle cx="60" cy="147" r="8"   fill={bodyFill} stroke={accent} strokeWidth="1.5" />
@@ -200,7 +201,7 @@ export function RobotSVG({ config, size = 140 }: { config: RobotConfig; size?: n
       )}
 
       {/* ── BODY: STYLE 2 ─────────────────────────── */}
-      {config.style === 2 && (
+      {!headOnly && config.style === 2 && (
         <>
           <rect x="15" y="116" width="90" height="52" rx="4" fill={bodyFill} stroke={accent} strokeWidth="2" />
           {/* Keyboard grid: 3 cols × 3 rows */}
@@ -222,7 +223,7 @@ export function RobotSVG({ config, size = 140 }: { config: RobotConfig; size?: n
       )}
 
       {/* ── BODY: STYLE 3 ─────────────────────────── */}
-      {config.style === 3 && (
+      {!headOnly && config.style === 3 && (
         <>
           <rect x="32" y="120" width="56" height="48" rx="28" fill={bodyFill} stroke={accent} strokeWidth="2" />
           <rect x="44" y="133" width="32" height="4" rx="2" fill={accent} opacity="0.4" />

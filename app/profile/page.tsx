@@ -85,6 +85,7 @@ export default async function ProfilePage() {
   const earnedBadges   = computeEarnedBadges(clarityBest, completedCount)
 
   // Robot part unlock conditions
+  const bodyUnlocked = completedCount >= 1
   const unlockedParts = {
     antenna:     (clarityBest.get(3) ?? 0) >= 60,
     glowingEyes: streak >= 7,
@@ -133,7 +134,7 @@ export default async function ProfilePage() {
           <p className="text-xs font-mono font-semibold uppercase tracking-widest mb-4" style={{ color: '#B0E020' }}>
             Your Robot
           </p>
-          <RobotCustomizer initialConfig={robotConfig} unlockedParts={unlockedParts} />
+          <RobotCustomizer initialConfig={robotConfig} unlockedParts={unlockedParts} bodyUnlocked={bodyUnlocked} />
         </section>
 
         {/* ── PROFILE ───────────────────────────────────────── */}

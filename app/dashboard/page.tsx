@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/src/lib/supabase/server'
+import { RobotSVG, DEFAULT_ROBOT_CONFIG, type RobotConfig } from '@/app/profile/_components/RobotSVG'
 
 const CLARITY_LEVEL_COUNT = 10
 
@@ -16,11 +17,16 @@ export default async function DashboardPage() {
     supabase.from('xp_ledger').select('level_id, amount').eq('user_id', user.id),
     supabase.from('streaks').select('current_streak').eq('user_id', user.id).maybeSingle(),
     supabase.from('xp_ledger').select('level, score').eq('user_id', user.id).eq('world', 'clarity'),
-    supabase.from('profiles').select('name').eq('id', user.id).maybeSingle(),
+    supabase.from('profiles').select('name, robot_config').eq('id', user.id).maybeSingle(),
   ])
 
   const displayName = profile?.name ?? user.email ?? ''
   const firstName = displayName.split(' ')[0]
+
+  const rawRobotConfig = (profile as { robot_config?: unknown } | null)?.robot_config
+  const robotConfig: RobotConfig = rawRobotConfig && typeof rawRobotConfig === 'object'
+    ? { ...DEFAULT_ROBOT_CONFIG, ...(rawRobotConfig as Partial<RobotConfig>) }
+    : DEFAULT_ROBOT_CONFIG
 
   // Sum of best score (amount) per level
   const bestPerLevel = new Map<number, number>()
@@ -97,10 +103,10 @@ export default async function DashboardPage() {
           <Link
             href="/profile"
             aria-label="View your profile"
-            className="w-16 h-16 rounded-full flex items-center justify-center shrink-0 transition-all duration-200 hover:scale-105 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B0E020] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
-            style={{ background: '#B0E020', border: '2px solid rgba(255,255,255,0.2)', color: '#ffffff', fontSize: '16px', fontWeight: 800, letterSpacing: '0.02em' }}
+            className="w-14 h-14 rounded-full overflow-hidden flex items-center justify-center shrink-0 transition-all duration-200 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B0E020] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
+            style={{ background: 'rgba(176,224,32,0.1)', border: '2px solid rgba(176,224,32,0.35)' }}
           >
-            {displayName.split(' ').map((n: string) => n[0]).slice(0, 2).join('').toUpperCase()}
+            <RobotSVG config={robotConfig} size={56} headOnly />
           </Link>
         </div>
       </header>

@@ -14,6 +14,7 @@ interface UnlockedParts {
 interface RobotCustomizerProps {
   initialConfig: RobotConfig
   unlockedParts: UnlockedParts
+  bodyUnlocked: boolean
 }
 
 const STYLE_NAMES: Record<RobotStyle, string> = {
@@ -29,16 +30,17 @@ const PARTS: Array<{
   icon: string
   hint: string
 }> = [
-  { key: 'antenna',     label: 'Antenna',     icon: '📡', hint: 'Complete Clarity level 3' },
-  { key: 'glowingEyes', label: 'Glow Eyes',   icon: '✨', hint: '7-day streak'             },
-  { key: 'goldBody',    label: 'Gold Body',   icon: '⭐', hint: 'Score 80+ on any level'   },
-  { key: 'crown',       label: 'Crown',       icon: '👑', hint: 'Complete all Clarity levels' },
+  { key: 'antenna',     label: 'Antenna',   icon: '📡', hint: 'Complete Clarity level 3'  },
+  { key: 'glowingEyes', label: 'Glow Eyes', icon: '✨', hint: '7-day streak'              },
+  { key: 'goldBody',    label: 'Gold Body', icon: '⭐', hint: 'Score 80+ on any level'    },
+  { key: 'crown',       label: 'Crown',     icon: '👑', hint: 'Complete all Clarity levels' },
 ]
 
-export default function RobotCustomizer({ initialConfig, unlockedParts }: RobotCustomizerProps) {
-  const [config, setConfig] = useState<RobotConfig>(initialConfig)
-  const [saving, setSaving]   = useState(false)
-  const [saved, setSaved]     = useState(false)
+export default function RobotCustomizer({ initialConfig, unlockedParts, bodyUnlocked }: RobotCustomizerProps) {
+  const [config, setConfig]     = useState<RobotConfig>(initialConfig)
+  const [isEditing, setIsEditing] = useState(false)
+  const [saving, setSaving]     = useState(false)
+  const [saved, setSaved]       = useState(false)
 
   async function handleSave() {
     setSaving(true)
@@ -65,20 +67,57 @@ export default function RobotCustomizer({ initialConfig, unlockedParts }: RobotC
     setSaved(false)
   }
 
-  return (
-    <div className="flex flex-col gap-5">
-
-      {/* Robot preview + name */}
-      <div className="flex flex-col items-center gap-3">
+  // ── Collapsed view — robot avatar + name + edit button ──────────────────
+  if (!isEditing) {
+    return (
+      <button
+        onClick={() => setIsEditing(true)}
+        className="w-full flex flex-col items-center gap-3 rounded-3xl py-7 px-5 transition-all duration-200 group"
+        style={{
+          background: 'rgba(255,255,255,0.03)',
+          border: '1px solid rgba(176,224,32,0.12)',
+        }}
+        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(176,224,32,0.35)' }}
+        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(176,224,32,0.12)' }}
+        aria-label="Edit your robot"
+      >
+        {/* Robot head (or full if body unlocked) */}
         <div
-          className="inline-flex items-center justify-center rounded-3xl p-6"
-          style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(176,224,32,0.15)' }}
+          className="rounded-2xl p-4 transition-all duration-200 group-hover:scale-105"
+          style={{ background: 'rgba(176,224,32,0.06)', border: '1px solid rgba(176,224,32,0.15)' }}
         >
-          <RobotSVG config={config} size={140} />
+          <RobotSVG config={config} size={100} headOnly={!bodyUnlocked} />
         </div>
-        {/* Robot name display */}
+
+        {/* Robot name */}
+        <div className="text-center">
+          <p className="text-base font-bold font-mono" style={{ color: '#B0E020' }}>
+            {config.name.trim() || <span style={{ color: 'rgba(255,255,255,0.3)' }}>Unnamed Robot</span>}
+          </p>
+          <p className="text-xs font-mono mt-1" style={{ color: 'rgba(255,255,255,0.25)' }}>
+            Tap to customize
+          </p>
+        </div>
+      </button>
+    )
+  }
+
+  // ── Expanded editor ──────────────────────────────────────────────────────
+  return (
+    <div
+      className="rounded-3xl p-5 flex flex-col gap-5"
+      style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(176,224,32,0.2)' }}
+    >
+      {/* Preview */}
+      <div className="flex flex-col items-center gap-2">
+        <div
+          className="rounded-2xl p-5"
+          style={{ background: 'rgba(176,224,32,0.06)', border: '1px solid rgba(176,224,32,0.15)' }}
+        >
+          <RobotSVG config={config} size={120} headOnly={!bodyUnlocked} />
+        </div>
         <p className="text-sm font-bold font-mono" style={{ color: '#B0E020', minHeight: '1.25rem' }}>
-          {config.name.trim() ? config.name.trim() : <span style={{ color: 'rgba(255,255,255,0.2)' }}>Unnamed Robot</span>}
+          {config.name.trim() || <span style={{ color: 'rgba(255,255,255,0.25)' }}>Unnamed Robot</span>}
         </p>
       </div>
 
@@ -116,7 +155,7 @@ export default function RobotCustomizer({ initialConfig, unlockedParts }: RobotC
       {/* Style picker */}
       <div>
         <p className="text-xs font-mono font-semibold uppercase tracking-widest mb-3" style={{ color: '#B0E020' }}>
-          Base Style
+          Head Style
         </p>
         <div className="grid grid-cols-4 gap-2">
           {([0, 1, 2, 3] as RobotStyle[]).map(style => {
@@ -131,7 +170,7 @@ export default function RobotCustomizer({ initialConfig, unlockedParts }: RobotC
                   border: `1.5px solid ${active ? '#B0E020' : 'rgba(255,255,255,0.08)'}`,
                 }}
               >
-                <RobotSVG config={{ ...DEFAULT_ROBOT_CONFIG, style }} size={52} />
+                <RobotSVG config={{ ...DEFAULT_ROBOT_CONFIG, style }} size={52} headOnly />
                 <span
                   className="text-[10px] font-mono font-semibold"
                   style={{ color: active ? '#B0E020' : 'rgba(255,255,255,0.4)' }}
@@ -144,58 +183,77 @@ export default function RobotCustomizer({ initialConfig, unlockedParts }: RobotC
         </div>
       </div>
 
-      {/* Parts */}
-      <div>
-        <p className="text-xs font-mono font-semibold uppercase tracking-widest mb-3" style={{ color: '#B0E020' }}>
-          Equip Parts
+      {/* Body unlock hint (shown when body not yet unlocked) */}
+      {!bodyUnlocked && (
+        <p className="text-xs font-mono text-center rounded-xl px-3 py-2" style={{ background: 'rgba(255,255,255,0.03)', color: 'rgba(255,255,255,0.3)', border: '1px solid rgba(255,255,255,0.06)' }}>
+          🔒 Complete your first Clarity level to unlock the body
         </p>
-        <div className="grid grid-cols-2 gap-2">
-          {PARTS.map(({ key, label, icon, hint }) => {
-            const unlocked = unlockedParts[key]
-            const equipped = config[key]
-            return (
-              <button
-                key={key}
-                onClick={() => unlocked && togglePart(key)}
-                disabled={!unlocked}
-                className="flex items-center gap-3 rounded-2xl px-4 py-3 text-left transition-all duration-200 min-w-0"
-                style={{
-                  background: equipped ? 'rgba(176,224,32,0.1)' : 'rgba(255,255,255,0.04)',
-                  border: `1.5px solid ${equipped ? 'rgba(176,224,32,0.4)' : 'rgba(255,255,255,0.08)'}`,
-                  opacity: unlocked ? 1 : 0.45,
-                  cursor: unlocked ? 'pointer' : 'not-allowed',
-                }}
-              >
-                <span className="text-xl shrink-0" role="img" aria-label={label}>
-                  {unlocked ? icon : '🔒'}
-                </span>
-                <div className="min-w-0 flex-1">
-                  <p className="text-sm font-bold text-white truncate">{label}</p>
-                  {unlocked ? (
-                    <p className="text-[10px] font-mono" style={{ color: equipped ? 'rgba(176,224,32,0.7)' : 'rgba(255,255,255,0.3)' }}>
-                      {equipped ? 'Equipped' : 'Tap to equip'}
-                    </p>
-                  ) : (
-                    <p className="text-[10px] font-mono truncate" style={{ color: 'rgba(255,255,255,0.3)' }}>
-                      {hint}
-                    </p>
-                  )}
-                </div>
-              </button>
-            )
-          })}
+      )}
+
+      {/* Parts (only shown when body is unlocked) */}
+      {bodyUnlocked && (
+        <div>
+          <p className="text-xs font-mono font-semibold uppercase tracking-widest mb-3" style={{ color: '#B0E020' }}>
+            Equip Parts
+          </p>
+          <div className="grid grid-cols-2 gap-2">
+            {PARTS.map(({ key, label, icon, hint }) => {
+              const unlocked = unlockedParts[key]
+              const equipped = config[key]
+              return (
+                <button
+                  key={key}
+                  onClick={() => unlocked && togglePart(key)}
+                  disabled={!unlocked}
+                  className="flex items-center gap-3 rounded-2xl px-4 py-3 text-left transition-all duration-200 min-w-0"
+                  style={{
+                    background: equipped ? 'rgba(176,224,32,0.1)' : 'rgba(255,255,255,0.04)',
+                    border: `1.5px solid ${equipped ? 'rgba(176,224,32,0.4)' : 'rgba(255,255,255,0.08)'}`,
+                    opacity: unlocked ? 1 : 0.45,
+                    cursor: unlocked ? 'pointer' : 'not-allowed',
+                  }}
+                >
+                  <span className="text-xl shrink-0" role="img" aria-label={label}>
+                    {unlocked ? icon : '🔒'}
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-bold text-white truncate">{label}</p>
+                    {unlocked ? (
+                      <p className="text-[10px] font-mono" style={{ color: equipped ? 'rgba(176,224,32,0.7)' : 'rgba(255,255,255,0.3)' }}>
+                        {equipped ? 'Equipped' : 'Tap to equip'}
+                      </p>
+                    ) : (
+                      <p className="text-[10px] font-mono truncate" style={{ color: 'rgba(255,255,255,0.3)' }}>
+                        {hint}
+                      </p>
+                    )}
+                  </div>
+                </button>
+              )
+            })}
+          </div>
         </div>
+      )}
+
+      {/* Actions */}
+      <div className="flex gap-2">
+        <button
+          onClick={handleSave}
+          disabled={saving}
+          className="flex-1 py-3 rounded-full font-bold text-sm tracking-wide transition-all duration-200 btn-primary"
+        >
+          {saving ? 'Saving…' : saved ? '✓ Saved!' : 'Save'}
+        </button>
+        <button
+          onClick={() => setIsEditing(false)}
+          className="px-5 py-3 rounded-full font-bold text-sm tracking-wide transition-all duration-200"
+          style={{ border: '1.5px solid rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.4)' }}
+          onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = 'white'; (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.3)' }}
+          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.4)'; (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.1)' }}
+        >
+          Done
+        </button>
       </div>
-
-      {/* Save */}
-      <button
-        onClick={handleSave}
-        disabled={saving}
-        className="w-full py-3 rounded-full font-bold text-sm tracking-wide transition-all duration-200 btn-primary"
-      >
-        {saving ? 'Saving…' : saved ? '✓ Robot saved!' : 'Save Robot'}
-      </button>
-
     </div>
   )
 }
