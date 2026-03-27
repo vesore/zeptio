@@ -6,6 +6,7 @@ export interface RobotConfig {
   antenna: boolean
   goldBody: boolean
   crown: boolean
+  name: string
 }
 
 export const DEFAULT_ROBOT_CONFIG: RobotConfig = {
@@ -14,6 +15,7 @@ export const DEFAULT_ROBOT_CONFIG: RobotConfig = {
   antenna: false,
   goldBody: false,
   crown: false,
+  name: '',
 }
 
 // Y coord of top edge of head for each style (used to position antenna / crown)

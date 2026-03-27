@@ -68,13 +68,48 @@ export default function RobotCustomizer({ initialConfig, unlockedParts }: RobotC
   return (
     <div className="flex flex-col gap-5">
 
-      {/* Robot preview */}
-      <div className="flex justify-center">
+      {/* Robot preview + name */}
+      <div className="flex flex-col items-center gap-3">
         <div
           className="inline-flex items-center justify-center rounded-3xl p-6"
           style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(176,224,32,0.15)' }}
         >
           <RobotSVG config={config} size={140} />
+        </div>
+        {/* Robot name display */}
+        <p className="text-sm font-bold font-mono" style={{ color: '#B0E020', minHeight: '1.25rem' }}>
+          {config.name.trim() ? config.name.trim() : <span style={{ color: 'rgba(255,255,255,0.2)' }}>Unnamed Robot</span>}
+        </p>
+      </div>
+
+      {/* Name input */}
+      <div className="flex flex-col gap-1.5">
+        <label
+          htmlFor="robot-name-input"
+          className="text-xs font-mono font-semibold uppercase tracking-widest"
+          style={{ color: '#B0E020' }}
+        >
+          Robot Name
+        </label>
+        <div className="relative">
+          <input
+            id="robot-name-input"
+            type="text"
+            value={config.name}
+            onChange={e => { setConfig(prev => ({ ...prev, name: e.target.value.slice(0, 20) })); setSaved(false) }}
+            placeholder="Give your robot a name…"
+            maxLength={20}
+            className="w-full rounded-2xl px-4 py-3 pr-14 text-sm font-medium outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#B0E020] placeholder:text-white/25"
+            style={{ color: 'white', background: 'rgba(255,255,255,0.04)', border: '1.5px solid rgba(255,255,255,0.1)' }}
+            onFocus={e => { e.target.style.borderColor = '#B0E020' }}
+            onBlur={e  => { e.target.style.borderColor = 'rgba(255,255,255,0.1)' }}
+          />
+          <span
+            className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-mono tabular-nums pointer-events-none"
+            style={{ color: config.name.length >= 17 ? '#f87171' : 'rgba(255,255,255,0.25)' }}
+          >
+            {config.name.length}/20
+          </span>
         </div>
       </div>
 
