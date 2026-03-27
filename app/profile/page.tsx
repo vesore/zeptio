@@ -106,7 +106,7 @@ export default async function ProfilePage() {
     : null
 
   return (
-    <main className="min-h-screen text-white overflow-x-hidden">
+    <main className="min-h-screen w-full max-w-full text-white overflow-hidden">
       {/* Header */}
       <header className="border-b border-white/10 px-3 sm:px-6 py-3 sm:py-4 flex items-center justify-between backdrop-blur-sm" style={{ background: 'rgba(26,29,43,0.6)' }}>
         <Link
@@ -121,7 +121,7 @@ export default async function ProfilePage() {
         </span>
       </header>
 
-      <div className="w-full max-w-lg mx-auto px-3 sm:px-6 py-4 sm:py-12 flex flex-col gap-4 sm:gap-8">
+      <div className="w-full max-w-full sm:max-w-lg mx-auto px-3 sm:px-6 py-4 sm:py-12 flex flex-col gap-4 sm:gap-8 overflow-hidden">
 
         {/* Name + meta */}
         <div>
@@ -168,7 +168,7 @@ export default async function ProfilePage() {
         </div>
 
         {/* Clarity Progress */}
-        <div className="rounded-3xl glass p-6 sm:p-7" style={{ border: '1px solid rgba(255,255,255,0.08)' }}>
+        <div className="w-full rounded-3xl glass p-5 sm:p-7 overflow-hidden" style={{ border: '1px solid rgba(255,255,255,0.08)' }}>
           {/* Header */}
           <div className="flex items-start justify-between mb-1">
             <p className="text-xs font-mono font-semibold uppercase tracking-widest" style={{ color: '#B0E020' }}>

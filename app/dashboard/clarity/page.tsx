@@ -104,18 +104,18 @@ export default async function ClarityPage() {
                   }}
                 >
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-4 min-w-0">
                       <span
                         className="w-10 h-10 rounded-2xl flex items-center justify-center text-sm font-black font-mono shrink-0"
                         style={{ backgroundColor: completed ? '#B0E020' : 'rgba(176,224,32,0.12)', color: completed ? '#1A1D2B' : '#B0E020' }}
                       >
                         {completed ? '✓' : level.id}
                       </span>
-                      <div>
-                        <p className="text-sm font-bold text-white group-hover:text-[#B0E020] transition-colors duration-200">
+                      <div className="min-w-0">
+                        <p className="text-sm font-bold text-white group-hover:text-[#B0E020] transition-colors duration-200 truncate">
                           {level.title}
                         </p>
-                        <p className="text-xs font-mono mt-0.5" style={{ color: 'rgba(176,224,32,0.5)' }}>
+                        <p className="text-xs font-mono mt-0.5 truncate" style={{ color: 'rgba(176,224,32,0.5)' }}>
                           {level.concept}
                         </p>
                       </div>
@@ -151,18 +151,18 @@ export default async function ClarityPage() {
                 }}
               >
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-4 min-w-0">
                     <span
                       className="w-10 h-10 rounded-2xl flex items-center justify-center text-sm font-black font-mono shrink-0"
                       style={{ backgroundColor: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.2)' }}
                     >
                       {level.id}
                     </span>
-                    <div>
-                      <p className="text-sm font-bold" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                    <div className="min-w-0">
+                      <p className="text-sm font-bold truncate" style={{ color: 'rgba(255,255,255,0.4)' }}>
                         {level.title}
                       </p>
-                      <p className="text-xs font-mono mt-0.5" style={{ color: 'rgba(255,255,255,0.2)' }}>
+                      <p className="text-xs font-mono mt-0.5 truncate" style={{ color: 'rgba(255,255,255,0.2)' }}>
                         {level.concept}
                       </p>
                     </div>

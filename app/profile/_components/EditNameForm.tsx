@@ -70,8 +70,8 @@ export default function EditNameForm({ initialName }: { initialName: string }) {
           onChange={e => setDraft(e.target.value)}
           onKeyDown={e => { if (e.key === 'Enter') handleSave(); if (e.key === 'Escape') handleCancel() }}
           disabled={saving}
-          className="rounded-2xl px-4 py-2 text-lg font-bold outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#B0E020] glass"
-          style={{ color: '#B0E020', border: '1.5px solid #B0E020', minWidth: '180px' }}
+          className="w-full min-w-0 rounded-2xl px-4 py-2 text-lg font-bold outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#B0E020] glass"
+          style={{ color: '#B0E020', border: '1.5px solid #B0E020' }}
         />
         <button
           onClick={handleSave}
