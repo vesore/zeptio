@@ -88,11 +88,11 @@ export default async function DashboardPage() {
   return (
     <main className="min-h-screen text-white overflow-x-hidden">
       {/* Header */}
-      <header className="border-b border-white/10 px-3 sm:px-6 py-3 sm:py-4 flex items-center justify-between backdrop-blur-sm" style={{ background: 'rgba(26,29,43,0.6)' }}>
-        <span className="text-[#B0E020] font-mono font-bold tracking-widest text-sm uppercase" aria-label="Zeptio — home">
+      <header className="border-b border-white/10 px-3 sm:px-6 py-3 sm:py-4 flex flex-wrap items-center justify-between gap-2 backdrop-blur-sm" style={{ background: 'rgba(26,29,43,0.6)' }}>
+        <span className="text-[#B0E020] font-mono font-bold tracking-widest text-sm uppercase shrink-0" aria-label="Zeptio — home">
           Zeptio
         </span>
-        <div className="flex items-center gap-3 min-w-0">
+        <div className="flex items-center gap-3 shrink-0">
           <span className="hidden sm:block text-sm font-mono truncate max-w-[200px]" style={{ color: 'rgba(255,255,255,0.4)' }} aria-label={`Signed in as ${user.email}`}>{user.email}</span>
           <Link
             href="/profile"
