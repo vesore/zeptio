@@ -165,33 +165,41 @@ export default async function DashboardPage() {
       ))}
 
       {/* ── TOP BAR ─────────────────────────────── */}
-      <div className="relative z-10 shrink-0 flex items-center justify-center px-4 pt-4 pb-2">
-        {/* Avatar — absolute top-right */}
-        <Link
-          href="/profile"
-          aria-label="View your profile"
-          className="absolute right-4 top-4 w-12 h-12 rounded-full overflow-hidden flex items-center justify-center transition-all duration-200 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B0E020] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-          style={{ background: 'rgba(176,224,32,0.08)', border: '1.5px solid rgba(176,224,32,0.3)' }}
-        >
-          <RobotSVG config={robotConfig} size={48} headOnly />
-        </Link>
+      {/* Three-column grid: spacer | logo | avatar — keeps logo truly centered */}
+      <div className="relative z-10 shrink-0 grid grid-cols-3 items-center px-4 pt-4 pb-1">
+        {/* Left: empty spacer (mirrors avatar width) */}
+        <div className="w-12 h-12" />
 
-        {/* ZEPTIO logo — centered */}
-        <span
-          className="font-mono font-black tracking-widest text-3xl sm:text-4xl uppercase"
-          style={{
-            color: '#B0E020',
-            textShadow: '0 0 20px rgba(176,224,32,0.8), 0 0 60px rgba(176,224,32,0.35)',
-          }}
-          aria-label="Zeptio"
-        >
-          Zeptio
-        </span>
+        {/* Center: ZEPTIO logo */}
+        <div className="flex justify-center">
+          <span
+            className="font-mono font-black tracking-widest text-3xl sm:text-4xl uppercase"
+            style={{
+              color: '#B0E020',
+              textShadow: '0 0 20px rgba(176,224,32,0.8), 0 0 60px rgba(176,224,32,0.35)',
+            }}
+            aria-label="Zeptio"
+          >
+            Zeptio
+          </span>
+        </div>
+
+        {/* Right: avatar */}
+        <div className="flex justify-end">
+          <Link
+            href="/profile"
+            aria-label="View your profile"
+            className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center transition-all duration-200 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B0E020] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+            style={{ background: 'rgba(176,224,32,0.08)', border: '1.5px solid rgba(176,224,32,0.3)' }}
+          >
+            <RobotSVG config={robotConfig} size={48} headOnly />
+          </Link>
+        </div>
       </div>
 
       {/* ── PILLS ───────────────────────────────── */}
       <div
-        className="relative z-10 shrink-0 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 px-4 py-2"
+        className="relative z-10 shrink-0 flex flex-row items-center justify-center gap-3 sm:gap-6 px-4 py-2"
         aria-label="Your stats"
       >
         <div
