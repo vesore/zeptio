@@ -1,0 +1,212 @@
+import Link from 'next/link'
+import { redirect } from 'next/navigation'
+import { createClient } from '@/src/lib/supabase/server'
+import { CONSTRAINTS_LEVELS } from '@/src/lib/game/constraints-levels'
+import { CLARITY_LEVELS } from '@/src/lib/game/clarity-levels'
+
+const CLARITY_LEVEL_COUNT = CLARITY_LEVELS.length
+
+export default async function ConstraintsPage() {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/auth/login')
+
+  // Verify Clarity unlock requirement (80+ avg across all levels)
+  const { data: clarityRows } = await supabase
+    .from('xp_ledger')
+    .select('level, score')
+    .eq('user_id', user.id)
+    .eq('world', 'clarity')
+
+  const clarityBest = new Map<number, number>()
+  for (const row of clarityRows ?? []) {
+    const cur = clarityBest.get(row.level) ?? 0
+    if ((row.score ?? 0) > cur) clarityBest.set(row.level, row.score)
+  }
+
+  const clarityCompleted = clarityBest.size === CLARITY_LEVEL_COUNT
+  const clarityAvg = clarityCompleted
+    ? Array.from(clarityBest.values()).reduce((a, b) => a + b, 0) / CLARITY_LEVEL_COUNT
+    : 0
+
+  if (!clarityCompleted || clarityAvg < 80) {
+    redirect('/dashboard')
+  }
+
+  // Load Constraints scores
+  const { data: scoreRows } = await supabase
+    .from('xp_ledger')
+    .select('level, score')
+    .eq('user_id', user.id)
+    .eq('world', 'constraints')
+
+  const bestScores = new Map<number, number>()
+  for (const row of scoreRows ?? []) {
+    const cur = bestScores.get(row.level) ?? 0
+    if ((row.score ?? 0) > cur) bestScores.set(row.level, row.score)
+  }
+
+  function isUnlocked(levelId: number): boolean {
+    if (levelId === CONSTRAINTS_LEVELS[0].id) return true
+    return (bestScores.get(levelId - 1) ?? 0) >= 60
+  }
+
+  function isCompleted(levelId: number): boolean {
+    return (bestScores.get(levelId) ?? 0) >= 60
+  }
+
+  const completedCount = CONSTRAINTS_LEVELS.filter((l) => isCompleted(l.id)).length
+
+  return (
+    <main className="min-h-screen w-full max-w-full overflow-x-hidden pb-20">
+      <div className="w-full max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8">
+
+        {/* Back link */}
+        <Link
+          href="/dashboard"
+          className="inline-flex items-center gap-2 text-sm font-mono transition-colors duration-200 hover:text-[#B0E020] mb-8"
+          style={{ color: 'rgba(255,255,255,0.4)' }}
+        >
+          ← Home
+        </Link>
+
+        {/* World header */}
+        <div className="rounded-3xl p-6 mb-8 glass lime-radial-glow">
+          <div className="flex items-start justify-between mb-4">
+            <div className="min-w-0 mr-3">
+              <div className="flex items-center gap-2 mb-2">
+                <span
+                  className="w-8 h-8 rounded-xl flex items-center justify-center text-base font-mono shrink-0"
+                  style={{ background: 'rgba(176,224,32,0.12)', color: '#B0E020' }}
+                  aria-hidden="true"
+                >
+                  ⬡
+                </span>
+                <p className="text-xs font-mono tracking-widest uppercase" style={{ color: '#B0E020' }}>
+                  Constraints World
+                </p>
+              </div>
+              <h1 className="text-2xl font-black tracking-tight text-white mb-1">Work within limits.</h1>
+              <p className="text-sm" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                Score 60+ on each level to unlock the next.
+              </p>
+            </div>
+            <span
+              className="text-sm font-black tabular-nums rounded-full px-3 py-1 shrink-0 mt-1"
+              style={{ background: 'rgba(176,224,32,0.1)', color: 'rgba(176,224,32,0.7)' }}
+            >
+              {completedCount}/{CONSTRAINTS_LEVELS.length}
+            </span>
+          </div>
+
+          {/* Progress bar */}
+          <div className="h-2 rounded-full overflow-hidden" style={{ backgroundColor: 'rgba(255,255,255,0.07)' }}>
+            <div
+              className="h-2 rounded-full transition-all duration-700"
+              style={{
+                width: `${Math.round((completedCount / CONSTRAINTS_LEVELS.length) * 100)}%`,
+                background: 'linear-gradient(90deg, #B0E020, #b8ff00)',
+              }}
+            />
+          </div>
+        </div>
+
+        {/* Level list */}
+        <div className="flex flex-col gap-3">
+          {CONSTRAINTS_LEVELS.map((level, index) => {
+            const levelIndex = index + 1  // 1-based display index
+            const unlocked = isUnlocked(level.id)
+            const completed = isCompleted(level.id)
+            const best = bestScores.get(level.id)
+
+            if (unlocked) {
+              return (
+                <Link
+                  key={level.id}
+                  href={`/dashboard/constraints/${levelIndex}`}
+                  className="group rounded-3xl p-5 transition-all duration-200 hover:border-[#B0E020]/40 lime-glow-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B0E020] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent glass"
+                  style={{
+                    border: `1px solid ${completed ? 'rgba(176,224,32,0.2)' : 'rgba(255,255,255,0.08)'}`,
+                    background: completed ? 'rgba(176,224,32,0.04)' : 'rgba(255,255,255,0.03)',
+                  }}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4 min-w-0">
+                      <span
+                        className="w-10 h-10 rounded-2xl flex items-center justify-center text-sm font-black font-mono shrink-0"
+                        style={{ backgroundColor: completed ? '#B0E020' : 'rgba(176,224,32,0.12)', color: completed ? '#1A1D2B' : '#B0E020' }}
+                      >
+                        {completed ? '✓' : levelIndex}
+                      </span>
+                      <div className="min-w-0">
+                        <p className="text-sm font-bold text-white group-hover:text-[#B0E020] transition-colors duration-200 truncate">
+                          {level.title}
+                        </p>
+                        <p className="text-xs font-mono mt-0.5 truncate" style={{ color: 'rgba(176,224,32,0.5)' }}>
+                          {level.concept}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0 ml-2">
+                      {best !== undefined ? (
+                        <span
+                          className="text-xs sm:text-sm font-black tabular-nums font-mono"
+                          style={{ color: best >= 80 ? '#B0E020' : best >= 60 ? '#facc15' : '#f87171' }}
+                        >
+                          Best: {best}/100
+                        </span>
+                      ) : (
+                        <span className="text-xs font-mono hidden sm:inline" style={{ color: 'rgba(255,255,255,0.3)' }}>
+                          Not played yet
+                        </span>
+                      )}
+                      <span className="text-sm font-mono" style={{ color: 'rgba(255,255,255,0.25)' }}>→</span>
+                    </div>
+                  </div>
+                </Link>
+              )
+            }
+
+            return (
+              <div
+                key={level.id}
+                className="rounded-3xl p-5"
+                style={{
+                  background: 'rgba(255,255,255,0.02)',
+                  border: '1px solid rgba(255,255,255,0.05)',
+                  opacity: 0.35,
+                }}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4 min-w-0">
+                    <span
+                      className="w-10 h-10 rounded-2xl flex items-center justify-center text-sm font-black font-mono shrink-0"
+                      style={{ backgroundColor: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.2)' }}
+                    >
+                      {levelIndex}
+                    </span>
+                    <div className="min-w-0">
+                      <p className="text-sm font-bold truncate" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                        {level.title}
+                      </p>
+                      <p className="text-xs font-mono mt-0.5 truncate" style={{ color: 'rgba(255,255,255,0.2)' }}>
+                        {level.concept}
+                      </p>
+                    </div>
+                  </div>
+                  <span
+                    className="text-xs font-mono tracking-widest uppercase rounded-full px-3 py-1 shrink-0"
+                    style={{ background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.2)' }}
+                  >
+                    Locked
+                  </span>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+
+      </div>
+    </main>
+  )
+}
