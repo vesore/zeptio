@@ -124,13 +124,13 @@ export default async function DashboardPage() {
 
           {/* Stats pills */}
           <div className="flex flex-wrap gap-3" aria-label="Your stats">
-            <div className="flex items-center gap-4 rounded-full bg-white/10 border border-white/20 px-5 py-3 flex-shrink-0">
-              <span className="text-white text-base sm:text-lg font-bold whitespace-nowrap tracking-wide">Score</span>
-              <span className="text-[#B0E020] text-base sm:text-lg font-bold tabular-nums tracking-wide">{totalXp}</span>
+            <div className="flex items-center gap-6 rounded-full bg-white/10 border border-white/20 px-5 py-3 flex-shrink-0">
+              <span className="text-white text-base sm:text-lg font-bold whitespace-nowrap">Score</span>
+              <span className="text-[#B0E020] text-base sm:text-lg font-bold tabular-nums">{totalXp}</span>
             </div>
-            <div className="flex items-center gap-4 rounded-full bg-white/10 border border-white/20 px-5 py-3 flex-shrink-0">
-              <span className="text-white text-base sm:text-lg font-bold whitespace-nowrap tracking-wide">🔥 Streak</span>
-              <span className="text-[#B0E020] text-base sm:text-lg font-bold tabular-nums tracking-wide">{streak}</span>
+            <div className="flex items-center gap-6 rounded-full bg-white/10 border border-white/20 px-5 py-3 flex-shrink-0">
+              <span className="text-white text-base sm:text-lg font-bold whitespace-nowrap">🔥 Streak</span>
+              <span className="text-[#B0E020] text-base sm:text-lg font-bold tabular-nums">{streak}</span>
             </div>
           </div>
         </div>
