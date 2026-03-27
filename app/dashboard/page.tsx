@@ -86,7 +86,7 @@ export default async function DashboardPage() {
   ]
 
   return (
-    <main className="min-h-screen text-white">
+    <main className="min-h-screen text-white overflow-x-hidden">
       {/* Header */}
       <header className="border-b border-white/10 px-4 sm:px-6 py-4 flex items-center justify-between backdrop-blur-sm" style={{ background: 'rgba(26,29,43,0.6)' }}>
         <span className="text-[#B0E020] font-mono font-bold tracking-widest text-sm uppercase" aria-label="Zeptio — home">
@@ -97,7 +97,7 @@ export default async function DashboardPage() {
           <Link
             href="/profile"
             aria-label="View your profile"
-            className="w-12 h-12 rounded-full flex items-center justify-center shrink-0 transition-all duration-200 hover:scale-105 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B0E020] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
+            className="w-16 h-16 rounded-full flex items-center justify-center shrink-0 transition-all duration-200 hover:scale-105 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B0E020] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
             style={{ background: '#B0E020', border: '2px solid rgba(255,255,255,0.2)', color: '#ffffff', fontSize: '16px', fontWeight: 800, letterSpacing: '0.02em' }}
           >
             {displayName.split(' ').map((n: string) => n[0]).slice(0, 2).join('').toUpperCase()}
@@ -117,14 +117,14 @@ export default async function DashboardPage() {
           </p>
 
           {/* Stats pills */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:justify-between" aria-label="Your stats">
-            <div className="flex items-center justify-between sm:justify-start rounded-full bg-white/10 border border-white/20 px-6 sm:px-8 py-3 sm:py-4">
-              <span className="text-white text-lg sm:text-xl font-bold">Score</span>
-              <span className="text-[#B0E020] text-lg sm:text-xl font-bold" style={{marginLeft: '20px'}}>{totalXp}</span>
+          <div className="flex flex-wrap gap-3" aria-label="Your stats">
+            <div className="flex items-center gap-4 rounded-full bg-white/10 border border-white/20 px-5 py-3 flex-shrink-0">
+              <span className="text-white text-base sm:text-lg font-bold whitespace-nowrap">Score</span>
+              <span className="text-[#B0E020] text-base sm:text-lg font-bold tabular-nums">{totalXp}</span>
             </div>
-            <div className="flex items-center justify-between sm:justify-start rounded-full bg-white/10 border border-white/20 px-6 sm:px-8 py-3 sm:py-4">
-              <span className="text-white text-lg sm:text-xl font-bold">🔥 Streak</span>
-              <span className="text-[#B0E020] text-lg sm:text-xl font-bold" style={{marginLeft: '20px'}}>{streak}</span>
+            <div className="flex items-center gap-4 rounded-full bg-white/10 border border-white/20 px-5 py-3 flex-shrink-0">
+              <span className="text-white text-base sm:text-lg font-bold whitespace-nowrap">🔥 Streak</span>
+              <span className="text-[#B0E020] text-base sm:text-lg font-bold tabular-nums">{streak}</span>
             </div>
           </div>
         </div>

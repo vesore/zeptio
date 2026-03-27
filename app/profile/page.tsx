@@ -106,7 +106,7 @@ export default async function ProfilePage() {
     : null
 
   return (
-    <main className="min-h-screen text-white">
+    <main className="min-h-screen text-white overflow-x-hidden">
       {/* Header */}
       <header className="border-b border-white/10 px-4 sm:px-6 py-4 flex items-center justify-between backdrop-blur-sm" style={{ background: 'rgba(26,29,43,0.6)' }}>
         <Link
@@ -121,7 +121,7 @@ export default async function ProfilePage() {
         </span>
       </header>
 
-      <div className="w-full max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-14 flex flex-col gap-6 sm:gap-8">
+      <div className="w-full max-w-lg mx-auto px-4 sm:px-6 py-8 sm:py-12 flex flex-col gap-6 sm:gap-8">
 
         {/* Name + meta */}
         <div>
