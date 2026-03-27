@@ -182,3 +182,15 @@ body {
   50%       { opacity: 1; }
 }
 .card-glow { animation: cardGlowAnim 2.6s ease-in-out infinite; }
+
+@keyframes particleDrift {
+  0%   { transform: translateY(0px) translateX(0px); opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { transform: translateY(-80px) translateX(20px); opacity: 0; }
+}
+
+@keyframes neonGridPulse {
+  0%, 100% { opacity: 0.03; }
+  50%       { opacity: 0.07; }
+}
