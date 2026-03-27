@@ -3,103 +3,138 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/src/lib/supabase/server'
 import { RobotSVG, DEFAULT_ROBOT_CONFIG, type RobotConfig } from '@/app/profile/_components/RobotSVG'
 
-const CLARITY_LEVEL_COUNT = 10
+const CLARITY_LEVEL_COUNT     = 10
+const CONSTRAINTS_LEVEL_COUNT = 10
 
 export default async function DashboardPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/auth/login')
 
-  if (!user) {
-    redirect('/auth/login')
-  }
-
-  const [{ data: xpRows }, { data: streakRow }, { data: clarityScoreRows }, { data: profile }] = await Promise.all([
+  const [
+    { data: xpRows },
+    { data: streakRow },
+    { data: clarityScoreRows },
+    { data: constraintsScoreRows },
+    { data: profile },
+  ] = await Promise.all([
     supabase.from('xp_ledger').select('level_id, amount').eq('user_id', user.id),
     supabase.from('streaks').select('current_streak').eq('user_id', user.id).maybeSingle(),
     supabase.from('xp_ledger').select('level, score').eq('user_id', user.id).eq('world', 'clarity'),
+    supabase.from('xp_ledger').select('level, score').eq('user_id', user.id).eq('world', 'constraints'),
     supabase.from('profiles').select('name, robot_config').eq('id', user.id).maybeSingle(),
   ])
 
   const displayName = profile?.name ?? user.email ?? ''
-  const firstName = displayName.split(' ')[0]
+  const firstName   = displayName.split(' ')[0]
 
   const rawRobotConfig = (profile as { robot_config?: unknown } | null)?.robot_config
   const robotConfig: RobotConfig = rawRobotConfig && typeof rawRobotConfig === 'object'
     ? { ...DEFAULT_ROBOT_CONFIG, ...(rawRobotConfig as Partial<RobotConfig>) }
     : DEFAULT_ROBOT_CONFIG
 
-  // Sum of best score (amount) per level
+  // Total XP
   const bestPerLevel = new Map<number, number>()
   for (const row of xpRows ?? []) {
     const cur = bestPerLevel.get(row.level_id) ?? 0
     if ((row.amount ?? 0) > cur) bestPerLevel.set(row.level_id, row.amount ?? 0)
   }
   const totalXp = Array.from(bestPerLevel.values()).reduce((sum, v) => sum + v, 0)
-
   const streak  = streakRow?.current_streak ?? 0
 
-  // Best score per clarity level
+  // Clarity progress
   const clarityBest = new Map<number, number>()
   for (const row of clarityScoreRows ?? []) {
     const cur = clarityBest.get(row.level) ?? 0
     if ((row.score ?? 0) > cur) clarityBest.set(row.level, row.score)
   }
-
-  // Constraints unlocks when all 10 clarity levels have an average best score >= 80
-  const clarityCompleted = clarityBest.size === CLARITY_LEVEL_COUNT
-  const clarityAvg = clarityCompleted
-    ? Array.from(clarityBest.values()).reduce((a, b) => a + b, 0) / CLARITY_LEVEL_COUNT
-    : 0
+  const clarityCompleted   = clarityBest.size === CLARITY_LEVEL_COUNT
+  const clarityAvg         = clarityCompleted
+    ? Array.from(clarityBest.values()).reduce((a, b) => a + b, 0) / CLARITY_LEVEL_COUNT : 0
+  const clarityAllComplete = clarityCompleted && Array.from(clarityBest.values()).every(s => s >= 60)
   const constraintsUnlocked = clarityCompleted && clarityAvg >= 80
+
+  // Constraints progress
+  const constraintsBest = new Map<number, number>()
+  for (const row of constraintsScoreRows ?? []) {
+    const cur = constraintsBest.get(row.level) ?? 0
+    if ((row.score ?? 0) > cur) constraintsBest.set(row.level, row.score)
+  }
+  const constraintsAllComplete = constraintsBest.size >= CONSTRAINTS_LEVEL_COUNT &&
+    Array.from(constraintsBest.values()).every(s => s >= 60)
+
+  // Active world = most advanced world the user has started
+  const activeWorld = (constraintsUnlocked && constraintsBest.size > 0) ? 'constraints' : 'clarity'
 
   const WORLDS = [
     {
-      id: 'clarity',
-      name: 'Clarity',
-      description: 'Cut through ambiguity. Define the problem before you solve it.',
-      icon: '◎',
-      href: '/dashboard/clarity',
-      locked: false,
+      id:         'clarity',
+      name:       'Clarity',
+      levelCount: CLARITY_LEVEL_COUNT,
+      accent:     '#B0E020',
+      accentRgb:  '176,224,32',
+      href:       '/dashboard/clarity',
+      locked:     false,
+      completed:  clarityAllComplete,
       lockMessage: '',
     },
     {
-      id: 'constraints',
-      name: 'Constraints',
-      description: 'Work within limits. Great solutions thrive under pressure.',
-      icon: '⬡',
-      href: constraintsUnlocked ? '/dashboard/constraints' : undefined,
-      locked: !constraintsUnlocked,
-      lockMessage: 'Complete Clarity with 80+ avg to unlock',
+      id:         'constraints',
+      name:       'Constraints',
+      levelCount: CONSTRAINTS_LEVEL_COUNT,
+      accent:     '#00D4FF',
+      accentRgb:  '0,212,255',
+      href:       constraintsUnlocked ? '/dashboard/constraints' : undefined,
+      locked:     !constraintsUnlocked,
+      completed:  constraintsAllComplete,
+      lockMessage: 'Complete Clarity 80+ avg',
     },
     {
-      id: 'structure',
-      name: 'Structure',
-      description: 'Build with intention. Organize thinking into lasting systems.',
-      icon: '▦',
-      href: undefined,
-      locked: true,
+      id:         'structure',
+      name:       'Structure',
+      levelCount: 10,
+      accent:     '#9B59FF',
+      accentRgb:  '155,89,255',
+      href:       undefined,
+      locked:     true,
+      completed:  false,
       lockMessage: 'Coming soon',
     },
     {
-      id: 'debug',
-      name: 'Debug',
-      description: 'Find the break. Trace errors back to their root cause.',
-      icon: '⟁',
-      href: undefined,
-      locked: true,
+      id:         'debug',
+      name:       'Debug',
+      levelCount: 10,
+      accent:     '#FF6B35',
+      accentRgb:  '255,107,53',
+      href:       undefined,
+      locked:     true,
+      completed:  false,
       lockMessage: 'Coming soon',
     },
   ]
 
   return (
     <main className="min-h-screen text-white overflow-x-hidden">
-      {/* Header */}
-      <header className="border-b border-white/10 px-3 sm:px-6 py-3 sm:py-4 flex flex-wrap items-center justify-between gap-2 backdrop-blur-sm" style={{ background: 'rgba(26,29,43,0.6)' }}>
-        <span className="text-[#B0E020] font-mono font-bold tracking-widest text-sm uppercase shrink-0" aria-label="Zeptio — home">
+
+      {/* ── Header ────────────────────────────────── */}
+      <header
+        className="border-b border-white/10 px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between backdrop-blur-sm"
+        style={{ background: 'rgba(26,29,43,0.6)' }}
+      >
+        {/* 1. ZEPTIO LOGO — text-2xl font-black */}
+        <span
+          className="text-[#B0E020] font-mono font-black tracking-widest text-2xl uppercase shrink-0"
+          aria-label="Zeptio"
+        >
           Zeptio
         </span>
         <div className="flex items-center gap-3 shrink-0">
-          <span className="hidden sm:block text-sm font-mono truncate max-w-[200px]" style={{ color: 'rgba(255,255,255,0.4)' }} aria-label={`Signed in as ${user.email}`}>{user.email}</span>
+          <span
+            className="hidden sm:block text-sm font-mono truncate max-w-[200px]"
+            style={{ color: 'rgba(255,255,255,0.4)' }}
+          >
+            {user.email}
+          </span>
           <Link
             href="/profile"
             aria-label="View your profile"
@@ -111,25 +146,26 @@ export default async function DashboardPage() {
         </div>
       </header>
 
-      <div className="w-full max-w-2xl mx-auto px-3 sm:px-6 lg:px-8 py-5 sm:py-12 lg:py-16 lime-radial-glow">
+      <div className="w-full max-w-2xl mx-auto px-3 sm:px-6 lg:px-8 py-5 sm:py-10 lime-radial-glow">
+
         {/* Welcome */}
-        <div className="mb-6 sm:mb-14">
-          <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight mb-2 sm:mb-4">
+        <div className="mb-6 sm:mb-10">
+          <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight mb-2 sm:mb-3">
             Welcome back,{' '}
             <span style={{ color: '#B0E020' }}>{firstName}</span>!
           </h1>
-          <p className="mb-4 sm:mb-8 text-sm sm:text-lg" style={{ color: 'rgba(255,255,255,0.5)' }}>
+          <p className="mb-5 sm:mb-7 text-sm sm:text-lg" style={{ color: 'rgba(255,255,255,0.5)' }}>
             Choose a world to enter.
           </p>
 
-          {/* Stats pills */}
+          {/* 1. PILLS — inline-flex centered */}
           <div className="flex flex-wrap gap-3" aria-label="Your stats">
-            <div className="rounded-full bg-white/10 border border-white/20 px-5 py-3 flex-shrink-0 text-base sm:text-lg font-bold whitespace-nowrap">
+            <div className="inline-flex items-center justify-center rounded-full bg-white/10 border border-white/20 px-5 py-3 flex-shrink-0 text-base sm:text-lg font-bold whitespace-nowrap">
               <span className="text-white">Score</span>
               <span>&nbsp;&nbsp;</span>
               <span className="text-[#B0E020] tabular-nums">{totalXp}</span>
             </div>
-            <div className="rounded-full bg-white/10 border border-white/20 px-5 py-3 flex-shrink-0 text-base sm:text-lg font-bold whitespace-nowrap">
+            <div className="inline-flex items-center justify-center rounded-full bg-white/10 border border-white/20 px-5 py-3 flex-shrink-0 text-base sm:text-lg font-bold whitespace-nowrap">
               <span className="text-white">🔥 Streak</span>
               <span>&nbsp;&nbsp;</span>
               <span className="text-[#B0E020] tabular-nums">{streak}</span>
@@ -137,89 +173,124 @@ export default async function DashboardPage() {
           </div>
         </div>
 
-        {/* 2×2 World Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5" role="list" aria-label="Game worlds">
+        {/* 4. WORLD GRID — bold 2×2 square cards */}
+        <div className="grid grid-cols-2 gap-3 sm:gap-4" role="list" aria-label="Game worlds">
           {WORLDS.map((world) => {
-            const active = !!world.href
-            const cardClass = [
-              'group relative text-left rounded-3xl p-5 sm:p-7 transition-all duration-300 glass',
-              active
-                ? 'hover:border-[#B0E020]/40 lime-glow-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B0E020] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent'
-                : 'opacity-40 cursor-not-allowed',
-            ].join(' ')
+            const isActive = world.id === activeWorld
 
-            const inner = (
+            const cardContent = (
               <>
-                {/* Top shimmer line on hover */}
-                <span aria-hidden="true" className="absolute inset-x-7 top-0 h-px bg-gradient-to-r from-[#B0E020]/0 via-[#B0E020]/50 to-[#B0E020]/0 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-                {/* Radial glow behind active cards */}
-                {active && (
-                  <span aria-hidden="true" className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" style={{ background: 'radial-gradient(ellipse at top left, rgba(176,224,32,0.06) 0%, transparent 60%)' }} />
+                {/* Animated glow overlay */}
+                {!world.locked && (
+                  <div
+                    className="card-glow absolute inset-0 rounded-3xl pointer-events-none"
+                    style={{
+                      boxShadow: `0 0 40px rgba(${world.accentRgb},0.28), inset 0 0 28px rgba(${world.accentRgb},0.07)`,
+                    }}
+                  />
                 )}
-                <div className="flex items-start justify-between gap-4 relative">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-3 mb-4">
-                      <span
-                        aria-hidden="true"
-                        className="w-10 h-10 rounded-2xl flex items-center justify-center text-lg font-mono"
-                        style={{ background: active ? 'rgba(176,224,32,0.12)' : 'rgba(255,255,255,0.05)', color: active ? '#B0E020' : 'rgba(255,255,255,0.3)' }}
-                      >
-                        {world.icon}
-                      </span>
-                      {world.locked && (
-                        <span className="text-xs font-mono tracking-widest uppercase rounded-full px-3 py-1" style={{ background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.3)' }}>
-                          {world.lockMessage}
-                        </span>
-                      )}
-                    </div>
-                    <h2 className={`text-2xl font-black tracking-tight mb-2 transition-colors duration-200 ${active ? 'group-hover:text-[#B0E020]' : 'text-white/40'}`}>
-                      {world.name}
-                    </h2>
-                    <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.45)' }}>
-                      {world.description}
-                    </p>
-                  </div>
-                  {active && (
-                    <span aria-hidden="true" className="mt-1 transition-all duration-200 text-xl shrink-0" style={{ color: 'rgba(255,255,255,0.15)' }}>
-                      →
+
+                {/* Top-left status badge */}
+                <div className="absolute top-3 left-3 z-10">
+                  {world.completed ? (
+                    <span
+                      className="inline-flex items-center justify-center w-7 h-7 rounded-full text-sm font-black"
+                      style={{ background: `rgba(${world.accentRgb},0.2)`, color: world.accent }}
+                    >
+                      ✓
                     </span>
+                  ) : world.locked ? (
+                    <span
+                      className="inline-flex items-center justify-center w-7 h-7 rounded-full text-sm"
+                      style={{ background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.3)' }}
+                    >
+                      🔒
+                    </span>
+                  ) : null}
+                </div>
+
+                {/* Top-right: robot floats on active world */}
+                {isActive && !world.locked && (
+                  <div className="absolute top-2 right-2 z-10 robot-float" aria-hidden="true">
+                    <RobotSVG config={robotConfig} size={38} headOnly />
+                  </div>
+                )}
+
+                {/* Bottom content */}
+                <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-5 z-10">
+                  {world.locked && (
+                    <p
+                      className="text-[10px] sm:text-xs font-mono mb-1 truncate"
+                      style={{ color: 'rgba(255,255,255,0.28)' }}
+                    >
+                      {world.lockMessage}
+                    </p>
                   )}
+                  <h2
+                    className="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight leading-none"
+                    style={{ color: world.locked ? 'rgba(255,255,255,0.22)' : world.accent }}
+                  >
+                    {world.name}
+                  </h2>
+                  <p
+                    className="text-xs sm:text-sm font-mono mt-1"
+                    style={{ color: world.locked ? 'rgba(255,255,255,0.14)' : 'rgba(255,255,255,0.38)' }}
+                  >
+                    {world.levelCount} levels
+                  </p>
                 </div>
               </>
             )
 
-            return active ? (
+            const cardStyle = {
+              background: world.locked
+                ? 'rgba(255,255,255,0.02)'
+                : `linear-gradient(145deg, rgba(${world.accentRgb},0.08) 0%, rgba(26,29,43,0.95) 60%)`,
+              border: `1.5px solid ${world.locked ? 'rgba(255,255,255,0.06)' : `rgba(${world.accentRgb},0.28)`}`,
+              opacity: world.locked ? 0.55 : 1,
+            }
+
+            const baseClass = 'relative aspect-square rounded-3xl overflow-hidden transition-all duration-300'
+
+            return world.href ? (
               <Link
                 key={world.id}
-                href={world.href!}
-                className={cardClass}
+                href={world.href}
+                className={`${baseClass} hover:scale-[1.025] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B0E020] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent`}
+                style={cardStyle}
                 role="listitem"
-                aria-label={`Enter the ${world.name} world — ${world.description}`}
+                aria-label={`${world.name} — ${world.levelCount} levels`}
               >
-                {inner}
+                {cardContent}
               </Link>
             ) : (
               <div
                 key={world.id}
-                className={cardClass}
+                className={`${baseClass} cursor-not-allowed`}
+                style={cardStyle}
                 role="listitem"
-                aria-label={`${world.name} world — ${world.lockMessage}. ${world.description}`}
                 aria-disabled="true"
+                aria-label={`${world.name} — ${world.lockMessage}`}
               >
-                {inner}
+                {cardContent}
               </div>
             )
           })}
         </div>
-        {/* Footer */}
-        <div className="mt-10 sm:mt-20 pt-6 flex gap-5 text-xs" style={{ borderTop: '1px solid rgba(255,255,255,0.07)', color: 'rgba(255,255,255,0.25)' }}>
+
+        {/* 3. FOOTER — gap-8 for breathing room */}
+        <div
+          className="mt-10 sm:mt-20 pt-6 flex gap-8 text-xs"
+          style={{ borderTop: '1px solid rgba(255,255,255,0.07)', color: 'rgba(255,255,255,0.25)' }}
+        >
           <a href="/privacy" className="hover:text-[#B0E020] transition-colors duration-200">Privacy</a>
-          <a href="/terms" className="hover:text-[#B0E020] transition-colors duration-200">Terms</a>
+          <a href="/terms"   className="hover:text-[#B0E020] transition-colors duration-200">Terms</a>
           <a href="/support" className="hover:text-[#B0E020] transition-colors duration-200">Support</a>
           {user.email === 'vesorestyle@gmail.com' && (
             <a href="/admin" className="hover:text-[#B0E020] transition-colors duration-200">Admin</a>
           )}
         </div>
+
       </div>
     </main>
   )

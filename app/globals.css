@@ -176,3 +176,9 @@ body {
 }
 .robot-lean    { animation: robotLean 1.6s ease-in-out infinite; }
 .antenna-blink { animation: antennaBlink 2.8s ease-in-out infinite; }
+
+@keyframes cardGlowAnim {
+  0%, 100% { opacity: 0.45; }
+  50%       { opacity: 1; }
+}
+.card-glow { animation: cardGlowAnim 2.6s ease-in-out infinite; }
