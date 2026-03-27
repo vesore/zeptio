@@ -165,3 +165,14 @@ body {
 .robot-bounce     { animation: robotBounce 0.55s ease-in-out infinite; }
 .robot-float      { animation: robotFloat 3.2s ease-in-out infinite; }
 .neon-pulse       { animation: neonPulse 2s ease-in-out infinite; }
+
+@keyframes antennaBlink {
+  0%, 80%, 100% { opacity: 1; }
+  84%, 93%      { opacity: 0.05; }
+}
+@keyframes robotLean {
+  0%, 100% { transform: rotate(0deg) translateY(0px); }
+  50%      { transform: rotate(5deg) translateY(3px); }
+}
+.robot-lean    { animation: robotLean 1.6s ease-in-out infinite; }
+.antenna-blink { animation: antennaBlink 2.8s ease-in-out infinite; }

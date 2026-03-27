@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import GameRobot, { type RobotExpression } from './GameRobot'
+import { DEFAULT_ROBOT_CONFIG, type RobotConfig } from '@/app/profile/_components/RobotSVG'
 
 interface LevelConfig {
   world: 'clarity' | 'constraints' | 'structure' | 'debug'
@@ -24,6 +25,7 @@ interface WordBudgetProps {
   levelId: number
   levelConfig: LevelConfig
   nextLevelUrl?: string
+  robotConfig?: RobotConfig
 }
 
 function countWords(text: string): number {
@@ -48,7 +50,7 @@ const CONFETTI = Array.from({ length: 32 }, (_, i) => ({
   shape:    i % 3 === 0 ? '50%' : i % 3 === 1 ? '2px' : '0%',  // circle / rounded / square
 }))
 
-export default function WordBudget({ goal, wordLimit, levelId: _levelId, levelConfig, nextLevelUrl }: WordBudgetProps) {
+export default function WordBudget({ goal, wordLimit, levelId: _levelId, levelConfig, nextLevelUrl, robotConfig = DEFAULT_ROBOT_CONFIG }: WordBudgetProps) {
   const [prompt, setPrompt]                   = useState('')
   const [isLoading, setIsLoading]             = useState(false)
   const [result, setResult]                   = useState<ScoreResult | null>(null)
@@ -186,26 +188,26 @@ export default function WordBudget({ goal, wordLimit, levelId: _levelId, levelCo
   // Derive robot expression
   const robotExpression: RobotExpression =
     isLoading                           ? 'loading'
-    : result === null                   ? 'idle'
-    : !scoreLanded                      ? 'loading'
-    : result.score === 100              ? 'perfect'
-    : result.score >= 80                ? 'excited'
-    : result.score >= 60                ? 'happy'
-    : result.score >= 40                ? 'neutral'
-    : 'sad'
+    : result !== null && !scoreLanded   ? 'loading'
+    : result !== null && result.score === 100 ? 'perfect'
+    : result !== null && result.score >= 80   ? 'excited'
+    : result !== null && result.score >= 60   ? 'happy'
+    : result !== null && result.score >= 40   ? 'neutral'
+    : result !== null                         ? 'sad'
+    : prompt.trim() !== ''              ? 'typing'
+    : 'idle'
 
   return (
     <div className="min-h-screen w-full max-w-full overflow-x-hidden flex items-center justify-center" style={{ background: '#000' }}>
       {/* Screen-reader live region */}
       <div className="sr-only" aria-live="polite" aria-atomic="true">{announcement}</div>
 
-      {/* Robot mascot — fixed top-right, hidden on small screens */}
+      {/* Robot companion — fixed bottom-right, always visible */}
       <div
-        className="hidden sm:block"
-        style={{ position: 'fixed', right: '1.5rem', top: '5.5rem', zIndex: 40 }}
+        style={{ position: 'fixed', right: '1rem', bottom: '1.5rem', zIndex: 40 }}
         aria-hidden="true"
       >
-        <GameRobot expression={robotExpression} />
+        <GameRobot config={robotConfig} expression={robotExpression} size={80} showBubble />
       </div>
 
       {/* "LEVEL COMPLETE!" banner — centered overlay */}

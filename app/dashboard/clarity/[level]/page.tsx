@@ -3,6 +3,7 @@ import { notFound, redirect } from 'next/navigation'
 import { createClient } from '@/src/lib/supabase/server'
 import WordBudget from '@/src/components/game/WordBudget'
 import { CLARITY_LEVELS } from '@/src/lib/game/clarity-levels'
+import { DEFAULT_ROBOT_CONFIG, type RobotConfig } from '@/app/profile/_components/RobotSVG'
 
 interface Props {
   params: Promise<{ level: string }>
@@ -20,18 +21,20 @@ export default async function ClarityLevelPage({ params }: Props) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/auth/login')
 
-  // Check if this level is unlocked
-  if (levelId > 1) {
-    const { data: prevScores } = await supabase
-      .from('xp_ledger')
-      .select('score')
-      .eq('user_id', user.id)
-      .eq('world', 'clarity')
-      .eq('level', levelId - 1)
-      .limit(1)
+  // Check if this level is unlocked + fetch robot config in parallel
+  const [prevScoresResult, profileResult] = await Promise.all([
+    levelId > 1
+      ? supabase.from('xp_ledger').select('score').eq('user_id', user.id).eq('world', 'clarity').eq('level', levelId - 1).limit(1)
+      : Promise.resolve({ data: [{}] }),
+    supabase.from('profiles').select('robot_config').eq('id', user.id).maybeSingle(),
+  ])
 
-    if (!prevScores?.length) redirect('/dashboard/clarity')
-  }
+  if (levelId > 1 && !prevScoresResult.data?.length) redirect('/dashboard/clarity')
+
+  const rawRobot = (profileResult.data as { robot_config?: unknown } | null)?.robot_config
+  const robotConfig: RobotConfig = rawRobot && typeof rawRobot === 'object'
+    ? { ...DEFAULT_ROBOT_CONFIG, ...(rawRobot as Partial<RobotConfig>) }
+    : DEFAULT_ROBOT_CONFIG
 
   const levelConfig = {
     world: 'clarity' as const,
@@ -71,6 +74,7 @@ export default async function ClarityLevelPage({ params }: Props) {
         levelId={level.id}
         levelConfig={levelConfig}
         nextLevelUrl={nextLevelUrl}
+        robotConfig={robotConfig}
       />
     </div>
   )

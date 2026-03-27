@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { CLARITY_LEVELS } from '@/src/lib/game/clarity-levels'
+import { RobotSVG, DEFAULT_ROBOT_CONFIG, type RobotConfig } from '@/app/profile/_components/RobotSVG'
 
 // Deterministic star positions — avoids hydration mismatch
 const STARS = Array.from({ length: 90 }, (_, i) => ({
@@ -29,11 +30,14 @@ const PLANET_POS = [
 const CONTAINER_HEIGHT = 880
 const PLANET_R = 28  // visual radius in px — for label offset only
 
+const ROBOT_SIZE = 44  // px width of the robot head on the map
+
 interface GalaxyMapProps {
   bestScores: Record<number, number>
+  robotConfig?: RobotConfig
 }
 
-export default function GalaxyMap({ bestScores }: GalaxyMapProps) {
+export default function GalaxyMap({ bestScores, robotConfig = DEFAULT_ROBOT_CONFIG }: GalaxyMapProps) {
   function isUnlocked(levelId: number): boolean {
     if (levelId === 1) return true
     return (bestScores[levelId - 1] ?? 0) >= 60
@@ -42,6 +46,11 @@ export default function GalaxyMap({ bestScores }: GalaxyMapProps) {
   function isCompleted(levelId: number): boolean {
     return (bestScores[levelId] ?? 0) >= 60
   }
+
+  // Find the current active planet (first unlocked + not completed), else last planet
+  const currentIdx = CLARITY_LEVELS.findIndex(l => isUnlocked(l.id) && !isCompleted(l.id))
+  const robotIdx   = currentIdx === -1 ? CLARITY_LEVELS.length - 1 : currentIdx
+  const robotPos   = PLANET_POS[robotIdx]
 
   return (
     <div style={{ position: 'relative', width: '100%', height: CONTAINER_HEIGHT + 'px' }}>
@@ -92,6 +101,28 @@ export default function GalaxyMap({ bestScores }: GalaxyMapProps) {
           )
         })}
       </svg>
+
+      {/* Robot companion — floats above current planet */}
+      <div
+        className="robot-float"
+        style={{
+          position: 'absolute',
+          left:      robotPos.x + '%',
+          top:       (robotPos.y - PLANET_R - ROBOT_SIZE - 6) + 'px',
+          transform: 'translateX(-50%)',
+          zIndex:    20,
+          pointerEvents: 'none',
+        }}
+        aria-hidden="true"
+      >
+        <RobotSVG
+          config={robotConfig}
+          size={ROBOT_SIZE}
+          headOnly
+          expression="idle"
+          antennaMode="blink"
+        />
+      </div>
 
       {/* Planet nodes */}
       {CLARITY_LEVELS.map((level, i) => {

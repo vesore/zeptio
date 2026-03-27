@@ -3,17 +3,17 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/src/lib/supabase/server'
 import { CLARITY_LEVELS } from '@/src/lib/game/clarity-levels'
 import GalaxyMap from './_components/GalaxyMap'
+import { DEFAULT_ROBOT_CONFIG, type RobotConfig } from '@/app/profile/_components/RobotSVG'
 
 export default async function ClarityPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/auth/login')
 
-  const { data: scoreRows } = await supabase
-    .from('xp_ledger')
-    .select('level, score')
-    .eq('user_id', user.id)
-    .eq('world', 'clarity')
+  const [{ data: scoreRows }, { data: profileData }] = await Promise.all([
+    supabase.from('xp_ledger').select('level, score').eq('user_id', user.id).eq('world', 'clarity'),
+    supabase.from('profiles').select('robot_config').eq('id', user.id).maybeSingle(),
+  ])
 
   const bestScoresMap = new Map<number, number>()
   for (const row of scoreRows ?? []) {
@@ -26,6 +26,11 @@ export default async function ClarityPage() {
   for (const [k, v] of bestScoresMap) bestScores[k] = v
 
   const completedCount = CLARITY_LEVELS.filter(l => (bestScores[l.id] ?? 0) >= 60).length
+
+  const rawRobot = (profileData as { robot_config?: unknown } | null)?.robot_config
+  const robotConfig: RobotConfig = rawRobot && typeof rawRobot === 'object'
+    ? { ...DEFAULT_ROBOT_CONFIG, ...(rawRobot as Partial<RobotConfig>) }
+    : DEFAULT_ROBOT_CONFIG
 
   return (
     <main className="min-h-screen w-full max-w-full overflow-x-hidden pb-24" style={{ background: '#000' }}>
@@ -86,7 +91,7 @@ export default async function ClarityPage() {
         </div>
 
         {/* ── Galaxy map ── */}
-        <GalaxyMap bestScores={bestScores} />
+        <GalaxyMap bestScores={bestScores} robotConfig={robotConfig} />
 
       </div>
     </main>
