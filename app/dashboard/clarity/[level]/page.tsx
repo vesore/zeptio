@@ -47,7 +47,7 @@ export default async function ClarityLevelPage({ params }: Props) {
   return (
     <div className="min-h-screen">
       {/* Nav bar */}
-      <div className="w-full max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 flex items-center justify-between">
+      <div className="w-full max-w-2xl mx-auto px-3 sm:px-6 lg:px-8 pt-3 sm:pt-6 mt-0 sm:mt-6 flex items-center justify-between">
         <Link
           href="/dashboard"
           className="inline-flex items-center gap-2 text-sm font-mono transition-colors duration-200 hover:text-[#B0E020]"

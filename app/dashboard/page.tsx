@@ -88,7 +88,7 @@ export default async function DashboardPage() {
   return (
     <main className="min-h-screen text-white overflow-x-hidden">
       {/* Header */}
-      <header className="border-b border-white/10 px-4 sm:px-6 py-4 flex items-center justify-between backdrop-blur-sm" style={{ background: 'rgba(26,29,43,0.6)' }}>
+      <header className="border-b border-white/10 px-3 sm:px-6 py-3 sm:py-4 flex items-center justify-between backdrop-blur-sm" style={{ background: 'rgba(26,29,43,0.6)' }}>
         <span className="text-[#B0E020] font-mono font-bold tracking-widest text-sm uppercase" aria-label="Zeptio — home">
           Zeptio
         </span>
@@ -105,14 +105,14 @@ export default async function DashboardPage() {
         </div>
       </header>
 
-      <div className="w-full max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16 lime-radial-glow">
+      <div className="w-full max-w-2xl mx-auto px-3 sm:px-6 lg:px-8 py-5 sm:py-12 lg:py-16 lime-radial-glow">
         {/* Welcome */}
-        <div className="mb-10 sm:mb-14">
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight mb-3 sm:mb-4">
+        <div className="mb-6 sm:mb-14">
+          <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight mb-2 sm:mb-4">
             Welcome back,{' '}
             <span style={{ color: '#B0E020' }}>{firstName}</span>!
           </h1>
-          <p className="mb-6 sm:mb-8 text-base sm:text-lg" style={{ color: 'rgba(255,255,255,0.5)' }}>
+          <p className="mb-4 sm:mb-8 text-sm sm:text-lg" style={{ color: 'rgba(255,255,255,0.5)' }}>
             Choose a world to enter.
           </p>
 
@@ -204,7 +204,7 @@ export default async function DashboardPage() {
           })}
         </div>
         {/* Footer */}
-        <div className="mt-20 pt-6 flex gap-5 text-xs" style={{ borderTop: '1px solid rgba(255,255,255,0.07)', color: 'rgba(255,255,255,0.25)' }}>
+        <div className="mt-10 sm:mt-20 pt-6 flex gap-5 text-xs" style={{ borderTop: '1px solid rgba(255,255,255,0.07)', color: 'rgba(255,255,255,0.25)' }}>
           <a href="/privacy" className="hover:text-[#B0E020] transition-colors duration-200">Privacy</a>
           <a href="/terms" className="hover:text-[#B0E020] transition-colors duration-200">Terms</a>
           <a href="/support" className="hover:text-[#B0E020] transition-colors duration-200">Support</a>
