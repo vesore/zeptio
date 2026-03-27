@@ -113,16 +113,16 @@ export default async function ProfilePage() {
       {/* Header */}
       <header
         className="border-b border-white/10 px-3 sm:px-6 py-3 sm:py-4 flex items-center justify-between backdrop-blur-sm"
-        style={{ background: 'rgba(26,29,43,0.6)' }}
+        style={{ background: 'rgba(15,15,15,0.6)' }}
       >
         <Link
           href="/dashboard"
-          className="text-sm font-mono transition-colors duration-200 hover:text-[#B0E020]"
+          className="text-sm font-mono transition-colors duration-200 hover:text-[#00FF88]"
           style={{ color: 'rgba(255,255,255,0.4)' }}
         >
           ← Dashboard
         </Link>
-        <span className="text-[#B0E020] font-mono font-bold tracking-widest text-sm uppercase">
+        <span className="text-[#00FF88] font-mono font-bold tracking-widest text-sm uppercase">
           Zeptio
         </span>
       </header>
@@ -131,7 +131,7 @@ export default async function ProfilePage() {
 
         {/* ── ROBOT AVATAR ──────────────────────────────────── */}
         <section>
-          <p className="text-xs font-mono font-semibold uppercase tracking-widest mb-4" style={{ color: '#B0E020' }}>
+          <p className="text-xs font-mono font-semibold uppercase tracking-widest mb-4" style={{ color: '#00FF88' }}>
             Your Robot
           </p>
           <RobotCustomizer initialConfig={robotConfig} unlockedParts={unlockedParts} bodyUnlocked={bodyUnlocked} />
@@ -139,7 +139,7 @@ export default async function ProfilePage() {
 
         {/* ── PROFILE ───────────────────────────────────────── */}
         <section className="rounded-3xl glass p-5 sm:p-6 overflow-hidden" style={{ border: '1px solid rgba(255,255,255,0.08)' }}>
-          <p className="text-xs font-mono font-semibold uppercase tracking-widest mb-4" style={{ color: '#B0E020' }}>
+          <p className="text-xs font-mono font-semibold uppercase tracking-widest mb-4" style={{ color: '#00FF88' }}>
             Profile
           </p>
           <div className="flex flex-col gap-4">
@@ -165,7 +165,7 @@ export default async function ProfilePage() {
 
         {/* ── BADGES ────────────────────────────────────────── */}
         <section>
-          <p className="text-xs font-mono font-semibold uppercase tracking-widest mb-4" style={{ color: '#B0E020' }}>
+          <p className="text-xs font-mono font-semibold uppercase tracking-widest mb-4" style={{ color: '#00FF88' }}>
             Badges
           </p>
           <div className="grid grid-cols-3 gap-2 sm:gap-3">
@@ -176,9 +176,9 @@ export default async function ProfilePage() {
                   key={badge.id}
                   className="rounded-2xl p-3 flex flex-col gap-1.5"
                   style={{
-                    background: earned ? 'rgba(176,224,32,0.07)' : 'rgba(255,255,255,0.03)',
-                    border:     earned ? '1px solid rgba(176,224,32,0.25)' : '1px solid rgba(255,255,255,0.07)',
-                    boxShadow:  earned ? '0 0 14px rgba(176,224,32,0.08)' : 'none',
+                    background: earned ? 'rgba(0,255,136,0.07)' : 'rgba(255,255,255,0.03)',
+                    border:     earned ? '1px solid rgba(0,255,136,0.25)' : '1px solid rgba(255,255,255,0.07)',
+                    boxShadow:  earned ? '0 0 14px rgba(0,255,136,0.08)' : 'none',
                     opacity:    earned ? 1 : 0.4,
                   }}
                 >
@@ -189,7 +189,7 @@ export default async function ProfilePage() {
                     {earned && (
                       <span
                         className="text-[9px] font-bold font-mono rounded-full px-1.5 py-0.5 uppercase tracking-wider shrink-0"
-                        style={{ background: 'rgba(176,224,32,0.15)', color: '#B0E020' }}
+                        style={{ background: 'rgba(0,255,136,0.15)', color: '#00FF88' }}
                       >
                         ✓
                       </span>
@@ -211,7 +211,7 @@ export default async function ProfilePage() {
         <form action={signOut}>
           <button
             type="submit"
-            className="w-full rounded-full py-4 font-bold text-sm tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B0E020] border border-red-400/30 text-red-400/60 hover:border-red-400 hover:text-red-400"
+            className="w-full rounded-full py-4 font-bold text-sm tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00FF88] border border-red-400/30 text-red-400/60 hover:border-red-400 hover:text-red-400"
           >
             Sign Out
           </button>

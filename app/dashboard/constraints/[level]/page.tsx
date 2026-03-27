@@ -76,7 +76,7 @@ export default async function ConstraintsLevelPage({ params }: Props) {
       <div className="w-full max-w-2xl mx-auto px-3 sm:px-6 lg:px-8 pt-3 sm:pt-6 mt-0 sm:mt-6 flex items-center justify-between">
         <Link
           href="/dashboard/constraints"
-          className="inline-flex items-center gap-2 text-sm font-mono transition-colors duration-200 hover:text-[#B0E020]"
+          className="inline-flex items-center gap-2 text-sm font-mono transition-colors duration-200 hover:text-[#00FF88]"
           style={{ color: 'rgba(255,255,255,0.4)' }}
         >
           ← Constraints
@@ -85,7 +85,7 @@ export default async function ConstraintsLevelPage({ params }: Props) {
           <span className="hidden sm:inline text-xs font-mono" style={{ color: 'rgba(255,255,255,0.3)' }}>
             {level.concept}
           </span>
-          <span className="text-xs font-mono rounded-full px-3 py-1" style={{ background: 'rgba(176,224,32,0.1)', color: 'rgba(176,224,32,0.7)' }}>
+          <span className="text-xs font-mono rounded-full px-3 py-1" style={{ background: 'rgba(0,255,136,0.1)', color: 'rgba(0,255,136,0.7)' }}>
             Level {String(levelIndex).padStart(2, '0')}
           </span>
         </div>

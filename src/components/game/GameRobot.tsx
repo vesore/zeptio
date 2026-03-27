@@ -77,9 +77,9 @@ export default function GameRobot({
               fontSize: '10px',
               fontFamily: 'monospace',
               fontWeight: 600,
-              color: '#B0E020',
-              background: 'rgba(13,16,32,0.92)',
-              border: '1px solid rgba(176,224,32,0.3)',
+              color: '#00FF88',
+              background: 'rgba(15,15,15,0.92)',
+              border: '1px solid rgba(0,255,136,0.3)',
               backdropFilter: 'blur(8px)',
             }}
           >
@@ -94,7 +94,7 @@ export default function GameRobot({
               height: 0,
               borderLeft: '5px solid transparent',
               borderRight: '5px solid transparent',
-              borderTop: '5px solid rgba(176,224,32,0.3)',
+              borderTop: '5px solid rgba(0,255,136,0.3)',
             }} />
           </div>
         </div>

@@ -53,7 +53,7 @@ export default function ProfileExtrasForm({ initialBio, initialFavoriteWorld }: 
         <label
           htmlFor="bio-input"
           className="text-xs font-mono font-semibold uppercase tracking-widest"
-          style={{ color: '#B0E020' }}
+          style={{ color: '#00FF88' }}
         >
           Bio
         </label>
@@ -65,9 +65,9 @@ export default function ProfileExtrasForm({ initialBio, initialFavoriteWorld }: 
             onChange={e => { setBio(e.target.value.slice(0, 60)); setSaved(false) }}
             placeholder="Describe yourself in one line…"
             maxLength={60}
-            className="w-full rounded-2xl px-4 py-3 pr-14 text-sm font-medium outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#B0E020] glass placeholder:text-white/25"
+            className="w-full rounded-2xl px-4 py-3 pr-14 text-sm font-medium outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#00FF88] glass placeholder:text-white/25"
             style={{ color: 'white', border: '1.5px solid rgba(255,255,255,0.1)' }}
-            onFocus={e => { e.target.style.borderColor = '#B0E020' }}
+            onFocus={e => { e.target.style.borderColor = '#00FF88' }}
             onBlur={e  => { e.target.style.borderColor = 'rgba(255,255,255,0.1)' }}
           />
           <span
@@ -84,7 +84,7 @@ export default function ProfileExtrasForm({ initialBio, initialFavoriteWorld }: 
         <label
           htmlFor="world-select"
           className="text-xs font-mono font-semibold uppercase tracking-widest"
-          style={{ color: '#B0E020' }}
+          style={{ color: '#00FF88' }}
         >
           Favorite World
         </label>
@@ -92,7 +92,7 @@ export default function ProfileExtrasForm({ initialBio, initialFavoriteWorld }: 
           id="world-select"
           value={favoriteWorld}
           onChange={e => { setFavoriteWorld(e.target.value); setSaved(false) }}
-          className="w-full rounded-2xl px-4 py-3 text-sm font-medium outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#B0E020] glass appearance-none"
+          className="w-full rounded-2xl px-4 py-3 text-sm font-medium outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#00FF88] glass appearance-none"
           style={{
             color: favoriteWorld ? 'white' : 'rgba(255,255,255,0.4)',
             border: '1.5px solid rgba(255,255,255,0.1)',
@@ -106,7 +106,7 @@ export default function ProfileExtrasForm({ initialBio, initialFavoriteWorld }: 
               key={opt.value}
               value={opt.value}
               disabled={opt.disabled}
-              style={{ background: '#1A1D2B', color: opt.disabled ? 'rgba(255,255,255,0.3)' : 'white' }}
+              style={{ background: '#0F0F0F', color: opt.disabled ? 'rgba(255,255,255,0.3)' : 'white' }}
             >
               {opt.label}
             </option>

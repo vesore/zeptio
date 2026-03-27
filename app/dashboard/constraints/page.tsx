@@ -64,7 +64,7 @@ export default async function ConstraintsPage() {
         {/* Back link */}
         <Link
           href="/dashboard"
-          className="inline-flex items-center gap-2 text-sm font-mono transition-colors duration-200 hover:text-[#B0E020] mb-8"
+          className="inline-flex items-center gap-2 text-sm font-mono transition-colors duration-200 hover:text-[#00FF88] mb-8"
           style={{ color: 'rgba(255,255,255,0.4)' }}
         >
           ← Home
@@ -77,12 +77,12 @@ export default async function ConstraintsPage() {
               <div className="flex items-center gap-2 mb-2">
                 <span
                   className="w-8 h-8 rounded-xl flex items-center justify-center text-base font-mono shrink-0"
-                  style={{ background: 'rgba(176,224,32,0.12)', color: '#B0E020' }}
+                  style={{ background: 'rgba(0,255,136,0.12)', color: '#00FF88' }}
                   aria-hidden="true"
                 >
                   ⬡
                 </span>
-                <p className="text-xs font-mono tracking-widest uppercase" style={{ color: '#B0E020' }}>
+                <p className="text-xs font-mono tracking-widest uppercase" style={{ color: '#00FF88' }}>
                   Constraints World
                 </p>
               </div>
@@ -93,7 +93,7 @@ export default async function ConstraintsPage() {
             </div>
             <span
               className="text-sm font-black tabular-nums rounded-full px-3 py-1 shrink-0 mt-1"
-              style={{ background: 'rgba(176,224,32,0.1)', color: 'rgba(176,224,32,0.7)' }}
+              style={{ background: 'rgba(0,255,136,0.1)', color: 'rgba(0,255,136,0.7)' }}
             >
               {completedCount}/{CONSTRAINTS_LEVELS.length}
             </span>
@@ -105,7 +105,7 @@ export default async function ConstraintsPage() {
               className="h-2 rounded-full transition-all duration-700"
               style={{
                 width: `${Math.round((completedCount / CONSTRAINTS_LEVELS.length) * 100)}%`,
-                background: 'linear-gradient(90deg, #B0E020, #b8ff00)',
+                background: 'linear-gradient(90deg, #00FF88, #00FF88)',
               }}
             />
           </div>
@@ -124,25 +124,25 @@ export default async function ConstraintsPage() {
                 <Link
                   key={level.id}
                   href={`/dashboard/constraints/${levelIndex}`}
-                  className="group rounded-3xl p-5 transition-all duration-200 hover:border-[#B0E020]/40 lime-glow-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B0E020] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent glass"
+                  className="group rounded-3xl p-5 transition-all duration-200 hover:border-[#00FF88]/40 lime-glow-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00FF88] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent glass"
                   style={{
-                    border: `1px solid ${completed ? 'rgba(176,224,32,0.2)' : 'rgba(255,255,255,0.08)'}`,
-                    background: completed ? 'rgba(176,224,32,0.04)' : 'rgba(255,255,255,0.03)',
+                    border: `1px solid ${completed ? 'rgba(0,255,136,0.2)' : 'rgba(255,255,255,0.08)'}`,
+                    background: completed ? 'rgba(0,255,136,0.04)' : 'rgba(255,255,255,0.03)',
                   }}
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4 min-w-0">
                       <span
                         className="w-10 h-10 rounded-2xl flex items-center justify-center text-sm font-black font-mono shrink-0"
-                        style={{ backgroundColor: completed ? '#B0E020' : 'rgba(176,224,32,0.12)', color: completed ? '#1A1D2B' : '#B0E020' }}
+                        style={{ backgroundColor: completed ? '#00FF88' : 'rgba(0,255,136,0.12)', color: completed ? '#0F0F0F' : '#00FF88' }}
                       >
                         {completed ? '✓' : levelIndex}
                       </span>
                       <div className="min-w-0">
-                        <p className="text-sm font-bold text-white group-hover:text-[#B0E020] transition-colors duration-200 truncate">
+                        <p className="text-sm font-bold text-white group-hover:text-[#00FF88] transition-colors duration-200 truncate">
                           {level.title}
                         </p>
-                        <p className="text-xs font-mono mt-0.5 truncate" style={{ color: 'rgba(176,224,32,0.5)' }}>
+                        <p className="text-xs font-mono mt-0.5 truncate" style={{ color: 'rgba(0,255,136,0.5)' }}>
                           {level.concept}
                         </p>
                       </div>
@@ -151,7 +151,7 @@ export default async function ConstraintsPage() {
                       {best !== undefined ? (
                         <span
                           className="text-xs sm:text-sm font-black tabular-nums font-mono"
-                          style={{ color: best >= 80 ? '#B0E020' : best >= 60 ? '#facc15' : '#f87171' }}
+                          style={{ color: best >= 80 ? '#00FF88' : best >= 60 ? '#B87333' : '#C84B1F' }}
                         >
                           Best: {best}/100
                         </span>

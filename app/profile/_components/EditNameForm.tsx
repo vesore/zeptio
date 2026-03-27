@@ -46,7 +46,7 @@ export default function EditNameForm({ initialName }: { initialName: string }) {
           <span className="text-3xl sm:text-4xl font-black tracking-tight text-white">{name || '—'}</span>
           <button
             onClick={() => { setDraft(name); setEditing(true); setSaved(false) }}
-            className="rounded-full px-3 py-1 text-xs font-bold font-mono border border-[#B0E020]/25 bg-[#B0E020]/10 text-[#B0E020] hover:bg-[#B0E020]/20 hover:border-[#B0E020] transition-all duration-200"
+            className="rounded-full px-3 py-1 text-xs font-bold font-mono border border-[#00FF88]/25 bg-[#00FF88]/10 text-[#00FF88] hover:bg-[#00FF88]/20 hover:border-[#00FF88] transition-all duration-200"
           >
             Edit
           </button>
@@ -70,14 +70,14 @@ export default function EditNameForm({ initialName }: { initialName: string }) {
           onChange={e => setDraft(e.target.value)}
           onKeyDown={e => { if (e.key === 'Enter') handleSave(); if (e.key === 'Escape') handleCancel() }}
           disabled={saving}
-          className="w-full min-w-0 rounded-2xl px-4 py-2 text-lg font-bold outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#B0E020] glass"
-          style={{ color: '#B0E020', border: '1.5px solid #B0E020' }}
+          className="w-full min-w-0 rounded-2xl px-4 py-2 text-lg font-bold outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#00FF88] glass"
+          style={{ color: '#00FF88', border: '1.5px solid #00FF88' }}
         />
         <button
           onClick={handleSave}
           disabled={saving || !draft.trim()}
           className="rounded-full px-4 py-2 text-xs font-bold transition-all duration-200"
-          style={{ background: '#B0E020', color: '#1A1D2B', opacity: saving || !draft.trim() ? 0.5 : 1 }}
+          style={{ background: '#00FF88', color: '#0F0F0F', opacity: saving || !draft.trim() ? 0.5 : 1 }}
         >
           {saving ? 'Saving…' : 'Save'}
         </button>

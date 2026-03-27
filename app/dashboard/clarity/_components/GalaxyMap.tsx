@@ -93,7 +93,7 @@ export default function GalaxyMap({ bestScores, robotConfig = DEFAULT_ROBOT_CONF
               key={level.id}
               x1={from.x} y1={from.y}
               x2={to.x}   y2={to.y}
-              stroke={done ? 'rgba(176,224,32,0.45)' : open ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,0.05)'}
+              stroke={done ? 'rgba(0,255,136,0.45)' : open ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,0.05)'}
               strokeWidth="0.6"
               strokeDasharray="3,5"
               vectorEffect="non-scaling-stroke"
@@ -143,15 +143,15 @@ export default function GalaxyMap({ bestScores, robotConfig = DEFAULT_ROBOT_CONF
               alignItems:   'center',
               justifyContent: 'center',
               background: completed
-                ? '#B0E020'
+                ? '#00FF88'
                 : isCurrent
                   ? 'rgba(255,255,255,0.07)'
                   : 'rgba(255,255,255,0.03)',
-              border: `2px solid ${completed ? '#B0E020' : isCurrent ? 'rgba(255,255,255,0.45)' : 'rgba(255,255,255,0.08)'}`,
+              border: `2px solid ${completed ? '#00FF88' : isCurrent ? 'rgba(255,255,255,0.45)' : 'rgba(255,255,255,0.08)'}`,
               fontSize:   '15px',
               fontWeight: 900,
               fontFamily: 'monospace',
-              color: completed ? '#1A1D2B' : isCurrent ? 'white' : 'rgba(255,255,255,0.2)',
+              color: completed ? '#0F0F0F' : isCurrent ? 'white' : 'rgba(255,255,255,0.2)',
               flexShrink: 0,
             }}
           >
@@ -167,7 +167,7 @@ export default function GalaxyMap({ bestScores, robotConfig = DEFAULT_ROBOT_CONF
               fontWeight: 600,
               lineHeight: 1.3,
               color: completed
-                ? '#B0E020'
+                ? '#00FF88'
                 : isCurrent
                   ? 'rgba(255,255,255,0.8)'
                   : 'rgba(255,255,255,0.2)',
@@ -179,7 +179,7 @@ export default function GalaxyMap({ bestScores, robotConfig = DEFAULT_ROBOT_CONF
                 fontSize: '8px',
                 fontFamily: 'monospace',
                 marginTop: '2px',
-                color: best >= 80 ? '#B0E020' : best >= 60 ? '#facc15' : '#f87171',
+                color: best >= 80 ? '#00FF88' : best >= 60 ? '#B87333' : '#C84B1F',
               }}>
                 {best}/100
               </p>

@@ -3,13 +3,22 @@
 @tailwind utilities;
 
 :root {
-  --bg-gradient: linear-gradient(135deg, #1A1D2B 0%, #2D3148 50%, #1A1D2B 100%);
-  --lime: #B0E020;
-  --foreground: #ffffff;
+  --bg: #0F0F0F;
+  --surface: #1A1A1A;
+  --surface-mid: #242424;
+  --steel: #8B8FA8;
+  --copper: #B87333;
+  --rust: #C84B1F;
+  --chrome: #E8E8E8;
+  --circuit: #00FF88;
+  --text-primary: #E8E8E8;
+  --text-secondary: #8B8FA8;
+  --border: #2A2A2A;
+  --foreground: #E8E8E8;
 }
 
 body {
-  background: var(--bg-gradient);
+  background: #0F0F0F;
   background-attachment: fixed;
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
@@ -18,40 +27,40 @@ body {
 
 /* Glassmorphism card */
 .glass {
-  background: rgba(255, 255, 255, 0.07);
+  background: rgba(26, 26, 26, 0.85);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid #2A2A2A;
   max-width: 100%;
   box-sizing: border-box;
 }
 
-/* Lime glow on hover for interactive elements */
+/* Copper glow on hover for interactive elements */
 .lime-glow-hover:hover {
-  box-shadow: 0 0 24px rgba(176, 224, 32, 0.25), 0 0 48px rgba(176, 224, 32, 0.1);
+  box-shadow: 0 0 24px rgba(184, 115, 51, 0.25), 0 0 48px rgba(184, 115, 51, 0.1);
 }
 
 /* Primary button */
 .btn-primary {
-  background-color: #B0E020;
-  color: #1A1D2B;
+  background-color: #00FF88;
+  color: #0F0F0F;
   border-radius: 9999px;
   font-weight: 700;
   transition: all 0.2s;
 }
 .btn-primary:hover {
-  box-shadow: 0 0 20px rgba(176, 224, 32, 0.5), 0 0 40px rgba(176, 224, 32, 0.2);
+  box-shadow: 0 0 20px rgba(0, 255, 136, 0.5), 0 0 40px rgba(0, 255, 136, 0.2);
   transform: translateY(-1px);
 }
 .btn-primary:disabled {
-  background-color: rgba(176, 224, 32, 0.15);
-  color: rgba(176, 224, 32, 0.4);
+  background-color: rgba(0, 255, 136, 0.15);
+  color: rgba(0, 255, 136, 0.4);
   box-shadow: none;
   transform: none;
   cursor: not-allowed;
 }
 
-/* Radial lime glow behind hero elements */
+/* Radial circuit glow behind hero elements */
 .lime-radial-glow {
   position: relative;
   overflow: hidden;
@@ -64,7 +73,7 @@ body {
   left: 0;
   right: 0;
   max-width: 100%;
-  background: radial-gradient(ellipse at center, rgba(176, 224, 32, 0.06) 0%, transparent 70%);
+  background: radial-gradient(ellipse at center, rgba(0, 255, 136, 0.05) 0%, transparent 70%);
   pointer-events: none;
   z-index: 0;
 }
@@ -75,8 +84,8 @@ body {
 
 @keyframes scorePulse {
   0%   { text-shadow: 0 0 0px transparent; }
-  40%  { text-shadow: 0 0 32px rgba(176,224,32,0.8), 0 0 64px rgba(176,224,32,0.4); }
-  100% { text-shadow: 0 0 10px rgba(176,224,32,0.2); }
+  40%  { text-shadow: 0 0 32px rgba(0,255,136,0.8), 0 0 64px rgba(0,255,136,0.4); }
+  100% { text-shadow: 0 0 10px rgba(0,255,136,0.2); }
 }
 .score-glow {
   animation: scorePulse 0.9s ease-out forwards;
@@ -90,7 +99,7 @@ body {
   content: '|';
   margin-left: 1px;
   animation: cursorBlink 0.8s step-end infinite;
-  color: #B0E020;
+  color: #00FF88;
 }
 .typing-cursor-done::after {
   content: '';
@@ -108,13 +117,13 @@ body {
 }
 
 @keyframes planetGlow {
-  0%, 100% { box-shadow: 0 0 10px rgba(176,224,32,0.5), 0 0 24px rgba(176,224,32,0.2); }
-  50%       { box-shadow: 0 0 20px rgba(176,224,32,0.9), 0 0 44px rgba(176,224,32,0.4); }
+  0%, 100% { box-shadow: 0 0 10px rgba(0,255,136,0.5), 0 0 24px rgba(0,255,136,0.2); }
+  50%       { box-shadow: 0 0 20px rgba(0,255,136,0.9), 0 0 44px rgba(0,255,136,0.4); }
 }
 
 @keyframes planetGlowCurrent {
-  0%, 100% { box-shadow: 0 0 12px rgba(255,255,255,0.5), 0 0 28px rgba(176,224,32,0.3); }
-  50%       { box-shadow: 0 0 26px rgba(255,255,255,0.9), 0 0 52px rgba(176,224,32,0.5); }
+  0%, 100% { box-shadow: 0 0 12px rgba(255,255,255,0.4), 0 0 28px rgba(0,255,136,0.3); }
+  50%       { box-shadow: 0 0 26px rgba(255,255,255,0.7), 0 0 52px rgba(0,255,136,0.5); }
 }
 
 @keyframes levelComplete {
@@ -140,8 +149,8 @@ body {
 }
 
 @keyframes neonPulse {
-  0%, 100% { box-shadow: 0 0 8px rgba(176,224,32,0.4), 0 0 0px rgba(176,224,32,0.1); }
-  50%       { box-shadow: 0 0 22px rgba(176,224,32,0.9), 0 0 44px rgba(176,224,32,0.4); }
+  0%, 100% { box-shadow: 0 0 8px rgba(0,255,136,0.4), 0 0 0px rgba(0,255,136,0.1); }
+  50%       { box-shadow: 0 0 22px rgba(0,255,136,0.9), 0 0 44px rgba(0,255,136,0.4); }
 }
 
 /* Scanlines */
@@ -193,4 +202,10 @@ body {
 @keyframes neonGridPulse {
   0%, 100% { opacity: 0.03; }
   50%       { opacity: 0.07; }
+}
+
+/* World card copper hover glow */
+.world-card-link:hover {
+  box-shadow: 0 0 28px rgba(184,115,51,0.22), inset 0 0 18px rgba(184,115,51,0.04);
+  border-color: rgba(184,115,51,0.5) !important;
 }

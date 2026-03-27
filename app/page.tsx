@@ -21,7 +21,7 @@ export default async function LandingPage({ searchParams }: Props) {
       <div className="w-full max-w-md mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center text-center gap-8">
 
         {/* Logo */}
-        <p className="font-mono font-bold tracking-widest text-sm uppercase" style={{ color: '#B0E020' }}>
+        <p className="font-mono font-bold tracking-widest text-sm uppercase" style={{ color: '#00FF88' }}>
           Zeptio
         </p>
 
@@ -44,9 +44,9 @@ export default async function LandingPage({ searchParams }: Props) {
 
         {/* Footer links */}
         <div className="flex gap-5 text-xs" style={{ color: 'rgba(255,255,255,0.3)' }}>
-          <a href="/privacy" className="hover:text-[#B0E020] transition-colors duration-200">Privacy</a>
-          <a href="/terms" className="hover:text-[#B0E020] transition-colors duration-200">Terms</a>
-          <a href="/support" className="hover:text-[#B0E020] transition-colors duration-200">Support</a>
+          <a href="/privacy" className="hover:text-[#00FF88] transition-colors duration-200">Privacy</a>
+          <a href="/terms" className="hover:text-[#00FF88] transition-colors duration-200">Terms</a>
+          <a href="/support" className="hover:text-[#00FF88] transition-colors duration-200">Support</a>
         </div>
 
       </div>

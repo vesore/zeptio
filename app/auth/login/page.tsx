@@ -109,7 +109,7 @@ export default function LoginPage() {
       <div className="w-full max-w-md mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <p
           className="text-center font-mono font-bold tracking-widest text-sm uppercase mb-8"
-          style={{ color: '#B0E020' }}
+          style={{ color: '#00FF88' }}
         >
           Zeptio
         </p>
@@ -124,8 +124,8 @@ export default function LoginPage() {
           <button
             type="button"
             onClick={handleGoogleSignIn}
-            className="w-full flex items-center justify-center gap-3 rounded-full py-4 font-bold text-sm tracking-wide transition-all duration-200 hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B0E020]"
-            style={{ backgroundColor: '#ffffff', color: '#1a1a1a' }}
+            className="w-full flex items-center justify-center gap-3 rounded-full py-4 font-bold text-sm tracking-wide transition-all duration-200 hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00FF88]"
+            style={{ backgroundColor: '#ffffff', color: '#0F0F0F' }}
           >
             <span
               className="w-5 h-5 rounded-full flex items-center justify-center text-xs font-black"
@@ -162,13 +162,13 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => { setEmail(e.target.value); if (state === 'error') setState('idle') }}
                 disabled={state === 'loading'}
-                className="w-full rounded-2xl px-4 py-3.5 text-base placeholder:text-white/30 outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#B0E020] glass"
+                className="w-full rounded-2xl px-4 py-3.5 text-base placeholder:text-white/30 outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#00FF88] glass"
                 style={{
                   border: `1.5px solid ${state === 'error' ? '#f87171' : 'rgba(255,255,255,0.1)'}`,
-                  color: '#B0E020',
+                  color: '#00FF88',
                   fontWeight: 700,
                 }}
-                onFocus={(e) => { if (state !== 'error') e.target.style.borderColor = '#B0E020' }}
+                onFocus={(e) => { if (state !== 'error') e.target.style.borderColor = '#00FF88' }}
                 onBlur={(e)  => { if (state !== 'error') e.target.style.borderColor = 'rgba(255,255,255,0.1)' }}
               />
             </div>
@@ -189,13 +189,13 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => { setPassword(e.target.value); if (state === 'error') setState('idle') }}
                 disabled={state === 'loading'}
-                className="w-full rounded-2xl px-4 py-3.5 text-base placeholder:text-white/30 outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#B0E020] glass"
+                className="w-full rounded-2xl px-4 py-3.5 text-base placeholder:text-white/30 outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#00FF88] glass"
                 style={{
                   border: `1.5px solid ${state === 'error' ? '#f87171' : 'rgba(255,255,255,0.1)'}`,
-                  color: '#B0E020',
+                  color: '#00FF88',
                   fontWeight: 700,
                 }}
-                onFocus={(e) => { if (state !== 'error') e.target.style.borderColor = '#B0E020' }}
+                onFocus={(e) => { if (state !== 'error') e.target.style.borderColor = '#00FF88' }}
                 onBlur={(e)  => { if (state !== 'error') e.target.style.borderColor = 'rgba(255,255,255,0.1)' }}
               />
             </div>
@@ -213,14 +213,14 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={!ready}
-              className="w-full py-4 text-sm font-bold tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B0E020] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent btn-primary"
+              className="w-full py-4 text-sm font-bold tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00FF88] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent btn-primary"
             >
               {state === 'loading' ? (
                 <span className="flex items-center justify-center gap-2">
                   <span
                     aria-hidden="true"
                     className="inline-block w-4 h-4 rounded-full border-2 animate-spin"
-                    style={{ borderColor: 'rgba(232,255,71,0.15)', borderTopColor: 'rgba(232,255,71,0.65)' }}
+                    style={{ borderColor: 'rgba(0,255,136,0.15)', borderTopColor: 'rgba(0,255,136,0.65)' }}
                   />
                   Signing in…
                 </span>

@@ -106,10 +106,10 @@ export function RobotSVG({
   expression?: RobotExpression
   antennaMode?: 'static' | 'blink' | 'spin'
 }) {
-  const accent   = config.goldBody ? '#f59e0b' : '#B0E020'
-  const headFill = '#2D3148'
-  const bodyFill = config.goldBody ? '#78350f' : '#2D3148'
-  const eyeFill  = '#B0E020'
+  const accent   = config.goldBody ? '#f59e0b' : '#00FF88'
+  const headFill = '#2A2A2A'
+  const bodyFill = config.goldBody ? '#78350f' : '#1A1A1A'
+  const eyeFill  = '#00FF88'
   const ht       = HEAD_TOP[config.style]
   const height   = headOnly ? size : Math.round(size * 170 / 120)
   const viewBox  = headOnly ? '0 0 120 120' : '0 0 120 170'
@@ -170,7 +170,7 @@ export function RobotSVG({
       {config.style === 2 && (
         <>
           <rect x="20" y="30" width="80" height="74" rx="4" fill={headFill} stroke={accent} strokeWidth="2" />
-          <rect x="30" y="40" width="60" height="48" rx="3" fill="#0d1020" stroke={accent} strokeWidth="1" opacity="0.9" />
+          <rect x="30" y="40" width="60" height="48" rx="3" fill="#111111" stroke={accent} strokeWidth="1" opacity="0.9" />
           {[38, 46, 54, 62, 70, 78, 86].map(x => (
             <circle key={x} cx={x} cy="79" r="1.5" fill={accent} opacity="0.45" />
           ))}
@@ -187,29 +187,29 @@ export function RobotSVG({
 
       {/* ── GLOW HALO (behind eyes) ───────────────── */}
       {config.glowingEyes && config.style === 0 && (
-        <><circle cx="47" cy="65" r="13" fill="#B0E020" opacity="0.2" /><circle cx="73" cy="65" r="13" fill="#B0E020" opacity="0.2" /></>
+        <><circle cx="47" cy="65" r="13" fill="#00FF88" opacity="0.2" /><circle cx="73" cy="65" r="13" fill="#00FF88" opacity="0.2" /></>
       )}
       {config.glowingEyes && config.style === 1 && (
-        <><circle cx="46" cy="70" r="15" fill="#B0E020" opacity="0.18" /><circle cx="74" cy="70" r="15" fill="#B0E020" opacity="0.18" /></>
+        <><circle cx="46" cy="70" r="15" fill="#00FF88" opacity="0.18" /><circle cx="74" cy="70" r="15" fill="#00FF88" opacity="0.18" /></>
       )}
       {config.glowingEyes && config.style === 2 && (
-        <><rect x="29" y="48" width="28" height="20" rx="5" fill="#B0E020" opacity="0.22" /><rect x="63" y="48" width="28" height="20" rx="5" fill="#B0E020" opacity="0.22" /></>
+        <><rect x="29" y="48" width="28" height="20" rx="5" fill="#00FF88" opacity="0.22" /><rect x="63" y="48" width="28" height="20" rx="5" fill="#00FF88" opacity="0.22" /></>
       )}
       {config.glowingEyes && config.style === 3 && (
-        <><rect x="40" y="58" width="21" height="13" rx="5" fill="#B0E020" opacity="0.22" /><rect x="59" y="58" width="21" height="13" rx="5" fill="#B0E020" opacity="0.22" /></>
+        <><rect x="40" y="58" width="21" height="13" rx="5" fill="#00FF88" opacity="0.22" /><rect x="59" y="58" width="21" height="13" rx="5" fill="#00FF88" opacity="0.22" /></>
       )}
 
       {/* ── NORMAL EYES (idle / typing only) ──────── */}
       {showNormalEyes(expression) && config.style === 0 && (
         <>
-          <circle cx="47" cy="65" r="7.5" fill={eyeFill} /><circle cx="47" cy="65" r="3.5" fill="#1A1D2B" />
-          <circle cx="73" cy="65" r="7.5" fill={eyeFill} /><circle cx="73" cy="65" r="3.5" fill="#1A1D2B" />
+          <circle cx="47" cy="65" r="7.5" fill={eyeFill} /><circle cx="47" cy="65" r="3.5" fill="#0F0F0F" />
+          <circle cx="73" cy="65" r="7.5" fill={eyeFill} /><circle cx="73" cy="65" r="3.5" fill="#0F0F0F" />
         </>
       )}
       {showNormalEyes(expression) && config.style === 1 && (
         <>
-          <circle cx="46" cy="70" r="9" fill={eyeFill} /><circle cx="46" cy="70" r="4" fill="#1A1D2B" />
-          <circle cx="74" cy="70" r="9" fill={eyeFill} /><circle cx="74" cy="70" r="4" fill="#1A1D2B" />
+          <circle cx="46" cy="70" r="9" fill={eyeFill} /><circle cx="46" cy="70" r="4" fill="#0F0F0F" />
+          <circle cx="74" cy="70" r="9" fill={eyeFill} /><circle cx="74" cy="70" r="4" fill="#0F0F0F" />
           <circle cx="49" cy="67" r="2" fill="white" opacity="0.5" /><circle cx="77" cy="67" r="2" fill="white" opacity="0.5" />
         </>
       )}
@@ -217,8 +217,8 @@ export function RobotSVG({
         <>
           <rect x="33" y="52" width="22" height="14" rx="2" fill={eyeFill} />
           <rect x="65" y="52" width="22" height="14" rx="2" fill={eyeFill} />
-          <rect x="33" y="57" width="22" height="2.5" fill="#1A1D2B" opacity="0.35" />
-          <rect x="65" y="57" width="22" height="2.5" fill="#1A1D2B" opacity="0.35" />
+          <rect x="33" y="57" width="22" height="2.5" fill="#0F0F0F" opacity="0.35" />
+          <rect x="65" y="57" width="22" height="2.5" fill="#0F0F0F" opacity="0.35" />
         </>
       )}
       {showNormalEyes(expression) && config.style === 3 && (

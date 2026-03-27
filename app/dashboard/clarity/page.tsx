@@ -33,21 +33,21 @@ export default async function ClarityPage() {
     : DEFAULT_ROBOT_CONFIG
 
   return (
-    <main className="min-h-screen w-full max-w-full overflow-x-hidden pb-24" style={{ background: '#000' }}>
+    <main className="min-h-screen w-full max-w-full overflow-x-hidden pb-24" style={{ background: '#0F0F0F' }}>
       <div className="w-full max-w-lg mx-auto px-4 sm:px-6">
 
         {/* ── Top nav ── */}
         <div className="pt-5 pb-2 flex items-center justify-between">
           <Link
             href="/dashboard"
-            className="text-sm font-mono transition-colors duration-200 hover:text-[#B0E020]"
+            className="text-sm font-mono transition-colors duration-200 hover:text-[#00FF88]"
             style={{ color: 'rgba(255,255,255,0.35)' }}
           >
             ← Home
           </Link>
           <span
             className="text-xs font-mono rounded-full px-3 py-1"
-            style={{ background: 'rgba(176,224,32,0.08)', color: 'rgba(176,224,32,0.6)' }}
+            style={{ background: 'rgba(0,255,136,0.08)', color: 'rgba(0,255,136,0.6)' }}
           >
             {completedCount}/{CLARITY_LEVELS.length} complete
           </span>
@@ -57,15 +57,15 @@ export default async function ClarityPage() {
         <div className="pt-6 pb-2 text-center">
           <p
             className="text-xs font-mono tracking-widest uppercase mb-2"
-            style={{ color: 'rgba(176,224,32,0.45)' }}
+            style={{ color: 'rgba(0,255,136,0.45)' }}
           >
             ◎ World One
           </p>
           <h1
             className="text-4xl sm:text-5xl font-black tracking-wider uppercase"
             style={{
-              color: '#B0E020',
-              textShadow: '0 0 20px rgba(176,224,32,0.6), 0 0 60px rgba(176,224,32,0.25)',
+              color: '#00FF88',
+              textShadow: '0 0 20px rgba(0,255,136,0.6), 0 0 60px rgba(0,255,136,0.25)',
               letterSpacing: '0.12em',
             }}
           >
@@ -83,8 +83,8 @@ export default async function ClarityPage() {
               className="h-1 rounded-full transition-all duration-700"
               style={{
                 width: `${Math.round((completedCount / CLARITY_LEVELS.length) * 100)}%`,
-                background: 'linear-gradient(90deg, #B0E020, #d4ff3a)',
-                boxShadow: '0 0 8px rgba(176,224,32,0.6)',
+                background: 'linear-gradient(90deg, #00FF88, #d4ff3a)',
+                boxShadow: '0 0 8px rgba(0,255,136,0.6)',
               }}
             />
           </div>

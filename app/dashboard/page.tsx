@@ -71,8 +71,8 @@ export default async function DashboardPage() {
       id:         'clarity',
       name:       'Clarity',
       levelCount: CLARITY_LEVEL_COUNT,
-      accent:     '#B0E020',
-      accentRgb:  '176,224,32',
+      accent:     '#00FF88',
+      accentRgb:  '0,255,136',
       href:       '/dashboard/clarity',
       locked:     false,
       completed:  clarityAllComplete,
@@ -82,8 +82,8 @@ export default async function DashboardPage() {
       id:         'constraints',
       name:       'Constraints',
       levelCount: CONSTRAINTS_LEVEL_COUNT,
-      accent:     '#00D4FF',
-      accentRgb:  '0,212,255',
+      accent:     '#B87333',
+      accentRgb:  '184,115,51',
       href:       constraintsUnlocked ? '/dashboard/constraints' : undefined,
       locked:     !constraintsUnlocked,
       completed:  constraintsAllComplete,
@@ -93,8 +93,8 @@ export default async function DashboardPage() {
       id:         'structure',
       name:       'Structure',
       levelCount: 10,
-      accent:     '#9B59FF',
-      accentRgb:  '155,89,255',
+      accent:     '#8B8FA8',
+      accentRgb:  '139,143,168',
       href:       undefined,
       locked:     true,
       completed:  false,
@@ -104,8 +104,8 @@ export default async function DashboardPage() {
       id:         'debug',
       name:       'Debug',
       levelCount: 10,
-      accent:     '#FF6B35',
-      accentRgb:  '255,107,53',
+      accent:     '#C84B1F',
+      accentRgb:  '200,75,31',
       href:       undefined,
       locked:     true,
       completed:  false,
@@ -125,7 +125,7 @@ export default async function DashboardPage() {
   return (
     <main
       className="text-white overflow-hidden flex flex-col relative"
-      style={{ background: '#000', height: '100dvh' }}
+      style={{ background: '#0F0F0F', height: '100dvh' }}
     >
       {/* Scanlines */}
       <div
@@ -140,7 +140,7 @@ export default async function DashboardPage() {
       <div
         className="pointer-events-none absolute inset-0 z-0"
         style={{
-          backgroundImage: 'linear-gradient(rgba(176,224,32,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(176,224,32,0.04) 1px, transparent 1px)',
+          backgroundImage: 'linear-gradient(rgba(0,255,136,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,136,0.04) 1px, transparent 1px)',
           backgroundSize: '60px 60px',
         }}
         aria-hidden="true"
@@ -156,7 +156,7 @@ export default async function DashboardPage() {
             top: p.top,
             width: p.size,
             height: p.size,
-            background: '#B0E020',
+            background: '#00FF88',
             animation: `particleDrift ${p.duration} ${p.delay} ease-in-out infinite`,
             opacity: 0,
           }}
@@ -175,8 +175,8 @@ export default async function DashboardPage() {
           <span
             className="font-mono font-black tracking-widest text-3xl sm:text-4xl uppercase"
             style={{
-              color: '#B0E020',
-              textShadow: '0 0 20px rgba(176,224,32,0.8), 0 0 60px rgba(176,224,32,0.35)',
+              color: '#00FF88',
+              textShadow: '0 0 20px rgba(0,255,136,0.8), 0 0 60px rgba(0,255,136,0.35)',
             }}
             aria-label="Zeptio"
           >
@@ -189,8 +189,8 @@ export default async function DashboardPage() {
           <Link
             href="/profile"
             aria-label="View your profile"
-            className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center transition-all duration-200 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B0E020] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-            style={{ background: 'rgba(176,224,32,0.08)', border: '1.5px solid rgba(176,224,32,0.3)' }}
+            className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center transition-all duration-200 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00FF88] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0F0F0F]"
+            style={{ background: 'rgba(0,255,136,0.08)', border: '1.5px solid rgba(0,255,136,0.3)' }}
           >
             <RobotSVG config={robotConfig} size={48} headOnly />
           </Link>
@@ -204,19 +204,19 @@ export default async function DashboardPage() {
       >
         <div
           className="inline-flex items-center justify-center rounded-full text-base font-bold whitespace-nowrap px-8 py-3"
-          style={{ background: 'rgba(176,224,32,0.06)', border: '1px solid rgba(176,224,32,0.2)' }}
+          style={{ background: 'rgba(0,255,136,0.06)', border: '1px solid rgba(0,255,136,0.2)' }}
         >
           <span className="text-white">Score</span>
           <span>&nbsp;&nbsp;</span>
-          <span className="text-[#B0E020] tabular-nums">{totalXp}</span>
+          <span className="text-[#00FF88] tabular-nums">{totalXp}</span>
         </div>
         <div
           className="inline-flex items-center justify-center rounded-full text-base font-bold whitespace-nowrap px-8 py-3"
-          style={{ background: 'rgba(176,224,32,0.06)', border: '1px solid rgba(176,224,32,0.2)' }}
+          style={{ background: 'rgba(0,255,136,0.06)', border: '1px solid rgba(0,255,136,0.2)' }}
         >
           <span className="text-white">🔥 Streak</span>
           <span>&nbsp;&nbsp;</span>
-          <span className="text-[#B0E020] tabular-nums">{streak}</span>
+          <span className="text-[#00FF88] tabular-nums">{streak}</span>
         </div>
       </div>
 
@@ -233,68 +233,77 @@ export default async function DashboardPage() {
                   <div
                     className="card-glow absolute inset-0 rounded-2xl pointer-events-none"
                     style={{
-                      boxShadow: `0 0 32px rgba(${world.accentRgb},0.25), inset 0 0 20px rgba(${world.accentRgb},0.06)`,
+                      boxShadow: `0 0 28px rgba(${world.accentRgb},0.15), inset 0 0 16px rgba(${world.accentRgb},0.04)`,
                     }}
                   />
                 )}
 
-                {/* Status badge — top left */}
-                <div className="absolute top-3 left-3 z-10">
-                  {world.completed ? (
+                {/* Centered content */}
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 p-3 sm:p-4 z-10">
+
+                  {/* Robot floats above name on active world */}
+                  {isActive && !world.locked && (
+                    <div className="robot-float mb-1" aria-hidden="true">
+                      <RobotSVG config={robotConfig} size={32} headOnly />
+                    </div>
+                  )}
+
+                  {/* Rust padlock for locked */}
+                  {world.locked && (
                     <span
-                      className="inline-flex items-center justify-center w-7 h-7 rounded-full text-sm font-black"
-                      style={{ background: `rgba(${world.accentRgb},0.2)`, color: world.accent }}
-                    >
-                      ✓
-                    </span>
-                  ) : world.locked ? (
-                    <span
-                      className="inline-flex items-center justify-center w-7 h-7 rounded-full text-sm"
-                      style={{ background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.3)' }}
+                      className="text-2xl sm:text-3xl mb-1"
+                      style={{ color: '#C84B1F', filter: 'drop-shadow(0 0 6px rgba(200,75,31,0.5))' }}
+                      aria-hidden="true"
                     >
                       🔒
                     </span>
-                  ) : null}
-                </div>
+                  )}
 
-                {/* Robot — bottom right of active world */}
-                {isActive && !world.locked && (
-                  <div className="absolute bottom-10 right-3 z-10 robot-float" aria-hidden="true">
-                    <RobotSVG config={robotConfig} size={36} headOnly />
-                  </div>
-                )}
+                  {/* Completed check */}
+                  {world.completed && (
+                    <span
+                      className="inline-flex items-center justify-center w-7 h-7 rounded-full text-sm font-black mb-1"
+                      style={{ background: `rgba(${world.accentRgb},0.2)`, color: world.accent }}
+                      aria-hidden="true"
+                    >
+                      ✓
+                    </span>
+                  )}
 
-                {/* Label — bottom */}
-                <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4 z-10">
-                  {world.locked && (
+                  {/* World name */}
+                  <h2
+                    className="text-lg sm:text-xl font-black tracking-tight leading-none text-center"
+                    style={{ color: world.locked ? 'rgba(232,232,232,0.2)' : '#E8E8E8' }}
+                  >
+                    {world.name}
+                  </h2>
+
+                  {/* Subtitle */}
+                  <p
+                    className="text-[10px] sm:text-xs font-mono mt-0.5 text-center"
+                    style={{ color: world.locked ? 'rgba(139,143,168,0.3)' : '#8B8FA8' }}
+                  >
+                    {world.levelCount} Levels
+                  </p>
+
+                  {/* Lock message */}
+                  {world.locked && world.lockMessage && (
                     <p
-                      className="text-[10px] font-mono mb-1 truncate"
-                      style={{ color: 'rgba(255,255,255,0.28)' }}
+                      className="text-[9px] font-mono mt-1 text-center"
+                      style={{ color: 'rgba(139,143,168,0.4)' }}
                     >
                       {world.lockMessage}
                     </p>
                   )}
-                  <h2
-                    className="text-lg sm:text-xl lg:text-2xl font-black tracking-tight leading-none"
-                    style={{ color: world.locked ? 'rgba(255,255,255,0.22)' : world.accent }}
-                  >
-                    {world.name}
-                  </h2>
-                  <p
-                    className="text-[10px] sm:text-xs font-mono mt-1"
-                    style={{ color: world.locked ? 'rgba(255,255,255,0.14)' : 'rgba(255,255,255,0.35)' }}
-                  >
-                    {world.levelCount} levels
-                  </p>
                 </div>
               </>
             )
 
             const cardStyle = {
               background: world.locked
-                ? 'rgba(255,255,255,0.02)'
-                : `linear-gradient(145deg, rgba(${world.accentRgb},0.09) 0%, rgba(0,0,0,0.9) 65%)`,
-              border: `1.5px solid ${world.locked ? 'rgba(255,255,255,0.06)' : `rgba(${world.accentRgb},0.3)`}`,
+                ? '#1A1A1A'
+                : `linear-gradient(145deg, rgba(${world.accentRgb},0.07) 0%, #1A1A1A 60%)`,
+              border: `1.5px solid ${world.locked ? '#2A2A2A' : `rgba(${world.accentRgb},0.25)`}`,
               opacity: world.locked ? 0.5 : 1,
             }
 
@@ -304,7 +313,7 @@ export default async function DashboardPage() {
               <Link
                 key={world.id}
                 href={world.href}
-                className={`${baseClass} hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B0E020] focus-visible:ring-offset-2 focus-visible:ring-offset-black`}
+                className={`${baseClass} world-card-link hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00FF88] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0F0F0F]`}
                 style={cardStyle}
                 role="listitem"
                 aria-label={`${world.name} — ${world.levelCount} levels`}
@@ -332,15 +341,15 @@ export default async function DashboardPage() {
         className="relative z-10 shrink-0 flex items-center justify-center gap-0 text-xs py-3 px-4"
         style={{ color: 'rgba(255,255,255,0.25)' }}
       >
-        <a href="/privacy" className="hover:text-[#B0E020] transition-colors duration-200 px-3">Privacy</a>
+        <a href="/privacy" className="hover:text-[#00FF88] transition-colors duration-200 px-3">Privacy</a>
         <span aria-hidden="true">·</span>
-        <a href="/terms"   className="hover:text-[#B0E020] transition-colors duration-200 px-3">Terms</a>
+        <a href="/terms"   className="hover:text-[#00FF88] transition-colors duration-200 px-3">Terms</a>
         <span aria-hidden="true">·</span>
-        <a href="/support" className="hover:text-[#B0E020] transition-colors duration-200 px-3">Support</a>
+        <a href="/support" className="hover:text-[#00FF88] transition-colors duration-200 px-3">Support</a>
         {user.email === 'vesorestyle@gmail.com' && (
           <>
             <span aria-hidden="true">·</span>
-            <a href="/admin" className="hover:text-[#B0E020] transition-colors duration-200 px-3">Admin</a>
+            <a href="/admin" className="hover:text-[#00FF88] transition-colors duration-200 px-3">Admin</a>
           </>
         )}
       </div>
