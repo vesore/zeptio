@@ -69,7 +69,9 @@ export default async function DashboardPage() {
   const WORLDS = [
     {
       id:         'clarity',
-      name:       'Clarity',
+      name:       'CLARITY',
+      subtitle:   'The Brain',
+      emoji:      '🧠',
       levelCount: CLARITY_LEVEL_COUNT,
       accent:     '#00FF88',
       accentRgb:  '0,255,136',
@@ -80,7 +82,9 @@ export default async function DashboardPage() {
     },
     {
       id:         'constraints',
-      name:       'Constraints',
+      name:       'CONSTRAINTS',
+      subtitle:   'The Gears',
+      emoji:      '⚙️',
       levelCount: CONSTRAINTS_LEVEL_COUNT,
       accent:     '#B87333',
       accentRgb:  '184,115,51',
@@ -91,7 +95,9 @@ export default async function DashboardPage() {
     },
     {
       id:         'structure',
-      name:       'Structure',
+      name:       'STRUCTURE',
+      subtitle:   'The Arms',
+      emoji:      '🦾',
       levelCount: 10,
       accent:     '#8B8FA8',
       accentRgb:  '139,143,168',
@@ -102,7 +108,9 @@ export default async function DashboardPage() {
     },
     {
       id:         'debug',
-      name:       'Debug',
+      name:       'DEBUG',
+      subtitle:   'The Eyes',
+      emoji:      '👁️',
       levelCount: 10,
       accent:     '#C84B1F',
       accentRgb:  '200,75,31',
@@ -221,80 +229,104 @@ export default async function DashboardPage() {
       </div>
 
       {/* ── WORLD GRID ──────────────────────────── */}
-      <div className="relative z-10 flex-1 min-h-0 px-3 sm:px-6 py-3">
-        <div className="grid grid-cols-2 gap-3 sm:gap-4 h-full" role="list" aria-label="Game worlds">
+      <div className="relative z-10 flex-1 min-h-0 px-3 sm:px-6 py-3 flex flex-col gap-3 sm:gap-4">
+
+        {/* Per-world hover glow styles */}
+        <style>{`
+          .world-card-clarity:hover  { box-shadow: 0 0 0 1.5px #00FF88, 0 0 24px rgba(0,255,136,0.35); }
+          .world-card-constraints:hover { box-shadow: 0 0 0 1.5px #B87333, 0 0 24px rgba(184,115,51,0.35); }
+          .world-card-structure:hover { box-shadow: 0 0 0 1.5px #8B8FA8, 0 0 24px rgba(139,143,168,0.25); }
+          .world-card-debug:hover    { box-shadow: 0 0 0 1.5px #C84B1F, 0 0 24px rgba(200,75,31,0.35); }
+          @keyframes masteryPulse {
+            0%, 100% { box-shadow: 0 0 0 1.5px rgba(255,0,68,0.4), 0 0 20px rgba(255,0,68,0.2); }
+            50%       { box-shadow: 0 0 0 1.5px rgba(255,0,68,0.9), 0 0 40px rgba(255,0,68,0.5); }
+          }
+          .world-card-mastery { animation: masteryPulse 2.4s ease-in-out infinite; }
+        `}</style>
+
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 flex-1 min-h-0" role="list" aria-label="Game worlds">
           {WORLDS.map((world) => {
             const isActive = world.id === activeWorld
 
             const cardContent = (
               <>
-                {/* Animated border glow */}
-                {!world.locked && (
-                  <div
-                    className="card-glow absolute inset-0 rounded-2xl pointer-events-none"
-                    style={{
-                      boxShadow: `0 0 28px rgba(${world.accentRgb},0.15), inset 0 0 16px rgba(${world.accentRgb},0.04)`,
-                    }}
-                  />
-                )}
+                {/* Top edge accent gradient */}
+                <div
+                  className="absolute top-0 left-0 right-0 pointer-events-none"
+                  style={{
+                    height: '3px',
+                    background: `linear-gradient(90deg, transparent, ${world.accent}, transparent)`,
+                    opacity: world.locked ? 0.15 : 0.7,
+                  }}
+                  aria-hidden="true"
+                />
 
-                {/* Centered content */}
-                <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 p-3 sm:p-4 z-10">
+                {/* Card content: emoji top, name+subtitle center, levels bottom */}
+                <div className="absolute inset-0 flex flex-col items-center p-3 sm:p-4 z-10">
 
-                  {/* Robot floats above name on active world */}
-                  {isActive && !world.locked && (
-                    <div className="robot-float mb-1" aria-hidden="true">
-                      <RobotSVG config={robotConfig} size={32} headOnly />
-                    </div>
-                  )}
-
-                  {/* Rust padlock for locked */}
-                  {world.locked && (
+                  {/* Emoji area — top */}
+                  <div className="relative flex items-center justify-center mt-1" aria-hidden="true">
                     <span
-                      className="text-2xl sm:text-3xl mb-1"
-                      style={{ color: '#C84B1F', filter: 'drop-shadow(0 0 6px rgba(200,75,31,0.5))' }}
-                      aria-hidden="true"
+                      className="text-3xl sm:text-4xl leading-none"
+                      style={world.locked ? { filter: 'grayscale(1)', opacity: 0.25 } : undefined}
                     >
-                      🔒
+                      {world.emoji}
                     </span>
-                  )}
+                    {/* Padlock overlay on locked worlds */}
+                    {world.locked && (
+                      <span
+                        className="absolute -bottom-1 -right-1 text-xs leading-none"
+                        style={{ filter: 'drop-shadow(0 0 4px rgba(200,75,31,0.6))' }}
+                      >
+                        🔒
+                      </span>
+                    )}
+                  </div>
 
-                  {/* Completed check */}
-                  {world.completed && (
-                    <span
-                      className="inline-flex items-center justify-center w-7 h-7 rounded-full text-sm font-black mb-1"
-                      style={{ background: `rgba(${world.accentRgb},0.2)`, color: world.accent }}
-                      aria-hidden="true"
+                  {/* Name + subtitle — center (flex-1 to push level count down) */}
+                  <div className="flex-1 flex flex-col items-center justify-center gap-0.5">
+                    {/* Completed check badge */}
+                    {world.completed && (
+                      <span
+                        className="inline-flex items-center justify-center w-5 h-5 rounded-full text-[10px] font-black mb-0.5"
+                        style={{ background: `rgba(${world.accentRgb},0.2)`, color: world.accent }}
+                        aria-hidden="true"
+                      >
+                        ✓
+                      </span>
+                    )}
+
+                    {/* Active robot badge */}
+                    {isActive && !world.locked && (
+                      <div className="robot-float mb-0.5" aria-hidden="true">
+                        <RobotSVG config={robotConfig} size={24} headOnly />
+                      </div>
+                    )}
+
+                    {/* World name */}
+                    <h2
+                      className="text-sm sm:text-base font-black tracking-widest leading-none text-center"
+                      style={{ color: world.locked ? 'rgba(232,232,232,0.2)' : '#E8E8E8' }}
                     >
-                      ✓
-                    </span>
-                  )}
+                      {world.name}
+                    </h2>
 
-                  {/* World name */}
-                  <h2
-                    className="text-lg sm:text-xl font-black tracking-tight leading-none text-center"
-                    style={{ color: world.locked ? 'rgba(232,232,232,0.2)' : '#E8E8E8' }}
-                  >
-                    {world.name}
-                  </h2>
+                    {/* Body part subtitle */}
+                    <p
+                      className="text-[10px] sm:text-[11px] font-mono tracking-wide text-center mt-0.5"
+                      style={{ color: world.locked ? 'rgba(184,115,51,0.2)' : '#B87333' }}
+                    >
+                      {world.subtitle}
+                    </p>
+                  </div>
 
-                  {/* Subtitle */}
+                  {/* Level count — bottom */}
                   <p
-                    className="text-[10px] sm:text-xs font-mono mt-0.5 text-center"
-                    style={{ color: world.locked ? 'rgba(139,143,168,0.3)' : '#8B8FA8' }}
+                    className="text-[9px] sm:text-[10px] font-mono text-center mb-0.5"
+                    style={{ color: world.locked ? 'rgba(139,143,168,0.2)' : '#8B8FA8' }}
                   >
                     {world.levelCount} Levels
                   </p>
-
-                  {/* Lock message */}
-                  {world.locked && world.lockMessage && (
-                    <p
-                      className="text-[9px] font-mono mt-1 text-center"
-                      style={{ color: 'rgba(139,143,168,0.4)' }}
-                    >
-                      {world.lockMessage}
-                    </p>
-                  )}
                 </div>
               </>
             )
@@ -302,18 +334,18 @@ export default async function DashboardPage() {
             const cardStyle = {
               background: world.locked
                 ? '#1A1A1A'
-                : `linear-gradient(145deg, rgba(${world.accentRgb},0.07) 0%, #1A1A1A 60%)`,
-              border: `1.5px solid ${world.locked ? '#2A2A2A' : `rgba(${world.accentRgb},0.25)`}`,
-              opacity: world.locked ? 0.5 : 1,
+                : `linear-gradient(160deg, rgba(${world.accentRgb},0.08) 0%, #1A1A1A 55%)`,
+              border: `1.5px solid ${world.locked ? '#2A2A2A' : `rgba(${world.accentRgb},0.3)`}`,
+              opacity: world.locked ? 0.6 : 1,
             }
 
-            const baseClass = 'relative rounded-2xl overflow-hidden transition-all duration-300 h-full'
+            const baseClass = `relative rounded-2xl overflow-hidden transition-all duration-300 h-full world-card-${world.id}`
 
             return world.href ? (
               <Link
                 key={world.id}
                 href={world.href}
-                className={`${baseClass} world-card-link hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00FF88] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0F0F0F]`}
+                className={`${baseClass} hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00FF88] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0F0F0F]`}
                 style={cardStyle}
                 role="listitem"
                 aria-label={`${world.name} — ${world.levelCount} levels`}
@@ -334,6 +366,57 @@ export default async function DashboardPage() {
             )
           })}
         </div>
+
+        {/* ── MASTERY TEASER (full-width locked) ── */}
+        <div
+          className="relative rounded-2xl overflow-hidden world-card-mastery shrink-0"
+          style={{
+            background: 'linear-gradient(90deg, rgba(255,0,68,0.06) 0%, #1A1A1A 50%, rgba(255,0,68,0.06) 100%)',
+            border: '1.5px solid rgba(255,0,68,0.25)',
+            opacity: 0.7,
+            height: '72px',
+          }}
+          role="listitem"
+          aria-disabled="true"
+          aria-label="Mastery — Complete all worlds to unlock"
+        >
+          {/* Top edge pulse */}
+          <div
+            className="absolute top-0 left-0 right-0 pointer-events-none"
+            style={{
+              height: '2px',
+              background: 'linear-gradient(90deg, transparent, #FF0044, transparent)',
+              opacity: 0.5,
+            }}
+            aria-hidden="true"
+          />
+
+          <div className="absolute inset-0 flex flex-row items-center justify-center gap-3 px-5 z-10">
+            {/* Emoji + padlock */}
+            <div className="relative flex items-center justify-center" aria-hidden="true">
+              <span className="text-2xl leading-none" style={{ filter: 'grayscale(1)', opacity: 0.3 }}>❤️</span>
+              <span className="absolute -bottom-1 -right-1 text-[10px] leading-none" style={{ filter: 'drop-shadow(0 0 4px rgba(200,75,31,0.6))' }}>🔒</span>
+            </div>
+
+            <div className="flex flex-col items-start gap-0.5">
+              <h2
+                className="text-sm font-black tracking-widest leading-none"
+                style={{ color: 'rgba(232,232,232,0.2)' }}
+              >
+                MASTERY
+              </h2>
+              <p className="text-[10px] font-mono tracking-wide" style={{ color: 'rgba(255,0,68,0.35)' }}>The Core</p>
+            </div>
+
+            <p
+              className="ml-auto text-[9px] font-mono text-right leading-snug"
+              style={{ color: 'rgba(139,143,168,0.3)', maxWidth: '100px' }}
+            >
+              Complete all worlds to unlock
+            </p>
+          </div>
+        </div>
+
       </div>
 
       {/* ── FOOTER ──────────────────────────────── */}
