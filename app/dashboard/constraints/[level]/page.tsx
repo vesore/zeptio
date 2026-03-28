@@ -4,6 +4,7 @@ import { createClient } from '@/src/lib/supabase/server'
 import WordBudget from '@/src/components/game/WordBudget'
 import { CONSTRAINTS_LEVELS } from '@/src/lib/game/constraints-levels'
 import { CLARITY_LEVELS } from '@/src/lib/game/clarity-levels'
+import { DEFAULT_ROBOT_CONFIG, type RobotConfig } from '@/app/profile/_components/RobotSVG'
 
 const CLARITY_LEVEL_COUNT = CLARITY_LEVELS.length
 
@@ -45,19 +46,20 @@ export default async function ConstraintsLevelPage({ params }: Props) {
     redirect('/dashboard')
   }
 
-  // Check if this constraints level is unlocked (previous level scored 60+)
-  if (levelIndex > 1) {
-    const prevLevel = CONSTRAINTS_LEVELS[levelIndex - 2]
-    const { data: prevScores } = await supabase
-      .from('xp_ledger')
-      .select('score')
-      .eq('user_id', user.id)
-      .eq('world', 'constraints')
-      .eq('level', prevLevel.id)
-      .limit(1)
+  // Check if this constraints level is unlocked + fetch robot config in parallel
+  const [prevResult, profileResult] = await Promise.all([
+    levelIndex > 1
+      ? supabase.from('xp_ledger').select('score').eq('user_id', user.id).eq('world', 'constraints').eq('level', CONSTRAINTS_LEVELS[levelIndex - 2].id).limit(1)
+      : Promise.resolve({ data: [{}] }),
+    supabase.from('profiles').select('robot_config').eq('id', user.id).maybeSingle(),
+  ])
 
-    if (!prevScores?.length) redirect('/dashboard/constraints')
-  }
+  if (levelIndex > 1 && !prevResult.data?.length) redirect('/dashboard/constraints')
+
+  const rawRobot = (profileResult.data as { robot_config?: unknown } | null)?.robot_config
+  const robotConfig: RobotConfig = rawRobot && typeof rawRobot === 'object'
+    ? { ...DEFAULT_ROBOT_CONFIG, ...(rawRobot as Partial<RobotConfig>) }
+    : DEFAULT_ROBOT_CONFIG
 
   const levelConfig = {
     world: 'constraints' as const,
@@ -97,6 +99,7 @@ export default async function ConstraintsLevelPage({ params }: Props) {
         levelId={level.id}
         levelConfig={levelConfig}
         nextLevelUrl={nextLevelUrl}
+        robotConfig={robotConfig}
       />
     </div>
   )

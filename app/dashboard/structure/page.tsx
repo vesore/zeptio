@@ -1,44 +1,44 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/src/lib/supabase/server'
+import { STRUCTURE_LEVELS } from '@/src/lib/game/structure-levels'
 import { CONSTRAINTS_LEVELS } from '@/src/lib/game/constraints-levels'
-import { CLARITY_LEVELS } from '@/src/lib/game/clarity-levels'
 import WorldGalaxyMap from '@/app/dashboard/_components/WorldGalaxyMap'
 import { DEFAULT_ROBOT_CONFIG, type RobotConfig } from '@/app/profile/_components/RobotSVG'
 
-const CLARITY_LEVEL_COUNT = CLARITY_LEVELS.length
-const ACCENT = '#B87333'
+const CONSTRAINTS_LEVEL_COUNT = CONSTRAINTS_LEVELS.length
+const ACCENT = '#8B8FA8'
 
-export default async function ConstraintsPage() {
+export default async function StructurePage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/auth/login')
 
-  // Verify Clarity unlock requirement (avg 80+ across all levels)
-  const { data: clarityRows } = await supabase
+  // Verify Constraints unlock requirement (avg 80+ across all levels)
+  const { data: constraintsRows } = await supabase
     .from('xp_ledger')
     .select('level, score')
     .eq('user_id', user.id)
-    .eq('world', 'clarity')
+    .eq('world', 'constraints')
 
-  const clarityBest = new Map<number, number>()
-  for (const row of clarityRows ?? []) {
-    const cur = clarityBest.get(row.level) ?? 0
-    if ((row.score ?? 0) > cur) clarityBest.set(row.level, row.score)
+  const constraintsBest = new Map<number, number>()
+  for (const row of constraintsRows ?? []) {
+    const cur = constraintsBest.get(row.level) ?? 0
+    if ((row.score ?? 0) > cur) constraintsBest.set(row.level, row.score)
   }
 
-  const clarityCompleted = clarityBest.size === CLARITY_LEVEL_COUNT
-  const clarityAvg = clarityCompleted
-    ? Array.from(clarityBest.values()).reduce((a, b) => a + b, 0) / CLARITY_LEVEL_COUNT
+  const constraintsCompleted = constraintsBest.size === CONSTRAINTS_LEVEL_COUNT
+  const constraintsAvg = constraintsCompleted
+    ? Array.from(constraintsBest.values()).reduce((a, b) => a + b, 0) / CONSTRAINTS_LEVEL_COUNT
     : 0
 
-  if (!clarityCompleted || clarityAvg < 80) {
+  if (!constraintsCompleted || constraintsAvg < 80) {
     redirect('/dashboard')
   }
 
-  // Load Constraints scores + robot config in parallel
+  // Load Structure scores + robot config in parallel
   const [{ data: scoreRows }, { data: profileData }] = await Promise.all([
-    supabase.from('xp_ledger').select('level, score').eq('user_id', user.id).eq('world', 'constraints'),
+    supabase.from('xp_ledger').select('level, score').eq('user_id', user.id).eq('world', 'structure'),
     supabase.from('profiles').select('robot_config').eq('id', user.id).maybeSingle(),
   ])
 
@@ -51,7 +51,7 @@ export default async function ConstraintsPage() {
   const bestScores: Record<number, number> = {}
   for (const [k, v] of bestScoresMap) bestScores[k] = v
 
-  const completedCount = CONSTRAINTS_LEVELS.filter(l => (bestScores[l.id] ?? 0) >= 60).length
+  const completedCount = STRUCTURE_LEVELS.filter(l => (bestScores[l.id] ?? 0) >= 60).length
 
   const rawRobot = (profileData as { robot_config?: unknown } | null)?.robot_config
   const robotConfig: RobotConfig = rawRobot && typeof rawRobot === 'object'
@@ -68,31 +68,33 @@ export default async function ConstraintsPage() {
             href="/dashboard"
             className="text-sm font-mono transition-colors duration-200"
             style={{ color: 'rgba(255,255,255,0.35)' }}
+            onMouseEnter={e => (e.currentTarget.style.color = ACCENT)}
+            onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.35)')}
           >
             ← Home
           </Link>
           <span
             className="text-xs font-mono rounded-full px-3 py-1"
-            style={{ background: 'rgba(184,115,51,0.1)', color: 'rgba(184,115,51,0.7)' }}
+            style={{ background: 'rgba(139,143,168,0.1)', color: 'rgba(139,143,168,0.7)' }}
           >
-            {completedCount}/{CONSTRAINTS_LEVELS.length} complete
+            {completedCount}/{STRUCTURE_LEVELS.length} complete
           </span>
         </div>
 
         {/* Neon title */}
         <div className="pt-6 pb-2 text-center">
-          <p className="text-xs font-mono tracking-widest uppercase mb-2" style={{ color: 'rgba(184,115,51,0.5)' }}>
-            ◎ World Two
+          <p className="text-xs font-mono tracking-widest uppercase mb-2" style={{ color: 'rgba(139,143,168,0.5)' }}>
+            ◎ World Three
           </p>
           <h1
             className="text-4xl sm:text-5xl font-black tracking-wider uppercase"
             style={{
               color: ACCENT,
-              textShadow: '0 0 20px rgba(184,115,51,0.5), 0 0 60px rgba(184,115,51,0.2)',
+              textShadow: '0 0 20px rgba(139,143,168,0.5), 0 0 60px rgba(139,143,168,0.2)',
               letterSpacing: '0.12em',
             }}
           >
-            Constraints
+            Structure
           </h1>
           <p className="mt-2 text-xs font-mono" style={{ color: 'rgba(255,255,255,0.3)' }}>
             Score 60+ on each level to unlock the next
@@ -105,9 +107,9 @@ export default async function ConstraintsPage() {
             <div
               className="h-1 rounded-full transition-all duration-700"
               style={{
-                width: `${Math.round((completedCount / CONSTRAINTS_LEVELS.length) * 100)}%`,
-                background: `linear-gradient(90deg, ${ACCENT}, #d4923a)`,
-                boxShadow: `0 0 8px rgba(184,115,51,0.6)`,
+                width: `${Math.round((completedCount / STRUCTURE_LEVELS.length) * 100)}%`,
+                background: `linear-gradient(90deg, ${ACCENT}, #aeb2c8)`,
+                boxShadow: `0 0 8px rgba(139,143,168,0.6)`,
               }}
             />
           </div>
@@ -115,11 +117,11 @@ export default async function ConstraintsPage() {
 
         {/* Galaxy map */}
         <WorldGalaxyMap
-          levels={CONSTRAINTS_LEVELS}
+          levels={STRUCTURE_LEVELS}
           bestScores={bestScores}
           robotConfig={robotConfig}
           accent={ACCENT}
-          baseLevelHref={i => `/dashboard/constraints/${i}`}
+          baseLevelHref={i => `/dashboard/structure/${i}`}
         />
 
       </div>
