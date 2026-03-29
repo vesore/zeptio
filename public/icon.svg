@@ -1,0 +1,283 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <!-- Background grid pattern (PCB feel) -->
+    <pattern id="pcbGrid" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(184,115,51,0.06)" stroke-width="0.8"/>
+    </pattern>
+
+    <!-- Green glow filter for active nodes -->
+    <filter id="greenGlow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur"/>
+      <feColorMatrix in="blur" type="matrix"
+        values="0 0 0 0 0   1 0 0 0 1   0.5 0 0 0 0.5   0 0 0 1.2 0" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Copper glow filter -->
+    <filter id="copperGlow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Soft chrome glow on Z body -->
+    <filter id="chromeGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- ── BACKGROUND ─────────────────────────────────── -->
+  <rect width="1024" height="1024" rx="120" ry="120" fill="#0F0F0F"/>
+  <!-- PCB grid overlay -->
+  <rect width="1024" height="1024" rx="120" ry="120" fill="url(#pcbGrid)"/>
+  <!-- Subtle vignette -->
+  <radialGradient id="vignette" cx="50%" cy="50%" r="70%">
+    <stop offset="0%" stop-color="transparent"/>
+    <stop offset="100%" stop-color="rgba(0,0,0,0.55)"/>
+  </radialGradient>
+  <rect width="1024" height="1024" rx="120" ry="120" fill="url(#vignette)"/>
+
+  <!-- ── FAINT PCB TRACE GRID LINES ─────────────────── -->
+  <!-- Horizontal traces -->
+  <line x1="80" y1="200" x2="944" y2="200" stroke="rgba(184,115,51,0.07)" stroke-width="1.5" stroke-dasharray="6,18"/>
+  <line x1="80" y1="320" x2="944" y2="320" stroke="rgba(184,115,51,0.07)" stroke-width="1.5" stroke-dasharray="6,18"/>
+  <line x1="80" y1="512" x2="944" y2="512" stroke="rgba(184,115,51,0.05)" stroke-width="1.5" stroke-dasharray="6,18"/>
+  <line x1="80" y1="704" x2="944" y2="704" stroke="rgba(184,115,51,0.07)" stroke-width="1.5" stroke-dasharray="6,18"/>
+  <line x1="80" y1="824" x2="944" y2="824" stroke="rgba(184,115,51,0.07)" stroke-width="1.5" stroke-dasharray="6,18"/>
+  <!-- Vertical traces -->
+  <line x1="200" y1="80" x2="200" y2="944" stroke="rgba(184,115,51,0.05)" stroke-width="1.5" stroke-dasharray="6,18"/>
+  <line x1="512" y1="80" x2="512" y2="944" stroke="rgba(184,115,51,0.04)" stroke-width="1.5" stroke-dasharray="6,18"/>
+  <line x1="824" y1="80" x2="824" y2="944" stroke="rgba(184,115,51,0.05)" stroke-width="1.5" stroke-dasharray="6,18"/>
+
+  <!-- ── BACKGROUND PCB TRACES (behind Z) ───────────── -->
+  <!-- Corner connector traces -->
+  <polyline points="120,180 180,180 180,120" fill="none" stroke="rgba(184,115,51,0.12)" stroke-width="2" stroke-linecap="round"/>
+  <polyline points="904,180 844,180 844,120" fill="none" stroke="rgba(184,115,51,0.12)" stroke-width="2" stroke-linecap="round"/>
+  <polyline points="120,844 180,844 180,904" fill="none" stroke="rgba(184,115,51,0.12)" stroke-width="2" stroke-linecap="round"/>
+  <polyline points="904,844 844,844 844,904" fill="none" stroke="rgba(184,115,51,0.12)" stroke-width="2" stroke-linecap="round"/>
+  <!-- Corner dots -->
+  <circle cx="180" cy="180" r="5" fill="rgba(184,115,51,0.3)"/>
+  <circle cx="844" cy="180" r="5" fill="rgba(184,115,51,0.3)"/>
+  <circle cx="180" cy="844" r="5" fill="rgba(184,115,51,0.3)"/>
+  <circle cx="844" cy="844" r="5" fill="rgba(184,115,51,0.3)"/>
+
+  <!-- ── THE Z — MAIN BODY ───────────────────────────── -->
+  <!--
+    Z geometry (generous stroke width for circuit detail):
+    Top bar:    x1=220 → x2=804, y=200  (horizontal)
+    Diagonal:   220,200 → 804,824        (top-right to bottom-left)
+    Bottom bar: x1=220 → x2=804, y=824  (horizontal)
+
+    Rendered as a thick filled path so we can add internal detail.
+    Stroke width ~90px for the bars, ~80px for diagonal.
+  -->
+
+  <!-- Z shadow/depth layer -->
+  <path
+    d="M 220 155 L 804 155 L 804 245 L 370 245 L 804 779 L 804 869 L 220 869 L 220 779 L 670 779 L 236 245 L 220 245 Z"
+    fill="rgba(0,0,0,0.45)"
+    transform="translate(6,8)"
+  />
+
+  <!-- Z chrome base -->
+  <path
+    id="z-body"
+    d="M 220 155 L 804 155 L 804 245 L 370 245 L 804 779 L 804 869 L 220 869 L 220 779 L 670 779 L 220 245 L 220 155 Z"
+    fill="#C8C8C8"
+    filter="url(#chromeGlow)"
+  />
+
+  <!-- Z gradient overlay for depth -->
+  <linearGradient id="zGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%"   stop-color="#F0F0F0"/>
+    <stop offset="35%"  stop-color="#E8E8E8"/>
+    <stop offset="70%"  stop-color="#B0B0B0"/>
+    <stop offset="100%" stop-color="#888888"/>
+  </linearGradient>
+  <path
+    d="M 220 155 L 804 155 L 804 245 L 370 245 L 804 779 L 804 869 L 220 869 L 220 779 L 670 779 L 220 245 L 220 155 Z"
+    fill="url(#zGrad)"
+  />
+
+  <!-- Z inner bevel highlight (top-left edges) -->
+  <path
+    d="M 228 163 L 796 163 L 796 237 L 796 237"
+    fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="3" stroke-linecap="round"
+  />
+  <path
+    d="M 228 163 L 228 237"
+    fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="3" stroke-linecap="round"
+  />
+  <!-- Z inner shadow (bottom-right edges) -->
+  <path
+    d="M 228 861 L 796 861"
+    fill="none" stroke="rgba(0,0,0,0.35)" stroke-width="3" stroke-linecap="round"
+  />
+
+  <!-- ── CIRCUIT TRACES ON THE Z ─────────────────────── -->
+
+  <!-- TOP BAR traces — copper horizontal runs -->
+  <line x1="280" y1="200" x2="744" y2="200" stroke="#B87333" stroke-width="3.5" stroke-linecap="round" opacity="0.9"/>
+  <!-- Top bar micro trace branches -->
+  <line x1="340" y1="200" x2="340" y2="163" stroke="#B87333" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+  <line x1="340" y1="163" x2="380" y2="163" stroke="#B87333" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+  <line x1="480" y1="200" x2="480" y2="163" stroke="#B87333" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+  <line x1="600" y1="200" x2="600" y2="163" stroke="#B87333" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+  <line x1="600" y1="163" x2="560" y2="163" stroke="#B87333" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+  <line x1="720" y1="200" x2="720" y2="163" stroke="#B87333" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+
+  <!-- TOP BAR additional internal trace lines -->
+  <line x1="280" y1="215" x2="744" y2="215" stroke="rgba(184,115,51,0.35)" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="280" y1="229" x2="500" y2="229" stroke="rgba(184,115,51,0.2)" stroke-width="1.5" stroke-linecap="round"/>
+
+  <!-- BOTTOM BAR traces -->
+  <line x1="280" y1="824" x2="744" y2="824" stroke="#B87333" stroke-width="3.5" stroke-linecap="round" opacity="0.9"/>
+  <line x1="340" y1="824" x2="340" y2="861" stroke="#B87333" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+  <line x1="340" y1="861" x2="380" y2="861" stroke="#B87333" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+  <line x1="500" y1="824" x2="500" y2="861" stroke="#B87333" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+  <line x1="660" y1="824" x2="660" y2="861" stroke="#B87333" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+  <line x1="660" y1="861" x2="700" y2="861" stroke="#B87333" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+  <line x1="280" y1="809" x2="744" y2="809" stroke="rgba(184,115,51,0.35)" stroke-width="1.5" stroke-linecap="round"/>
+
+  <!-- DIAGONAL traces — following the Z stroke angle -->
+  <!-- Main diagonal copper trace (center of Z diagonal stroke) -->
+  <line x1="392" y1="245" x2="660" y2="779" stroke="#B87333" stroke-width="3" stroke-linecap="round" opacity="0.75"/>
+  <!-- Parallel secondary trace -->
+  <line x1="420" y1="245" x2="688" y2="779" stroke="rgba(184,115,51,0.3)" stroke-width="1.5" stroke-linecap="round"/>
+  <!-- Branch off diagonal midpoint -->
+  <line x1="528" y1="510" x2="440" y2="510" stroke="#B87333" stroke-width="2.5" stroke-linecap="round" opacity="0.65"/>
+  <line x1="440" y1="510" x2="440" y2="480" stroke="#B87333" stroke-width="2.5" stroke-linecap="round" opacity="0.65"/>
+  <line x1="528" y1="530" x2="600" y2="530" stroke="rgba(184,115,51,0.4)" stroke-width="2" stroke-linecap="round"/>
+  <line x1="600" y1="530" x2="600" y2="560" stroke="rgba(184,115,51,0.4)" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- ── COPPER CONNECTION NODES (larger pads) ────────── -->
+  <!-- Top bar nodes -->
+  <circle cx="280" cy="200" r="10" fill="#B87333" opacity="0.9" filter="url(#copperGlow)"/>
+  <circle cx="480" cy="200" r="8"  fill="#B87333" opacity="0.85"/>
+  <circle cx="600" cy="200" r="8"  fill="#B87333" opacity="0.85"/>
+  <circle cx="744" cy="200" r="10" fill="#B87333" opacity="0.9" filter="url(#copperGlow)"/>
+  <!-- Top bar micro nodes -->
+  <circle cx="340" cy="200" r="5"  fill="#B87333" opacity="0.8"/>
+  <circle cx="340" cy="163" r="4"  fill="#B87333" opacity="0.7"/>
+  <circle cx="380" cy="163" r="4"  fill="#B87333" opacity="0.7"/>
+  <circle cx="480" cy="163" r="4"  fill="#B87333" opacity="0.7"/>
+  <circle cx="600" cy="163" r="4"  fill="#B87333" opacity="0.7"/>
+  <circle cx="560" cy="163" r="4"  fill="#B87333" opacity="0.7"/>
+  <circle cx="720" cy="200" r="5"  fill="#B87333" opacity="0.8"/>
+  <circle cx="720" cy="163" r="4"  fill="#B87333" opacity="0.7"/>
+  <!-- Bottom bar nodes -->
+  <circle cx="280" cy="824" r="10" fill="#B87333" opacity="0.9" filter="url(#copperGlow)"/>
+  <circle cx="500" cy="824" r="8"  fill="#B87333" opacity="0.85"/>
+  <circle cx="660" cy="824" r="8"  fill="#B87333" opacity="0.85"/>
+  <circle cx="744" cy="824" r="10" fill="#B87333" opacity="0.9" filter="url(#copperGlow)"/>
+  <circle cx="340" cy="861" r="4"  fill="#B87333" opacity="0.7"/>
+  <circle cx="380" cy="861" r="4"  fill="#B87333" opacity="0.7"/>
+  <circle cx="500" cy="861" r="4"  fill="#B87333" opacity="0.7"/>
+  <circle cx="660" cy="861" r="4"  fill="#B87333" opacity="0.7"/>
+  <circle cx="700" cy="861" r="4"  fill="#B87333" opacity="0.7"/>
+  <!-- Diagonal branch nodes -->
+  <circle cx="528" cy="510" r="7"  fill="#B87333" opacity="0.85"/>
+  <circle cx="440" cy="510" r="6"  fill="#B87333" opacity="0.8"/>
+  <circle cx="440" cy="480" r="5"  fill="#B87333" opacity="0.7"/>
+  <circle cx="600" cy="530" r="5"  fill="#B87333" opacity="0.7"/>
+  <circle cx="600" cy="560" r="5"  fill="#B87333" opacity="0.7"/>
+
+  <!-- ── ACTIVE GREEN NODES (glowing circuit nodes) ────── -->
+  <!-- Z corners — always "hot" -->
+  <!-- Top-left of Z -->
+  <circle cx="220" cy="200" r="14" fill="rgba(0,255,136,0.15)" filter="url(#greenGlow)"/>
+  <circle cx="220" cy="200" r="9"  fill="#00FF88" filter="url(#greenGlow)"/>
+  <circle cx="220" cy="200" r="4"  fill="#ffffff" opacity="0.9"/>
+  <!-- Top-right of Z -->
+  <circle cx="804" cy="200" r="14" fill="rgba(0,255,136,0.15)" filter="url(#greenGlow)"/>
+  <circle cx="804" cy="200" r="9"  fill="#00FF88" filter="url(#greenGlow)"/>
+  <circle cx="804" cy="200" r="4"  fill="#ffffff" opacity="0.9"/>
+  <!-- Bottom-left of Z -->
+  <circle cx="220" cy="824" r="14" fill="rgba(0,255,136,0.15)" filter="url(#greenGlow)"/>
+  <circle cx="220" cy="824" r="9"  fill="#00FF88" filter="url(#greenGlow)"/>
+  <circle cx="220" cy="824" r="4"  fill="#ffffff" opacity="0.9"/>
+  <!-- Bottom-right of Z -->
+  <circle cx="804" cy="824" r="14" fill="rgba(0,255,136,0.15)" filter="url(#greenGlow)"/>
+  <circle cx="804" cy="824" r="9"  fill="#00FF88" filter="url(#greenGlow)"/>
+  <circle cx="804" cy="824" r="4"  fill="#ffffff" opacity="0.9"/>
+
+  <!-- Diagonal midpoint active node -->
+  <circle cx="512" cy="512" r="12" fill="rgba(0,255,136,0.12)" filter="url(#greenGlow)"/>
+  <circle cx="512" cy="512" r="7"  fill="#00FF88" filter="url(#greenGlow)"/>
+  <circle cx="512" cy="512" r="3"  fill="#ffffff" opacity="0.9"/>
+
+  <!-- Additional mid-trace active nodes -->
+  <circle cx="480" cy="200" r="7"  fill="rgba(0,255,136,0.9)" filter="url(#greenGlow)" opacity="0.7"/>
+  <circle cx="600" cy="200" r="7"  fill="rgba(0,255,136,0.9)" filter="url(#greenGlow)" opacity="0.7"/>
+  <circle cx="480" cy="824" r="7"  fill="rgba(0,255,136,0.9)" filter="url(#greenGlow)" opacity="0.7"/>
+  <circle cx="600" cy="824" r="7"  fill="rgba(0,255,136,0.9)" filter="url(#greenGlow)" opacity="0.7"/>
+
+  <!-- ── ROBOT EYES EMBEDDED IN Z ──────────────────────── -->
+  <!--
+    Place the robot eyes inside the upper portion of the Z diagonal stroke,
+    just below the top bar — roughly centered in the Z's top-right quadrant.
+    The diagonal at y≈310 spans from about x=300 (left edge) to x=430 (right).
+    Eyes sit at y=310, spaced 70px apart.
+  -->
+
+  <!-- Eye left — outer ring -->
+  <circle cx="430" cy="308" r="26" fill="#111111" stroke="#00FF88" stroke-width="3"/>
+  <!-- Eye left — iris -->
+  <circle cx="430" cy="308" r="16" fill="#00FF88" filter="url(#greenGlow)"/>
+  <!-- Eye left — pupil -->
+  <circle cx="430" cy="308" r="7"  fill="#0F0F0F"/>
+  <!-- Eye left — catchlight -->
+  <circle cx="436" cy="303" r="3"  fill="white" opacity="0.7"/>
+
+  <!-- Eye right — outer ring -->
+  <circle cx="530" cy="308" r="26" fill="#111111" stroke="#00FF88" stroke-width="3"/>
+  <!-- Eye right — iris -->
+  <circle cx="530" cy="308" r="16" fill="#00FF88" filter="url(#greenGlow)"/>
+  <!-- Eye right — pupil -->
+  <circle cx="530" cy="308" r="7"  fill="#0F0F0F"/>
+  <!-- Eye right — catchlight -->
+  <circle cx="536" cy="303" r="3"  fill="white" opacity="0.7"/>
+
+  <!-- Eyes connection trace (between the two eyes) -->
+  <line x1="456" y1="308" x2="504" y2="308" stroke="#B87333" stroke-width="2.5" stroke-linecap="round" opacity="0.7"/>
+  <circle cx="480" cy="308" r="4" fill="#B87333" opacity="0.8"/>
+
+  <!-- ── SMALL DECORATIVE IC CHIP (bottom-right area) ─── -->
+  <rect x="700" y="650" width="60" height="44" rx="4"
+    fill="rgba(26,26,26,0.9)" stroke="#B87333" stroke-width="1.5" opacity="0.6"/>
+  <!-- Chip pins left -->
+  <line x1="694" y1="663" x2="700" y2="663" stroke="#B87333" stroke-width="2" opacity="0.6"/>
+  <line x1="694" y1="672" x2="700" y2="672" stroke="#B87333" stroke-width="2" opacity="0.6"/>
+  <line x1="694" y1="681" x2="700" y2="681" stroke="#B87333" stroke-width="2" opacity="0.6"/>
+  <!-- Chip pins right -->
+  <line x1="760" y1="663" x2="766" y2="663" stroke="#B87333" stroke-width="2" opacity="0.6"/>
+  <line x1="760" y1="672" x2="766" y2="672" stroke="#B87333" stroke-width="2" opacity="0.6"/>
+  <line x1="760" y1="681" x2="766" y2="681" stroke="#B87333" stroke-width="2" opacity="0.6"/>
+  <!-- Chip notch -->
+  <path d="M 718 650 A 8 8 0 0 1 742 650" fill="none" stroke="#B87333" stroke-width="1.5" opacity="0.5"/>
+
+  <!-- Small IC chip top-left area -->
+  <rect x="264" y="650" width="50" height="36" rx="4"
+    fill="rgba(26,26,26,0.9)" stroke="rgba(139,143,168,0.5)" stroke-width="1.5" opacity="0.5"/>
+  <line x1="258" y1="660" x2="264" y2="660" stroke="rgba(139,143,168,0.5)" stroke-width="1.5" opacity="0.5"/>
+  <line x1="258" y1="669" x2="264" y2="669" stroke="rgba(139,143,168,0.5)" stroke-width="1.5" opacity="0.5"/>
+  <line x1="258" y1="678" x2="264" y2="678" stroke="rgba(139,143,168,0.5)" stroke-width="1.5" opacity="0.5"/>
+  <line x1="314" y1="660" x2="320" y2="660" stroke="rgba(139,143,168,0.5)" stroke-width="1.5" opacity="0.5"/>
+  <line x1="314" y1="669" x2="320" y2="669" stroke="rgba(139,143,168,0.5)" stroke-width="1.5" opacity="0.5"/>
+
+  <!-- ── OUTER FRAME ACCENT ─────────────────────────────── -->
+  <rect x="40" y="40" width="944" height="944" rx="96" ry="96"
+    fill="none" stroke="rgba(184,115,51,0.1)" stroke-width="1.5"/>
+  <rect x="55" y="55" width="914" height="914" rx="84" ry="84"
+    fill="none" stroke="rgba(232,232,232,0.04)" stroke-width="1"/>
+</svg>

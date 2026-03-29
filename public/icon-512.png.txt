@@ -1,0 +1,11 @@
+PWA Icon — 512×512px
+
+Generate from icon.svg at 512×512px (0.5× scale).
+
+Recommended tools:
+  Inkscape:  inkscape icon.svg --export-png=icon-512.png --export-width=512 --export-height=512
+  sharp CLI: npx sharp-cli -i icon.svg -o icon-512.png resize 512 512
+  rsvg:      rsvg-convert -w 512 -h 512 icon.svg -o icon-512.png
+
+Place the output at: public/icon-512.png
+Used in: manifest.json, PWA install prompt (large icon)

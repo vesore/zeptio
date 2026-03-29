@@ -1,0 +1,11 @@
+PWA Icon — 192×192px
+
+Generate from icon.svg at 192×192px (0.1875× scale).
+
+Recommended tools:
+  Inkscape:  inkscape icon.svg --export-png=icon-192.png --export-width=192 --export-height=192
+  sharp CLI: npx sharp-cli -i icon.svg -o icon-192.png resize 192 192
+  rsvg:      rsvg-convert -w 192 -h 192 icon.svg -o icon-192.png
+
+Place the output at: public/icon-192.png
+Used in: manifest.json, Android home screen shortcut (small icon)
