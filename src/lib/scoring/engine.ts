@@ -2,7 +2,7 @@ import 'server-only'
 import Anthropic from '@anthropic-ai/sdk'
 
 export interface LevelConfig {
-  world: 'clarity' | 'constraints' | 'structure' | 'debug'
+  world: 'clarity' | 'constraints' | 'structure' | 'debug' | 'mastery'
   level: number
   challenge: string
   criteria: string[]

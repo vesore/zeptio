@@ -28,9 +28,8 @@ const PLANET_POS = [
 ]
 
 const CONTAINER_HEIGHT = 880
-const PLANET_R = 28  // visual radius in px — for label offset only
-
-const ROBOT_SIZE = 44  // px width of the robot head on the map
+const PLANET_R = 28
+const ROBOT_SIZE = 44
 
 interface GalaxyMapProps {
   bestScores: Record<number, number>
@@ -38,9 +37,28 @@ interface GalaxyMapProps {
 }
 
 export default function GalaxyMap({ bestScores, robotConfig = DEFAULT_ROBOT_CONFIG }: GalaxyMapProps) {
+  /** Average score for levelIds [fromId..toId] inclusive (1-indexed) */
+  function avgRange(fromId: number, toId: number): number {
+    let sum = 0
+    const count = toId - fromId + 1
+    for (let id = fromId; id <= toId; id++) sum += bestScores[id] ?? 0
+    return sum / count
+  }
+
+  /**
+   * New unlock rules (levelId is 1-indexed, matching CLARITY_LEVELS ids 1-10):
+   *  levelId 1     — always unlocked
+   *  levelId 2–5   — prev level scored 60+
+   *  levelId 6–8   — prev level 60+ AND avg(1–5) ≥ 70
+   *  levelId 9–10  — prev level 60+ AND avg(1–8) ≥ 80
+   */
   function isUnlocked(levelId: number): boolean {
     if (levelId === 1) return true
-    return (bestScores[levelId - 1] ?? 0) >= 60
+    const prevScore = bestScores[levelId - 1] ?? 0
+    if (prevScore < 60) return false
+    if (levelId >= 6 && levelId <= 8) return avgRange(1, 5) >= 70
+    if (levelId >= 9) return avgRange(1, 8) >= 80
+    return true
   }
 
   function isCompleted(levelId: number): boolean {
@@ -132,6 +150,10 @@ export default function GalaxyMap({ bestScores, robotConfig = DEFAULT_ROBOT_CONF
         const isCurrent = unlocked && !completed
         const best      = bestScores[level.id]
 
+        let lockHint = ''
+        if (!unlocked && level.id >= 9) lockHint = '80+ avg req'
+        else if (!unlocked && level.id >= 6) lockHint = '70+ avg req'
+
         const planetCircle = (
           <div
             className={completed ? 'planet-completed' : isCurrent ? 'planet-current' : ''}
@@ -185,7 +207,9 @@ export default function GalaxyMap({ bestScores, robotConfig = DEFAULT_ROBOT_CONF
               </p>
             )}
             {!unlocked && (
-              <p style={{ fontSize: '9px', marginTop: '1px', opacity: 0.5 }}>🔒</p>
+              <p style={{ fontSize: '9px', marginTop: '1px', opacity: 0.5 }}>
+                {lockHint || '🔒'}
+              </p>
             )}
           </div>
         )

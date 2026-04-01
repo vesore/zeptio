@@ -6,7 +6,7 @@ import GameRobot, { type RobotExpression } from './GameRobot'
 import { DEFAULT_ROBOT_CONFIG, type RobotConfig } from '@/app/profile/_components/RobotSVG'
 
 interface LevelConfig {
-  world: 'clarity' | 'constraints' | 'structure' | 'debug'
+  world: 'clarity' | 'constraints' | 'structure' | 'debug' | 'mastery'
   level: number
   challenge: string
   criteria: string[]
@@ -26,6 +26,7 @@ interface WordBudgetProps {
   levelConfig: LevelConfig
   nextLevelUrl?: string
   robotConfig?: RobotConfig
+  keyRule?: string
 }
 
 function countWords(text: string): number {
@@ -47,20 +48,31 @@ const CONFETTI = Array.from({ length: 32 }, (_, i) => ({
   delay:    parseFloat(((i * 0.09) % 0.7).toFixed(2)),
   duration: parseFloat((((i * 0.13) % 0.8) + 0.55).toFixed(2)),
   size:     ((i * 3) % 7) + 5,
-  shape:    i % 3 === 0 ? '50%' : i % 3 === 1 ? '2px' : '0%',  // circle / rounded / square
+  shape:    i % 3 === 0 ? '50%' : i % 3 === 1 ? '2px' : '0%',
 }))
 
-export default function WordBudget({ goal, wordLimit, levelId: _levelId, levelConfig, nextLevelUrl, robotConfig = DEFAULT_ROBOT_CONFIG }: WordBudgetProps) {
-  const [prompt, setPrompt]                   = useState('')
-  const [isLoading, setIsLoading]             = useState(false)
-  const [result, setResult]                   = useState<ScoreResult | null>(null)
-  const [error, setError]                     = useState<string | null>(null)
-  const [displayScore, setDisplayScore]       = useState(0)
-  const [scoreLanded, setScoreLanded]         = useState(false)
-  const [feedbackVisible, setFeedbackVisible] = useState(false)
-  const [announcement, setAnnouncement]       = useState('')
-  const [displayedGoal, setDisplayedGoal]     = useState('')
-  const [showCelebration, setShowCelebration] = useState(false)
+export default function WordBudget({
+  goal,
+  wordLimit,
+  levelId,
+  levelConfig,
+  nextLevelUrl,
+  robotConfig = DEFAULT_ROBOT_CONFIG,
+  keyRule,
+}: WordBudgetProps) {
+  const [ruleDismissed, setRuleDismissed]         = useState(!keyRule)
+  const [prompt, setPrompt]                       = useState('')
+  const [isLoading, setIsLoading]                 = useState(false)
+  const [result, setResult]                       = useState<ScoreResult | null>(null)
+  const [error, setError]                         = useState<string | null>(null)
+  const [displayScore, setDisplayScore]           = useState(0)
+  const [scoreLanded, setScoreLanded]             = useState(false)
+  const [feedbackVisible, setFeedbackVisible]     = useState(false)
+  const [announcement, setAnnouncement]           = useState('')
+  const [displayedGoal, setDisplayedGoal]         = useState('')
+  const [showCelebration, setShowCelebration]     = useState(false)
+  const [reflection, setReflection]               = useState('')
+  const [reflectionSaved, setReflectionSaved]     = useState(false)
   const animationRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   // Typing animation for goal text on mount
@@ -138,6 +150,8 @@ export default function WordBudget({ goal, wordLimit, levelId: _levelId, levelCo
     setScoreLanded(false)
     setFeedbackVisible(false)
     setShowCelebration(false)
+    setReflection('')
+    setReflectionSaved(false)
 
     try {
       const res = await fetch('/api/score', {
@@ -164,6 +178,24 @@ export default function WordBudget({ goal, wordLimit, levelId: _levelId, levelCo
     }
   }
 
+  async function handleSaveReflection() {
+    if (!reflection.trim() || reflectionSaved) return
+    try {
+      await fetch('/api/reflection', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          level_id: levelId,
+          world: levelConfig.world,
+          reflection: reflection.trim(),
+        }),
+      })
+      setReflectionSaved(true)
+    } catch {
+      // Silently fail — reflection is non-critical
+    }
+  }
+
   function handleReset() {
     setPrompt('')
     setResult(null)
@@ -173,6 +205,8 @@ export default function WordBudget({ goal, wordLimit, levelId: _levelId, levelCo
     setFeedbackVisible(false)
     setAnnouncement('')
     setShowCelebration(false)
+    setReflection('')
+    setReflectionSaved(false)
   }
 
   const wordCount = countWords(prompt)
@@ -185,7 +219,6 @@ export default function WordBudget({ goal, wordLimit, levelId: _levelId, levelCo
     : displayScore >= 40 ? '#B87333'
     : '#C84B1F'
 
-  // Derive robot expression
   const robotExpression: RobotExpression =
     isLoading                           ? 'loading'
     : result !== null && !scoreLanded   ? 'loading'
@@ -197,6 +230,50 @@ export default function WordBudget({ goal, wordLimit, levelId: _levelId, levelCo
     : prompt.trim() !== ''              ? 'typing'
     : 'idle'
 
+  // ── KEY RULE GATE ──────────────────────────────────────────────────────────
+  if (!ruleDismissed && keyRule) {
+    return (
+      <div className="min-h-screen w-full flex items-center justify-center px-4" style={{ background: '#0F0F0F' }}>
+        <div
+          className="w-full max-w-2xl mx-auto"
+          style={{
+            background: 'rgba(255,255,255,0.04)',
+            border: '1px solid rgba(0,255,136,0.2)',
+            borderRadius: '24px',
+            padding: '40px 32px',
+            boxShadow: '0 0 40px rgba(0,255,136,0.06)',
+          }}
+        >
+          <p
+            className="text-xs font-mono font-semibold uppercase tracking-widest mb-6 text-center"
+            style={{ color: 'rgba(0,255,136,0.5)' }}
+          >
+            Key Rule
+          </p>
+          <p
+            className="text-2xl sm:text-3xl font-black text-center leading-tight mb-10"
+            style={{
+              color: '#E8E8E8',
+              textShadow: '0 0 20px rgba(0,255,136,0.15)',
+              fontFamily: 'monospace',
+              letterSpacing: '0.02em',
+            }}
+          >
+            &ldquo;{keyRule}&rdquo;
+          </p>
+          <button
+            onClick={() => setRuleDismissed(true)}
+            className="w-full py-4 font-bold text-sm tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00FF88] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent btn-primary"
+            autoFocus
+          >
+            Got it, let&apos;s play
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  // ── MAIN GAME UI ───────────────────────────────────────────────────────────
   return (
     <div className="min-h-screen w-full max-w-full overflow-x-hidden flex items-center justify-center" style={{ background: '#0F0F0F' }}>
       {/* Screen-reader live region */}
@@ -274,6 +351,21 @@ export default function WordBudget({ goal, wordLimit, levelId: _levelId, levelCo
             backdropFilter: 'blur(12px)',
           }}
         >
+
+          {/* Key Rule pill (visible after dismissal, as a reminder) */}
+          {keyRule && (
+            <div
+              className="rounded-2xl px-4 py-3 text-center"
+              style={{
+                background: 'rgba(0,255,136,0.04)',
+                border: '1px solid rgba(0,255,136,0.12)',
+              }}
+            >
+              <p className="text-xs font-mono" style={{ color: 'rgba(0,255,136,0.5)' }}>
+                &ldquo;{keyRule}&rdquo;
+              </p>
+            </div>
+          )}
 
           {/* Goal */}
           <div>
@@ -417,6 +509,63 @@ export default function WordBudget({ goal, wordLimit, levelId: _levelId, levelCo
                 </p>
                 <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.75)' }} aria-labelledby="feedback-label">
                   {result.feedback}
+                </p>
+              </div>
+
+              {/* Reflection question */}
+              <div
+                className="rounded-3xl p-6 flex flex-col gap-3 transition-opacity duration-500"
+                style={{
+                  opacity: feedbackVisible ? 1 : 0,
+                  background: 'rgba(184,115,51,0.04)',
+                  border: '1px solid rgba(184,115,51,0.15)',
+                }}
+              >
+                <label
+                  htmlFor="reflection-input"
+                  className="text-xs font-mono font-semibold uppercase tracking-widest"
+                  style={{ color: '#B87333' }}
+                >
+                  Reflection
+                </label>
+                <p className="text-sm" style={{ color: 'rgba(255,255,255,0.5)' }}>
+                  What made your best attempt work better than your first?
+                </p>
+                <div className="flex gap-2 items-start">
+                  <textarea
+                    id="reflection-input"
+                    className="flex-1 rounded-xl p-3 text-sm resize-none outline-none transition-all duration-200 focus-visible:ring-1 focus-visible:ring-[#B87333]"
+                    style={{
+                      background: 'rgba(255,255,255,0.04)',
+                      border: '1px solid rgba(184,115,51,0.2)',
+                      color: 'rgba(255,255,255,0.8)',
+                      minHeight: '60px',
+                      caretColor: '#B87333',
+                    }}
+                    placeholder="Type your reflection…"
+                    value={reflection}
+                    onChange={(e) => setReflection(e.target.value.slice(0, 100))}
+                    maxLength={100}
+                    disabled={reflectionSaved}
+                    aria-label="Your reflection on this attempt"
+                  />
+                  <button
+                    onClick={handleSaveReflection}
+                    disabled={!reflection.trim() || reflectionSaved}
+                    className="shrink-0 rounded-xl px-4 py-3 text-xs font-bold transition-all duration-200"
+                    style={{
+                      background: reflectionSaved ? 'rgba(0,255,136,0.1)' : 'rgba(184,115,51,0.15)',
+                      border: `1px solid ${reflectionSaved ? 'rgba(0,255,136,0.3)' : 'rgba(184,115,51,0.3)'}`,
+                      color: reflectionSaved ? '#00FF88' : '#B87333',
+                      cursor: reflectionSaved ? 'default' : 'pointer',
+                    }}
+                    aria-label={reflectionSaved ? 'Reflection saved' : 'Save reflection'}
+                  >
+                    {reflectionSaved ? '✓ Saved' : 'Save'}
+                  </button>
+                </div>
+                <p className="text-xs font-mono text-right" style={{ color: 'rgba(255,255,255,0.2)' }}>
+                  {reflection.length}/100
                 </p>
               </div>
 

@@ -5,8 +5,45 @@ import WordBudget from '@/src/components/game/WordBudget'
 import { CLARITY_LEVELS } from '@/src/lib/game/clarity-levels'
 import { DEFAULT_ROBOT_CONFIG, type RobotConfig } from '@/app/profile/_components/RobotSVG'
 
+const CLARITY_KEY_RULES = [
+  'Clear prompts get clear answers.',
+  'Specificity is kindness to the AI.',
+  'Know your audience before you write.',
+  'Context changes everything.',
+  'Details unlock better outputs.',
+  'Preparation beats improvisation.',
+  'Constraints define the solution.',
+  'Precision is a skill, not an accident.',
+  'Simple language travels further.',
+  'Mastery is clarity under pressure.',
+]
+
 interface Props {
   params: Promise<{ level: string }>
+}
+
+/** Average score for level IDs [fromId..toId] inclusive */
+function avgRange(bestScores: Map<number, number>, fromId: number, toId: number): number {
+  let sum = 0
+  const count = toId - fromId + 1
+  for (let id = fromId; id <= toId; id++) sum += bestScores.get(id) ?? 0
+  return sum / count
+}
+
+/**
+ * New unlock rules (levelId 1-indexed, matching clarity IDs 1-10):
+ *  levelId 1     — always unlocked
+ *  levelId 2–5   — prev level scored 60+
+ *  levelId 6–8   — prev 60+ AND avg(1–5) ≥ 70
+ *  levelId 9–10  — prev 60+ AND avg(1–8) ≥ 80
+ */
+function isLevelUnlocked(levelId: number, bestScores: Map<number, number>): boolean {
+  if (levelId === 1) return true
+  const prevScore = bestScores.get(levelId - 1) ?? 0
+  if (prevScore < 60) return false
+  if (levelId >= 6 && levelId <= 8) return avgRange(bestScores, 1, 5) >= 70
+  if (levelId >= 9) return avgRange(bestScores, 1, 8) >= 80
+  return true
 }
 
 export default async function ClarityLevelPage({ params }: Props) {
@@ -21,15 +58,18 @@ export default async function ClarityLevelPage({ params }: Props) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/auth/login')
 
-  // Check if this level is unlocked + fetch robot config in parallel
-  const [prevScoresResult, profileResult] = await Promise.all([
-    levelId > 1
-      ? supabase.from('xp_ledger').select('score').eq('user_id', user.id).eq('world', 'clarity').eq('level', levelId - 1).limit(1)
-      : Promise.resolve({ data: [{}] }),
+  const [{ data: scoreRows }, profileResult] = await Promise.all([
+    supabase.from('xp_ledger').select('level, score').eq('user_id', user.id).eq('world', 'clarity'),
     supabase.from('profiles').select('robot_config').eq('id', user.id).maybeSingle(),
   ])
 
-  if (levelId > 1 && !prevScoresResult.data?.length) redirect('/dashboard/clarity')
+  const bestScores = new Map<number, number>()
+  for (const row of scoreRows ?? []) {
+    const cur = bestScores.get(row.level) ?? 0
+    if ((row.score ?? 0) > cur) bestScores.set(row.level, row.score)
+  }
+
+  if (!isLevelUnlocked(levelId, bestScores)) redirect('/dashboard/clarity')
 
   const rawRobot = (profileResult.data as { robot_config?: unknown } | null)?.robot_config
   const robotConfig: RobotConfig = rawRobot && typeof rawRobot === 'object'
@@ -75,6 +115,7 @@ export default async function ClarityLevelPage({ params }: Props) {
         levelConfig={levelConfig}
         nextLevelUrl={nextLevelUrl}
         robotConfig={robotConfig}
+        keyRule={CLARITY_KEY_RULES[levelId - 1]}
       />
     </div>
   )

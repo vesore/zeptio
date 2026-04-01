@@ -2,11 +2,9 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/src/lib/supabase/server'
 import { DEBUG_LEVELS } from '@/src/lib/game/debug-levels'
-import { STRUCTURE_LEVELS } from '@/src/lib/game/structure-levels'
 import WorldGalaxyMap from '@/app/dashboard/_components/WorldGalaxyMap'
 import { DEFAULT_ROBOT_CONFIG, type RobotConfig } from '@/app/profile/_components/RobotSVG'
 
-const STRUCTURE_LEVEL_COUNT = STRUCTURE_LEVELS.length
 const ACCENT = '#C84B1F'
 
 export default async function DebugPage() {
@@ -14,29 +12,6 @@ export default async function DebugPage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/auth/login')
 
-  // Verify Structure unlock requirement (avg 80+ across all levels)
-  const { data: structureRows } = await supabase
-    .from('xp_ledger')
-    .select('level, score')
-    .eq('user_id', user.id)
-    .eq('world', 'structure')
-
-  const structureBest = new Map<number, number>()
-  for (const row of structureRows ?? []) {
-    const cur = structureBest.get(row.level) ?? 0
-    if ((row.score ?? 0) > cur) structureBest.set(row.level, row.score)
-  }
-
-  const structureCompleted = structureBest.size === STRUCTURE_LEVEL_COUNT
-  const structureAvg = structureCompleted
-    ? Array.from(structureBest.values()).reduce((a, b) => a + b, 0) / STRUCTURE_LEVEL_COUNT
-    : 0
-
-  if (!structureCompleted || structureAvg < 80) {
-    redirect('/dashboard')
-  }
-
-  // Load Debug scores + robot config in parallel
   const [{ data: scoreRows }, { data: profileData }] = await Promise.all([
     supabase.from('xp_ledger').select('level, score').eq('user_id', user.id).eq('world', 'debug'),
     supabase.from('profiles').select('robot_config').eq('id', user.id).maybeSingle(),
@@ -66,7 +41,7 @@ export default async function DebugPage() {
         <div className="pt-5 pb-2 flex items-center justify-between">
           <Link
             href="/dashboard"
-            className="text-sm font-mono transition-colors duration-200"
+            className="text-sm font-mono transition-colors duration-200 hover:text-[#C84B1F]"
             style={{ color: 'rgba(255,255,255,0.35)' }}
           >
             ← Home

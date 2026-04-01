@@ -3,13 +3,41 @@ import { notFound, redirect } from 'next/navigation'
 import { createClient } from '@/src/lib/supabase/server'
 import WordBudget from '@/src/components/game/WordBudget'
 import { DEBUG_LEVELS } from '@/src/lib/game/debug-levels'
-import { STRUCTURE_LEVELS } from '@/src/lib/game/structure-levels'
 import { DEFAULT_ROBOT_CONFIG, type RobotConfig } from '@/app/profile/_components/RobotSVG'
 
-const STRUCTURE_LEVEL_COUNT = STRUCTURE_LEVELS.length
+const DEBUG_KEY_RULES = [
+  'Vague prompts get vague answers.',
+  'Ambiguity is the enemy of output.',
+  'Contradictions confuse, clarity converts.',
+  'Bias in prompt means bias in output.',
+  'Impossible constraints produce impossible results.',
+  'Missing context is a silent killer.',
+  'Creativity and rules can coexist.',
+  'Specificity is the antidote to confusion.',
+  'One goal per prompt.',
+  'The best debugger is a fresh read.',
+]
 
 interface Props {
   params: Promise<{ level: string }>
+}
+
+function isLevelUnlocked(levelIndex: number, bestScores: Map<number, number>, levels: typeof DEBUG_LEVELS): boolean {
+  if (levelIndex === 1) return true
+  const prevId = levels[levelIndex - 2].id
+  const prevScore = bestScores.get(prevId) ?? 0
+  if (prevScore < 60) return false
+  if (levelIndex >= 6 && levelIndex <= 8) {
+    const ids = levels.slice(0, 5).map(l => l.id)
+    const avg = ids.reduce((s, id) => s + (bestScores.get(id) ?? 0), 0) / ids.length
+    return avg >= 70
+  }
+  if (levelIndex >= 9) {
+    const ids = levels.slice(0, 8).map(l => l.id)
+    const avg = ids.reduce((s, id) => s + (bestScores.get(id) ?? 0), 0) / ids.length
+    return avg >= 80
+  }
+  return true
 }
 
 export default async function DebugLevelPage({ params }: Props) {
@@ -24,37 +52,18 @@ export default async function DebugLevelPage({ params }: Props) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/auth/login')
 
-  // Verify Structure unlock requirement (avg 80+)
-  const { data: structureRows } = await supabase
-    .from('xp_ledger')
-    .select('level, score')
-    .eq('user_id', user.id)
-    .eq('world', 'structure')
-
-  const structureBest = new Map<number, number>()
-  for (const row of structureRows ?? []) {
-    const cur = structureBest.get(row.level) ?? 0
-    if ((row.score ?? 0) > cur) structureBest.set(row.level, row.score)
-  }
-
-  const structureCompleted = structureBest.size === STRUCTURE_LEVEL_COUNT
-  const structureAvg = structureCompleted
-    ? Array.from(structureBest.values()).reduce((a, b) => a + b, 0) / STRUCTURE_LEVEL_COUNT
-    : 0
-
-  if (!structureCompleted || structureAvg < 80) {
-    redirect('/dashboard')
-  }
-
-  // Check if this debug level is unlocked (previous level scored 60+)
-  const [prevResult, profileResult] = await Promise.all([
-    levelIndex > 1
-      ? supabase.from('xp_ledger').select('score').eq('user_id', user.id).eq('world', 'debug').eq('level', DEBUG_LEVELS[levelIndex - 2].id).limit(1)
-      : Promise.resolve({ data: [{}] }),
+  const [{ data: scoreRows }, profileResult] = await Promise.all([
+    supabase.from('xp_ledger').select('level, score').eq('user_id', user.id).eq('world', 'debug'),
     supabase.from('profiles').select('robot_config').eq('id', user.id).maybeSingle(),
   ])
 
-  if (levelIndex > 1 && !prevResult.data?.length) redirect('/dashboard/debug')
+  const bestScores = new Map<number, number>()
+  for (const row of scoreRows ?? []) {
+    const cur = bestScores.get(row.level) ?? 0
+    if ((row.score ?? 0) > cur) bestScores.set(row.level, row.score)
+  }
+
+  if (!isLevelUnlocked(levelIndex, bestScores, DEBUG_LEVELS)) redirect('/dashboard/debug')
 
   const rawRobot = (profileResult.data as { robot_config?: unknown } | null)?.robot_config
   const robotConfig: RobotConfig = rawRobot && typeof rawRobot === 'object'
@@ -99,6 +108,7 @@ export default async function DebugLevelPage({ params }: Props) {
         levelConfig={levelConfig}
         nextLevelUrl={nextLevelUrl}
         robotConfig={robotConfig}
+        keyRule={DEBUG_KEY_RULES[levelIndex - 1]}
       />
     </div>
   )

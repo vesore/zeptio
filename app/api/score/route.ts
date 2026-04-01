@@ -34,6 +34,11 @@ export async function POST(request: NextRequest) {
   try {
     const result = await scoreResponse(user_prompt, level_config as LevelConfig)
 
+    // Double XP for Mastery world
+    if ((level_config as LevelConfig).world === 'mastery') {
+      result.xp_earned = result.score * 2
+    }
+
     // Persist XP and update streak — non-blocking; never fail the score response
     const { world, level } = level_config as LevelConfig
     const todayUTC = new Date().toISOString().split('T')[0]

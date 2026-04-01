@@ -3,13 +3,41 @@ import { notFound, redirect } from 'next/navigation'
 import { createClient } from '@/src/lib/supabase/server'
 import WordBudget from '@/src/components/game/WordBudget'
 import { STRUCTURE_LEVELS } from '@/src/lib/game/structure-levels'
-import { CONSTRAINTS_LEVELS } from '@/src/lib/game/constraints-levels'
 import { DEFAULT_ROBOT_CONFIG, type RobotConfig } from '@/app/profile/_components/RobotSVG'
 
-const CONSTRAINTS_LEVEL_COUNT = CONSTRAINTS_LEVELS.length
+const STRUCTURE_KEY_RULES = [
+  'Structure is invisible when done right.',
+  'Format shapes the answer.',
+  'Tables reveal patterns words hide.',
+  'Balance creates credibility.',
+  'Sentences have architecture.',
+  'A clear structure guides clear thinking.',
+  'Ranked lists force prioritization.',
+  'Data needs a container.',
+  'Before and after shows transformation.',
+  'The best prompt is a blueprint.',
+]
 
 interface Props {
   params: Promise<{ level: string }>
+}
+
+function isLevelUnlocked(levelIndex: number, bestScores: Map<number, number>, levels: typeof STRUCTURE_LEVELS): boolean {
+  if (levelIndex === 1) return true
+  const prevId = levels[levelIndex - 2].id
+  const prevScore = bestScores.get(prevId) ?? 0
+  if (prevScore < 60) return false
+  if (levelIndex >= 6 && levelIndex <= 8) {
+    const ids = levels.slice(0, 5).map(l => l.id)
+    const avg = ids.reduce((s, id) => s + (bestScores.get(id) ?? 0), 0) / ids.length
+    return avg >= 70
+  }
+  if (levelIndex >= 9) {
+    const ids = levels.slice(0, 8).map(l => l.id)
+    const avg = ids.reduce((s, id) => s + (bestScores.get(id) ?? 0), 0) / ids.length
+    return avg >= 80
+  }
+  return true
 }
 
 export default async function StructureLevelPage({ params }: Props) {
@@ -24,37 +52,18 @@ export default async function StructureLevelPage({ params }: Props) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/auth/login')
 
-  // Verify Constraints unlock requirement (avg 80+)
-  const { data: constraintsRows } = await supabase
-    .from('xp_ledger')
-    .select('level, score')
-    .eq('user_id', user.id)
-    .eq('world', 'constraints')
-
-  const constraintsBest = new Map<number, number>()
-  for (const row of constraintsRows ?? []) {
-    const cur = constraintsBest.get(row.level) ?? 0
-    if ((row.score ?? 0) > cur) constraintsBest.set(row.level, row.score)
-  }
-
-  const constraintsCompleted = constraintsBest.size === CONSTRAINTS_LEVEL_COUNT
-  const constraintsAvg = constraintsCompleted
-    ? Array.from(constraintsBest.values()).reduce((a, b) => a + b, 0) / CONSTRAINTS_LEVEL_COUNT
-    : 0
-
-  if (!constraintsCompleted || constraintsAvg < 80) {
-    redirect('/dashboard')
-  }
-
-  // Check if this structure level is unlocked (previous level scored 60+)
-  const [prevResult, profileResult] = await Promise.all([
-    levelIndex > 1
-      ? supabase.from('xp_ledger').select('score').eq('user_id', user.id).eq('world', 'structure').eq('level', STRUCTURE_LEVELS[levelIndex - 2].id).limit(1)
-      : Promise.resolve({ data: [{}] }),
+  const [{ data: scoreRows }, profileResult] = await Promise.all([
+    supabase.from('xp_ledger').select('level, score').eq('user_id', user.id).eq('world', 'structure'),
     supabase.from('profiles').select('robot_config').eq('id', user.id).maybeSingle(),
   ])
 
-  if (levelIndex > 1 && !prevResult.data?.length) redirect('/dashboard/structure')
+  const bestScores = new Map<number, number>()
+  for (const row of scoreRows ?? []) {
+    const cur = bestScores.get(row.level) ?? 0
+    if ((row.score ?? 0) > cur) bestScores.set(row.level, row.score)
+  }
+
+  if (!isLevelUnlocked(levelIndex, bestScores, STRUCTURE_LEVELS)) redirect('/dashboard/structure')
 
   const rawRobot = (profileResult.data as { robot_config?: unknown } | null)?.robot_config
   const robotConfig: RobotConfig = rawRobot && typeof rawRobot === 'object'
@@ -99,6 +108,7 @@ export default async function StructureLevelPage({ params }: Props) {
         levelConfig={levelConfig}
         nextLevelUrl={nextLevelUrl}
         robotConfig={robotConfig}
+        keyRule={STRUCTURE_KEY_RULES[levelIndex - 1]}
       />
     </div>
   )

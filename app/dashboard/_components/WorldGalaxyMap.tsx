@@ -43,6 +43,11 @@ interface WorldGalaxyMapProps {
   accent:       string
   /** Returns the URL for a 1-based level index, e.g. (i) => `/dashboard/structure/${i}` */
   baseLevelHref: (levelIndex: number) => string
+  /**
+   * Optional override for unlock status (one boolean per level, 0-indexed).
+   * When provided, this replaces the default unlock logic entirely.
+   */
+  unlockedOverride?: boolean[]
 }
 
 export default function WorldGalaxyMap({
@@ -51,10 +56,32 @@ export default function WorldGalaxyMap({
   robotConfig = DEFAULT_ROBOT_CONFIG,
   accent,
   baseLevelHref,
+  unlockedOverride,
 }: WorldGalaxyMapProps) {
+  /** Compute average score for levels[fromIdx..toIdx] (inclusive) */
+  function avgRange(fromIdx: number, toIdx: number): number {
+    const slice = levels.slice(fromIdx, toIdx + 1)
+    if (slice.length === 0) return 0
+    return slice.reduce((sum, l) => sum + (bestScores[l.id] ?? 0), 0) / slice.length
+  }
+
+  /**
+   * New unlock rules (0-indexed):
+   *  idx 0         — always unlocked (Level 1)
+   *  idx 1–4       — prev level scored 60+
+   *  idx 5–7       — prev level 60+ AND avg(0–4) ≥ 70
+   *  idx 8–9       — prev level 60+ AND avg(0–7) ≥ 80
+   *
+   * If `unlockedOverride` is provided it takes full precedence.
+   */
   function isUnlocked(idx: number): boolean {
+    if (unlockedOverride) return unlockedOverride[idx] ?? false
     if (idx === 0) return true
-    return (bestScores[levels[idx - 1].id] ?? 0) >= 60
+    const prevScore = bestScores[levels[idx - 1].id] ?? 0
+    if (prevScore < 60) return false
+    if (idx >= 5 && idx <= 7) return avgRange(0, 4) >= 70
+    if (idx >= 8) return avgRange(0, 7) >= 80
+    return true
   }
 
   function isCompleted(idx: number): boolean {
@@ -132,6 +159,11 @@ export default function WorldGalaxyMap({
         const isCurrent = unlocked && !completed
         const best      = bestScores[level.id]
 
+        // Unlock hint for locked levels
+        let lockHint = ''
+        if (!unlocked && i >= 8) lockHint = '80+ avg req'
+        else if (!unlocked && i >= 5) lockHint = '70+ avg req'
+
         const planet = (
           <div
             className={completed ? 'planet-completed' : isCurrent ? 'planet-current' : ''}
@@ -165,7 +197,11 @@ export default function WorldGalaxyMap({
                 {best}/100
               </p>
             )}
-            {!unlocked && <p style={{ fontSize: '9px', marginTop: '1px', opacity: 0.5 }}>🔒</p>}
+            {!unlocked && (
+              <p style={{ fontSize: '9px', marginTop: '1px', opacity: 0.5 }}>
+                {lockHint || '🔒'}
+              </p>
+            )}
           </div>
         )
 

@@ -2,11 +2,9 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/src/lib/supabase/server'
 import { CONSTRAINTS_LEVELS } from '@/src/lib/game/constraints-levels'
-import { CLARITY_LEVELS } from '@/src/lib/game/clarity-levels'
 import WorldGalaxyMap from '@/app/dashboard/_components/WorldGalaxyMap'
 import { DEFAULT_ROBOT_CONFIG, type RobotConfig } from '@/app/profile/_components/RobotSVG'
 
-const CLARITY_LEVEL_COUNT = CLARITY_LEVELS.length
 const ACCENT = '#B87333'
 
 export default async function ConstraintsPage() {
@@ -14,29 +12,6 @@ export default async function ConstraintsPage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/auth/login')
 
-  // Verify Clarity unlock requirement (avg 80+ across all levels)
-  const { data: clarityRows } = await supabase
-    .from('xp_ledger')
-    .select('level, score')
-    .eq('user_id', user.id)
-    .eq('world', 'clarity')
-
-  const clarityBest = new Map<number, number>()
-  for (const row of clarityRows ?? []) {
-    const cur = clarityBest.get(row.level) ?? 0
-    if ((row.score ?? 0) > cur) clarityBest.set(row.level, row.score)
-  }
-
-  const clarityCompleted = clarityBest.size === CLARITY_LEVEL_COUNT
-  const clarityAvg = clarityCompleted
-    ? Array.from(clarityBest.values()).reduce((a, b) => a + b, 0) / CLARITY_LEVEL_COUNT
-    : 0
-
-  if (!clarityCompleted || clarityAvg < 80) {
-    redirect('/dashboard')
-  }
-
-  // Load Constraints scores + robot config in parallel
   const [{ data: scoreRows }, { data: profileData }] = await Promise.all([
     supabase.from('xp_ledger').select('level, score').eq('user_id', user.id).eq('world', 'constraints'),
     supabase.from('profiles').select('robot_config').eq('id', user.id).maybeSingle(),
@@ -66,7 +41,7 @@ export default async function ConstraintsPage() {
         <div className="pt-5 pb-2 flex items-center justify-between">
           <Link
             href="/dashboard"
-            className="text-sm font-mono transition-colors duration-200"
+            className="text-sm font-mono transition-colors duration-200 hover:text-[#B87333]"
             style={{ color: 'rgba(255,255,255,0.35)' }}
           >
             ← Home

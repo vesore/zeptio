@@ -6,6 +6,7 @@ import { CLARITY_LEVELS }     from '@/src/lib/game/clarity-levels'
 import { CONSTRAINTS_LEVELS } from '@/src/lib/game/constraints-levels'
 import { STRUCTURE_LEVELS }   from '@/src/lib/game/structure-levels'
 import { DEBUG_LEVELS }       from '@/src/lib/game/debug-levels'
+import DailySuggestion from '@/src/components/dashboard/DailySuggestion'
 
 const CLARITY_COUNT     = CLARITY_LEVELS.length
 const CONSTRAINTS_COUNT = CONSTRAINTS_LEVELS.length
@@ -36,7 +37,7 @@ function worldTotalXp(best: Map<number, number>): number {
   return Array.from(best.values()).reduce((s, v) => s + v, 0)
 }
 
-function worldAvg(best: Map<number, number>, count: number): number {
+function worldAvgOf(best: Map<number, number>, count: number): number {
   if (best.size < count) return 0
   return Array.from(best.values()).reduce((a, b) => a + b, 0) / count
 }
@@ -73,9 +74,6 @@ export default async function DashboardPage() {
     supabase.from('profiles').select('name, robot_config').eq('id', user.id).maybeSingle(),
   ])
 
-  const displayName = profile?.name ?? user.email ?? ''
-  const firstName   = displayName.split(' ')[0]
-
   const rawRobotConfig = (profile as { robot_config?: unknown } | null)?.robot_config
   const robotConfig: RobotConfig = rawRobotConfig && typeof rawRobotConfig === 'object'
     ? { ...DEFAULT_ROBOT_CONFIG, ...(rawRobotConfig as Partial<RobotConfig>) }
@@ -96,16 +94,6 @@ export default async function DashboardPage() {
   const structureBest   = buildBestMap(structureRows)
   const debugBest       = buildBestMap(debugRows)
 
-  // Unlock chain — each world needs prev world completed at avg 80+
-  const clarityAvg          = worldAvg(clarityBest, CLARITY_COUNT)
-  const constraintsUnlocked = clarityBest.size === CLARITY_COUNT && clarityAvg >= 80
-
-  const constraintsAvg     = worldAvg(constraintsBest, CONSTRAINTS_COUNT)
-  const structureUnlocked  = constraintsBest.size === CONSTRAINTS_COUNT && constraintsAvg >= 80
-
-  const structureAvg   = worldAvg(structureBest, STRUCTURE_COUNT)
-  const debugUnlocked  = structureBest.size === STRUCTURE_COUNT && structureAvg >= 80
-
   // World completion checks (all 60+)
   const clarityAllComplete     = clarityBest.size >= CLARITY_COUNT && Array.from(clarityBest.values()).every(s => s >= 60)
   const constraintsAllComplete = constraintsBest.size >= CONSTRAINTS_COUNT && Array.from(constraintsBest.values()).every(s => s >= 60)
@@ -125,49 +113,62 @@ export default async function DashboardPage() {
 
   const allWorldsComplete = clarityAllComplete && constraintsAllComplete && structureAllComplete && debugAllComplete
 
-  // Active world
+  // Mastery unlocks when Level 1 of ALL 4 worlds scored 80+
+  // Clarity level 1 = ID 1, Constraints level 1 = ID 11, Structure level 1 = ID 21, Debug level 1 = ID 31
+  const masteryUnlocked =
+    (clarityBest.get(1) ?? 0) >= 80 &&
+    (constraintsBest.get(11) ?? 0) >= 80 &&
+    (structureBest.get(21) ?? 0) >= 80 &&
+    (debugBest.get(31) ?? 0) >= 80
+
+  // Active world — most advanced world with any attempts
   const activeWorld =
-    debugUnlocked && debugBest.size > 0       ? 'debug'
-    : structureUnlocked && structureBest.size > 0 ? 'structure'
-    : constraintsUnlocked && constraintsBest.size > 0 ? 'constraints'
+    debugBest.size > 0       ? 'debug'
+    : structureBest.size > 0 ? 'structure'
+    : constraintsBest.size > 0 ? 'constraints'
     : 'clarity'
+
+  // Daily suggestion — world with lowest avg score (only count worlds with any score)
+  const worldAvgs: Array<{ id: string; name: string; href: string; accent: string; avg: number }> = [
+    { id: 'clarity',     name: 'Clarity',     href: '/dashboard/clarity',     accent: '#00FF88', avg: worldAvgOf(clarityBest, CLARITY_COUNT) },
+    { id: 'constraints', name: 'Constraints', href: '/dashboard/constraints', accent: '#B87333', avg: worldAvgOf(constraintsBest, CONSTRAINTS_COUNT) },
+    { id: 'structure',   name: 'Structure',   href: '/dashboard/structure',   accent: '#8B8FA8', avg: worldAvgOf(structureBest, STRUCTURE_COUNT) },
+    { id: 'debug',       name: 'Debug',       href: '/dashboard/debug',       accent: '#C84B1F', avg: worldAvgOf(debugBest, DEBUG_COUNT) },
+  ]
+  const worldsAttempted = worldAvgs.filter(w => w.avg > 0)
+  const weakestWorld = worldsAttempted.length > 0
+    ? worldsAttempted.reduce((a, b) => a.avg < b.avg ? a : b)
+    : null
 
   type WorldDef = {
     id: string; name: string; subtitle: string; emoji: string; levelCount: number;
-    accent: string; accentRgb: string; href?: string; locked: boolean;
-    completed: boolean; lockMessage: string; parts: number; totalXp: number;
-    partLabel: string;
+    accent: string; accentRgb: string; href: string; completed: boolean;
+    parts: number; totalXp: number; partLabel: string;
   }
 
   const WORLDS: WorldDef[] = [
     {
       id: 'clarity', name: 'CLARITY', subtitle: 'The Brain', emoji: '🧠',
       levelCount: CLARITY_COUNT, accent: '#00FF88', accentRgb: '0,255,136',
-      href: '/dashboard/clarity', locked: false, completed: clarityAllComplete,
-      lockMessage: '', parts: brainParts, totalXp: clarityXp, partLabel: 'Brain Parts',
+      href: '/dashboard/clarity', completed: clarityAllComplete,
+      parts: brainParts, totalXp: clarityXp, partLabel: 'Brain Parts',
     },
     {
       id: 'constraints', name: 'CONSTRAINTS', subtitle: 'The Gears', emoji: '⚙️',
       levelCount: CONSTRAINTS_COUNT, accent: '#B87333', accentRgb: '184,115,51',
-      href: constraintsUnlocked ? '/dashboard/constraints' : undefined,
-      locked: !constraintsUnlocked, completed: constraintsAllComplete,
-      lockMessage: 'Complete Clarity 80+ avg',
+      href: '/dashboard/constraints', completed: constraintsAllComplete,
       parts: gearParts, totalXp: constraintsXp, partLabel: 'Gear Parts',
     },
     {
       id: 'structure', name: 'STRUCTURE', subtitle: 'The Arms', emoji: '🦾',
       levelCount: STRUCTURE_COUNT, accent: '#8B8FA8', accentRgb: '139,143,168',
-      href: structureUnlocked ? '/dashboard/structure' : undefined,
-      locked: !structureUnlocked, completed: structureAllComplete,
-      lockMessage: 'Complete Constraints 80+ avg',
+      href: '/dashboard/structure', completed: structureAllComplete,
       parts: armParts, totalXp: structureXp, partLabel: 'Arm Parts',
     },
     {
       id: 'debug', name: 'DEBUG', subtitle: 'The Eyes', emoji: '👁️',
       levelCount: DEBUG_COUNT, accent: '#C84B1F', accentRgb: '200,75,31',
-      href: debugUnlocked ? '/dashboard/debug' : undefined,
-      locked: !debugUnlocked, completed: debugAllComplete,
-      lockMessage: 'Complete Structure 80+ avg',
+      href: '/dashboard/debug', completed: debugAllComplete,
       parts: eyeParts, totalXp: debugXp, partLabel: 'Eye Parts',
     },
   ]
@@ -229,7 +230,16 @@ export default async function DashboardPage() {
 
       {/* ── TOP BAR ──────────────────────────────── */}
       <div className="relative z-10 shrink-0 grid grid-cols-3 items-center px-4 pt-4 pb-1">
-        <div className="w-12 h-12" />
+        <div className="flex justify-start">
+          <Link
+            href="/journal"
+            className="text-xs font-mono transition-colors duration-200 hover:text-[#B87333]"
+            style={{ color: 'rgba(255,255,255,0.3)' }}
+            aria-label="Learning Journal"
+          >
+            Journal
+          </Link>
+        </div>
         <div className="flex justify-center">
           <span
             className="holo-flicker font-mono font-black tracking-widest text-3xl sm:text-4xl uppercase"
@@ -285,7 +295,6 @@ export default async function DashboardPage() {
             fill={eyeParts > 0 ? '#00FF88' : 'rgba(255,255,255,0.06)'}
             opacity={eyeParts > 0 ? 0.9 : 1}
           />
-          {/* Eye pupils */}
           {eyeParts > 0 && <>
             <circle cx="37" cy="13" r="2" fill="#0F0F0F" />
             <circle cx="53" cy="13" r="2" fill="#0F0F0F" />
@@ -302,7 +311,6 @@ export default async function DashboardPage() {
             stroke={gearParts > 0 ? '#B87333' : 'rgba(255,255,255,0.1)'}
             strokeWidth="1.5"
           />
-          {/* Gear dots on torso */}
           {gearParts > 0 && <>
             <circle cx="35" cy="50" r="5" fill="none" stroke="#B87333" strokeWidth="1.2" opacity="0.6" />
             <circle cx="45" cy="50" r="3" fill="none" stroke="#B87333" strokeWidth="1.2" opacity="0.4" />
@@ -320,7 +328,6 @@ export default async function DashboardPage() {
             stroke={armParts > 0 ? '#8B8FA8' : 'rgba(255,255,255,0.1)'}
             strokeWidth="1.5"
           />
-          {/* Arm highlights */}
           {armParts > 0 && <>
             <rect x="8"  y="48" width="5" height="2" rx="1" fill="#8B8FA8" opacity="0.5" />
             <rect x="77" y="48" width="5" height="2" rx="1" fill="#8B8FA8" opacity="0.5" />
@@ -341,7 +348,7 @@ export default async function DashboardPage() {
         </svg>
       </div>
 
-      {/* ── WORLD GRID + MASTERY ─────────────────── */}
+      {/* ── WORLD GRID + MASTERY + SUGGESTION ─── */}
       <div className="relative z-10 flex-1 min-h-0 px-3 sm:px-6 py-2 flex flex-col gap-2 sm:gap-3">
 
         <div className="grid grid-cols-2 gap-2 sm:gap-3 flex-1 min-h-0" role="list" aria-label="Game worlds">
@@ -355,27 +362,18 @@ export default async function DashboardPage() {
                 <div className="absolute top-0 left-0 right-0 pointer-events-none" style={{
                   height: '2px',
                   background: `linear-gradient(90deg,transparent,${world.accent},transparent)`,
-                  opacity: world.locked ? 0.12 : 0.65,
+                  opacity: 0.65,
                 }} aria-hidden="true" />
 
                 {/* Holographic inner glow */}
-                {!world.locked && (
-                  <div className="absolute inset-0 rounded-2xl pointer-events-none" style={{
-                    boxShadow: `0 0 20px rgba(${world.accentRgb},0.15),inset 0 0 12px rgba(${world.accentRgb},0.04)`,
-                  }} aria-hidden="true" />
-                )}
+                <div className="absolute inset-0 rounded-2xl pointer-events-none" style={{
+                  boxShadow: `0 0 20px rgba(${world.accentRgb},0.15),inset 0 0 12px rgba(${world.accentRgb},0.04)`,
+                }} aria-hidden="true" />
 
                 <div className="absolute inset-0 flex flex-col items-center p-2.5 sm:p-3 z-10">
                   {/* Emoji */}
                   <div className="relative flex items-center justify-center mt-0.5" aria-hidden="true">
-                    <span className="text-2xl sm:text-3xl leading-none"
-                      style={world.locked ? { filter: 'grayscale(1)', opacity: 0.2 } : undefined}>
-                      {world.emoji}
-                    </span>
-                    {world.locked && (
-                      <span className="absolute -bottom-1 -right-1 text-[10px] leading-none"
-                        style={{ filter: 'drop-shadow(0 0 4px rgba(200,75,31,0.6))' }}>🔒</span>
-                    )}
+                    <span className="text-2xl sm:text-3xl leading-none">{world.emoji}</span>
                   </div>
 
                   {/* Name + subtitle */}
@@ -384,117 +382,130 @@ export default async function DashboardPage() {
                       <span className="inline-flex items-center justify-center w-4 h-4 rounded-full text-[9px] font-black mb-0.5"
                         style={{ background: `rgba(${world.accentRgb},0.2)`, color: world.accent }}>✓</span>
                     )}
-                    {isActive && !world.locked && (
+                    {isActive && (
                       <div className="robot-float mb-0.5" aria-hidden="true">
                         <RobotSVG config={robotConfig} size={20} headOnly />
                       </div>
                     )}
                     <h2 className="text-[10px] sm:text-xs font-black tracking-widest leading-none text-center"
-                      style={{ color: world.locked ? 'rgba(232,232,232,0.15)' : '#E8E8E8' }}>
+                      style={{ color: '#E8E8E8' }}>
                       {world.name}
                     </h2>
                     <p className="text-[9px] sm:text-[10px] font-mono tracking-wide text-center"
-                      style={{ color: world.locked ? 'rgba(184,115,51,0.15)' : '#B87333' }}>
+                      style={{ color: '#B87333' }}>
                       {world.subtitle}
                     </p>
                   </div>
 
                   {/* Parts + XP progress */}
                   <div className="w-full flex flex-col items-center gap-0.5 mt-1">
-                    <p className="text-[8px] font-mono text-center"
-                      style={{ color: world.locked ? 'rgba(139,143,168,0.15)' : '#8B8FA8' }}>
-                      {world.locked ? `${world.levelCount} Levels` : `${world.partLabel}: ${world.parts}/5`}
+                    <p className="text-[8px] font-mono text-center" style={{ color: '#8B8FA8' }}>
+                      {`${world.partLabel}: ${world.parts}/5`}
                     </p>
-                    {!world.locked && (
-                      <>
-                        {/* Parts progress bar */}
-                        <div className="w-full h-0.5 rounded-full overflow-hidden"
-                          style={{ background: 'rgba(255,255,255,0.06)' }}>
-                          <div className="h-full rounded-full transition-all duration-700"
-                            style={{
-                              width: `${(world.totalXp / 1000) * 100}%`,
-                              background: world.accent,
-                              opacity: 0.7,
-                            }} />
-                        </div>
-                        <p className="text-[7px] font-mono tabular-nums"
-                          style={{ color: 'rgba(139,143,168,0.5)' }}>
-                          {world.parts < 5 ? `${world.totalXp}/${nextThreshold} pts` : 'Complete'}
-                        </p>
-                      </>
-                    )}
-                    {world.locked && world.lockMessage && (
-                      <p className="text-[7px] font-mono text-center" style={{ color: 'rgba(139,143,168,0.3)' }}>
-                        {world.lockMessage}
+                    <>
+                      <div className="w-full h-0.5 rounded-full overflow-hidden"
+                        style={{ background: 'rgba(255,255,255,0.06)' }}>
+                        <div className="h-full rounded-full transition-all duration-700"
+                          style={{
+                            width: `${(world.totalXp / 1000) * 100}%`,
+                            background: world.accent,
+                            opacity: 0.7,
+                          }} />
+                      </div>
+                      <p className="text-[7px] font-mono tabular-nums"
+                        style={{ color: 'rgba(139,143,168,0.5)' }}>
+                        {world.parts < 5 ? `${world.totalXp}/${nextThreshold} pts` : 'Complete'}
                       </p>
-                    )}
+                    </>
                   </div>
                 </div>
               </>
             )
 
             const cardStyle = {
-              background: world.locked
-                ? '#1A1A1A'
-                : `linear-gradient(160deg,rgba(${world.accentRgb},0.06) 0%,rgba(26,26,26,0.95) 55%)`,
-              border: `1.5px solid ${world.locked ? '#252525' : `rgba(${world.accentRgb},0.3)`}`,
+              background: `linear-gradient(160deg,rgba(${world.accentRgb},0.06) 0%,rgba(26,26,26,0.95) 55%)`,
+              border: `1.5px solid rgba(${world.accentRgb},0.3)`,
               backdropFilter: 'blur(4px)',
-              opacity: world.locked ? 0.55 : 1,
             }
 
-            const baseClass = `relative rounded-2xl overflow-hidden transition-all duration-300 h-full world-card-${world.id}`
-
-            return world.href ? (
+            return (
               <Link key={world.id} href={world.href}
-                className={`${baseClass} hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00FF88] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0F0F0F]`}
+                className={`relative rounded-2xl overflow-hidden transition-all duration-300 h-full world-card-${world.id} hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00FF88] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0F0F0F]`}
                 style={cardStyle} role="listitem"
                 aria-label={`${world.name} — ${world.levelCount} levels, ${world.parts}/5 parts`}>
                 {cardContent}
               </Link>
-            ) : (
-              <div key={world.id} className={`${baseClass} cursor-not-allowed`}
-                style={cardStyle} role="listitem" aria-disabled="true"
-                aria-label={`${world.name} — ${world.lockMessage}`}>
-                {cardContent}
-              </div>
             )
           })}
         </div>
 
-        {/* ── MASTERY TEASER ── */}
-        <div className="mastery-pulse relative rounded-2xl overflow-hidden shrink-0"
-          style={{
-            background: allWorldsComplete
-              ? 'linear-gradient(90deg,rgba(255,0,68,0.15) 0%,rgba(26,26,26,0.95) 50%,rgba(255,0,68,0.15) 100%)'
-              : 'linear-gradient(90deg,rgba(255,0,68,0.05) 0%,#1A1A1A 50%,rgba(255,0,68,0.05) 100%)',
-            border: '1.5px solid rgba(255,0,68,0.2)',
-            height: '60px',
-            opacity: allWorldsComplete ? 1 : 0.65,
-          }}
-          role="listitem" aria-disabled={!allWorldsComplete}
-          aria-label="Mastery — Complete all worlds to unlock">
-          <div className="absolute top-0 left-0 right-0 h-0.5 pointer-events-none"
-            style={{ background: 'linear-gradient(90deg,transparent,#FF0044,transparent)', opacity: 0.4 }} aria-hidden="true" />
-          <div className="absolute inset-0 flex flex-row items-center justify-center gap-3 px-4 z-10">
-            <div className="relative flex items-center justify-center" aria-hidden="true">
-              <span className="text-xl leading-none" style={allWorldsComplete ? undefined : { filter: 'grayscale(1)', opacity: 0.25 }}>❤️</span>
-              {!allWorldsComplete && (
+        {/* ── MASTERY TEASER / LINK ── */}
+        {masteryUnlocked ? (
+          <Link
+            href="/dashboard/mastery"
+            className="mastery-pulse relative rounded-2xl overflow-hidden shrink-0 hover:scale-[1.01] transition-transform duration-300"
+            style={{
+              background: 'linear-gradient(90deg,rgba(255,0,68,0.15) 0%,rgba(26,26,26,0.95) 50%,rgba(255,0,68,0.15) 100%)',
+              border: '1.5px solid rgba(255,0,68,0.35)',
+              height: '60px',
+            }}
+            role="listitem"
+            aria-label="Mastery — Enter the Mastery world"
+          >
+            <div className="absolute top-0 left-0 right-0 h-0.5 pointer-events-none"
+              style={{ background: 'linear-gradient(90deg,transparent,#FF0044,transparent)', opacity: 0.6 }} aria-hidden="true" />
+            <div className="absolute inset-0 flex flex-row items-center justify-center gap-3 px-4 z-10">
+              <span className="text-xl leading-none">❤️</span>
+              <div className="flex flex-col items-start gap-0">
+                <h2 className="text-[10px] font-black tracking-widest" style={{ color: '#E8E8E8' }}>MASTERY</h2>
+                <p className="text-[9px] font-mono" style={{ color: 'rgba(255,0,68,0.7)' }}>The Core</p>
+              </div>
+              <p className="ml-auto text-[8px] font-mono text-right leading-snug"
+                style={{ color: 'rgba(139,143,168,0.5)', maxWidth: '90px' }}>
+                Double XP · All skills
+              </p>
+            </div>
+          </Link>
+        ) : (
+          <div
+            className="mastery-pulse relative rounded-2xl overflow-hidden shrink-0"
+            style={{
+              background: 'linear-gradient(90deg,rgba(255,0,68,0.05) 0%,#1A1A1A 50%,rgba(255,0,68,0.05) 100%)',
+              border: '1.5px solid rgba(255,0,68,0.2)',
+              height: '60px',
+              opacity: 0.65,
+            }}
+            role="listitem" aria-disabled="true"
+            aria-label="Mastery — Score 80+ on Level 1 of all worlds to unlock"
+          >
+            <div className="absolute top-0 left-0 right-0 h-0.5 pointer-events-none"
+              style={{ background: 'linear-gradient(90deg,transparent,#FF0044,transparent)', opacity: 0.4 }} aria-hidden="true" />
+            <div className="absolute inset-0 flex flex-row items-center justify-center gap-3 px-4 z-10">
+              <div className="relative flex items-center justify-center" aria-hidden="true">
+                <span className="text-xl leading-none" style={{ filter: 'grayscale(1)', opacity: 0.25 }}>❤️</span>
                 <span className="absolute -bottom-1 -right-1 text-[9px] leading-none"
                   style={{ filter: 'drop-shadow(0 0 4px rgba(200,75,31,0.6))' }}>🔒</span>
-              )}
+              </div>
+              <div className="flex flex-col items-start gap-0">
+                <h2 className="text-[10px] font-black tracking-widest" style={{ color: 'rgba(232,232,232,0.18)' }}>MASTERY</h2>
+                <p className="text-[9px] font-mono" style={{ color: 'rgba(255,0,68,0.3)' }}>The Core</p>
+              </div>
+              <p className="ml-auto text-[8px] font-mono text-right leading-snug"
+                style={{ color: 'rgba(139,143,168,0.3)', maxWidth: '90px' }}>
+                Score 80+ on Level 1 of all worlds
+              </p>
             </div>
-            <div className="flex flex-col items-start gap-0">
-              <h2 className="text-[10px] font-black tracking-widest" style={{ color: allWorldsComplete ? '#E8E8E8' : 'rgba(232,232,232,0.18)' }}>
-                MASTERY
-              </h2>
-              <p className="text-[9px] font-mono" style={{ color: allWorldsComplete ? 'rgba(255,0,68,0.7)' : 'rgba(255,0,68,0.3)' }}>The Core</p>
-            </div>
-            <p className="ml-auto text-[8px] font-mono text-right leading-snug"
-              style={{ color: 'rgba(139,143,168,0.3)', maxWidth: '90px' }}>
-              {allWorldsComplete ? 'All worlds complete!' : 'Complete all worlds to unlock'}
-            </p>
           </div>
-        </div>
+        )}
+
+        {/* ── DAILY SUGGESTION ── */}
+        {weakestWorld && (
+          <DailySuggestion
+            worldName={weakestWorld.name}
+            worldHref={weakestWorld.href}
+            worldAccent={weakestWorld.accent}
+          />
+        )}
       </div>
 
       {/* ── FOOTER ──────────────────────────────── */}

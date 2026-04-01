@@ -3,13 +3,56 @@ import { notFound, redirect } from 'next/navigation'
 import { createClient } from '@/src/lib/supabase/server'
 import WordBudget from '@/src/components/game/WordBudget'
 import { CONSTRAINTS_LEVELS } from '@/src/lib/game/constraints-levels'
-import { CLARITY_LEVELS } from '@/src/lib/game/clarity-levels'
 import { DEFAULT_ROBOT_CONFIG, type RobotConfig } from '@/app/profile/_components/RobotSVG'
 
-const CLARITY_LEVEL_COUNT = CLARITY_LEVELS.length
+const CONSTRAINTS_KEY_RULES = [
+  'Limits force creativity.',
+  'Less words, more thought.',
+  'Removing options reveals solutions.',
+  'The best constraint is self-imposed.',
+  'Work within the box before thinking outside it.',
+  'Efficiency is a form of respect.',
+  'Constraints are a superpower.',
+  'The tightest prompts get the sharpest answers.',
+  'Simplicity is the ultimate sophistication.',
+  'True mastery shows in what you leave out.',
+]
 
 interface Props {
   params: Promise<{ level: string }>
+}
+
+/** Average score for level IDs [fromId..toId] inclusive */
+function avgRange(bestScores: Map<number, number>, fromId: number, toId: number): number {
+  let sum = 0
+  const count = toId - fromId + 1
+  for (let id = fromId; id <= toId; id++) sum += bestScores.get(id) ?? 0
+  return sum / count
+}
+
+/**
+ * New unlock rules for Constraints (levelIndex is 1-based, level IDs are 11-20):
+ *  levelIndex 1     — always unlocked
+ *  levelIndex 2–5   — prev level scored 60+
+ *  levelIndex 6–8   — prev 60+ AND avg(levels 1–5 of this world) ≥ 70
+ *  levelIndex 9–10  — prev 60+ AND avg(levels 1–8 of this world) ≥ 80
+ */
+function isLevelUnlocked(levelIndex: number, bestScores: Map<number, number>, levels: typeof CONSTRAINTS_LEVELS): boolean {
+  if (levelIndex === 1) return true
+  const prevId = levels[levelIndex - 2].id
+  const prevScore = bestScores.get(prevId) ?? 0
+  if (prevScore < 60) return false
+  if (levelIndex >= 6 && levelIndex <= 8) {
+    const ids = levels.slice(0, 5).map(l => l.id)
+    const avg = ids.reduce((s, id) => s + (bestScores.get(id) ?? 0), 0) / ids.length
+    return avg >= 70
+  }
+  if (levelIndex >= 9) {
+    const ids = levels.slice(0, 8).map(l => l.id)
+    const avg = ids.reduce((s, id) => s + (bestScores.get(id) ?? 0), 0) / ids.length
+    return avg >= 80
+  }
+  return true
 }
 
 export default async function ConstraintsLevelPage({ params }: Props) {
@@ -24,37 +67,18 @@ export default async function ConstraintsLevelPage({ params }: Props) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/auth/login')
 
-  // Verify Clarity unlock requirement
-  const { data: clarityRows } = await supabase
-    .from('xp_ledger')
-    .select('level, score')
-    .eq('user_id', user.id)
-    .eq('world', 'clarity')
-
-  const clarityBest = new Map<number, number>()
-  for (const row of clarityRows ?? []) {
-    const cur = clarityBest.get(row.level) ?? 0
-    if ((row.score ?? 0) > cur) clarityBest.set(row.level, row.score)
-  }
-
-  const clarityCompleted = clarityBest.size === CLARITY_LEVEL_COUNT
-  const clarityAvg = clarityCompleted
-    ? Array.from(clarityBest.values()).reduce((a, b) => a + b, 0) / CLARITY_LEVEL_COUNT
-    : 0
-
-  if (!clarityCompleted || clarityAvg < 80) {
-    redirect('/dashboard')
-  }
-
-  // Check if this constraints level is unlocked + fetch robot config in parallel
-  const [prevResult, profileResult] = await Promise.all([
-    levelIndex > 1
-      ? supabase.from('xp_ledger').select('score').eq('user_id', user.id).eq('world', 'constraints').eq('level', CONSTRAINTS_LEVELS[levelIndex - 2].id).limit(1)
-      : Promise.resolve({ data: [{}] }),
+  const [{ data: scoreRows }, profileResult] = await Promise.all([
+    supabase.from('xp_ledger').select('level, score').eq('user_id', user.id).eq('world', 'constraints'),
     supabase.from('profiles').select('robot_config').eq('id', user.id).maybeSingle(),
   ])
 
-  if (levelIndex > 1 && !prevResult.data?.length) redirect('/dashboard/constraints')
+  const bestScores = new Map<number, number>()
+  for (const row of scoreRows ?? []) {
+    const cur = bestScores.get(row.level) ?? 0
+    if ((row.score ?? 0) > cur) bestScores.set(row.level, row.score)
+  }
+
+  if (!isLevelUnlocked(levelIndex, bestScores, CONSTRAINTS_LEVELS)) redirect('/dashboard/constraints')
 
   const rawRobot = (profileResult.data as { robot_config?: unknown } | null)?.robot_config
   const robotConfig: RobotConfig = rawRobot && typeof rawRobot === 'object'
@@ -63,7 +87,7 @@ export default async function ConstraintsLevelPage({ params }: Props) {
 
   const levelConfig = {
     world: 'constraints' as const,
-    level: level.id,        // 11–20, stored in xp_ledger.level
+    level: level.id,
     challenge: level.goal,
     criteria: level.criteria,
     max_xp: level.max_xp,
@@ -73,7 +97,7 @@ export default async function ConstraintsLevelPage({ params }: Props) {
   const nextLevelUrl = isLastLevel ? undefined : `/dashboard/constraints/${levelIndex + 1}`
 
   return (
-    <div className="min-h-screen w-full max-w-full overflow-x-hidden">
+    <div className="min-h-screen w-full max-w-full overflow-x-hidden" style={{ background: '#0F0F0F' }}>
       {/* Nav bar */}
       <div className="w-full max-w-2xl mx-auto px-3 sm:px-6 lg:px-8 pt-3 sm:pt-6 mt-0 sm:mt-6 flex items-center justify-between">
         <Link
@@ -87,7 +111,7 @@ export default async function ConstraintsLevelPage({ params }: Props) {
           <span className="hidden sm:inline text-xs font-mono" style={{ color: 'rgba(255,255,255,0.3)' }}>
             {level.concept}
           </span>
-          <span className="text-xs font-mono rounded-full px-3 py-1" style={{ background: 'rgba(0,255,136,0.1)', color: 'rgba(0,255,136,0.7)' }}>
+          <span className="text-xs font-mono rounded-full px-3 py-1" style={{ background: 'rgba(184,115,51,0.1)', color: 'rgba(184,115,51,0.7)' }}>
             Level {String(levelIndex).padStart(2, '0')}
           </span>
         </div>
@@ -100,6 +124,7 @@ export default async function ConstraintsLevelPage({ params }: Props) {
         levelConfig={levelConfig}
         nextLevelUrl={nextLevelUrl}
         robotConfig={robotConfig}
+        keyRule={CONSTRAINTS_KEY_RULES[levelIndex - 1]}
       />
     </div>
   )
