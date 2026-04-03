@@ -343,38 +343,44 @@ export default function WaitlistForm() {
               )}
 
               {/* Signature field — outside the scroll box */}
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-2" style={{ opacity: scrolledToBottom ? 1 : 0.35 }}>
                 <label
-                  className="text-xs font-mono"
-                  style={{ color: scrolledToBottom ? 'rgba(232,232,232,0.5)' : 'rgba(232,232,232,0.2)' }}
+                  className="text-sm font-bold"
+                  style={{ color: scrolledToBottom ? '#B87333' : 'rgba(184,115,51,0.4)' }}
                   htmlFor="nda-signature"
                 >
-                  Digital signature — type your full name exactly as entered
-                  <span className="ml-1 font-bold" style={{ color: scrolledToBottom ? '#B87333' : 'rgba(184,115,51,0.3)' }}>
-                    ({fullName})
+                  Type your full name to sign:
+                  <span className="ml-1 font-mono text-xs font-normal" style={{ color: 'rgba(232,232,232,0.4)' }}>
+                    (must match &ldquo;{fullName}&rdquo;)
                   </span>
                 </label>
                 <input
                   id="nda-signature"
                   type="text"
                   autoComplete="off"
-                  placeholder={scrolledToBottom ? fullName : 'Scroll to the bottom of the NDA first'}
+                  placeholder={scrolledToBottom ? 'Type your exact full name here' : 'Scroll to the bottom of the NDA first'}
                   value={signature}
                   onChange={e => setSignature(e.target.value)}
                   disabled={!scrolledToBottom}
                   className={`${inputBase} font-mono`}
                   style={{
-                    background: scrolledToBottom ? 'rgba(184,115,51,0.04)' : 'rgba(255,255,255,0.02)',
-                    border: `1.5px solid ${
+                    background: '#1A1A1A',
+                    border: `2px solid ${
                       !scrolledToBottom
-                        ? 'rgba(232,232,232,0.06)'
+                        ? 'rgba(184,115,51,0.15)'
                         : signatureValid
-                        ? '#B87333'
-                        : 'rgba(232,232,232,0.15)'
+                        ? '#00FF88'
+                        : signature.length > 0
+                        ? '#f87171'
+                        : '#B87333'
                     }`,
-                    color: signatureValid ? '#B87333' : '#E8E8E8',
+                    color: '#FFFFFF',
                     cursor: scrolledToBottom ? 'text' : 'not-allowed',
-                    opacity: scrolledToBottom ? 1 : 0.35,
+                    boxShadow: scrolledToBottom && !signatureValid && signature.length === 0
+                      ? '0 0 0 3px rgba(184,115,51,0.15)'
+                      : signatureValid
+                      ? '0 0 0 3px rgba(0,255,136,0.15)'
+                      : 'none',
                   }}
                   aria-disabled={!scrolledToBottom}
                 />
@@ -384,53 +390,31 @@ export default function WaitlistForm() {
                   </p>
                 )}
                 {signatureValid && (
-                  <p className="text-[10px] font-mono" style={{ color: '#B87333' }}>
+                  <p className="text-[10px] font-mono" style={{ color: '#00FF88' }}>
                     ✓ Signature accepted
                   </p>
                 )}
+                <p className="text-[10px] font-mono" style={{ color: 'rgba(232,232,232,0.25)' }}>
+                  Your typed name serves as your digital signature
+                </p>
               </div>
 
-              {/* Optional email copy checkbox */}
+              {/* Optional email copy checkbox — secondary, small */}
               <label
-                className="flex items-start gap-3 cursor-pointer select-none rounded-xl px-4 py-3 transition-colors duration-150"
-                style={{
-                  opacity: scrolledToBottom ? 1 : 0.3,
-                  background: emailCopy ? 'rgba(184,115,51,0.06)' : 'rgba(255,255,255,0.02)',
-                  border: `1.5px solid ${emailCopy ? 'rgba(184,115,51,0.3)' : 'rgba(232,232,232,0.08)'}`,
-                }}
+                className="flex items-center gap-2.5 cursor-pointer select-none py-1"
+                style={{ opacity: scrolledToBottom ? 0.7 : 0.25 }}
               >
-                <div className="relative mt-0.5 shrink-0">
-                  <input
-                    type="checkbox"
-                    checked={emailCopy}
-                    onChange={e => setEmailCopy(e.target.checked)}
-                    disabled={!scrolledToBottom}
-                    className="sr-only"
-                  />
-                  <div
-                    className="rounded flex items-center justify-center transition-all duration-150"
-                    style={{
-                      width: '22px', height: '22px',
-                      background: emailCopy ? '#B87333' : 'rgba(255,255,255,0.04)',
-                      border: `2px solid ${emailCopy ? '#B87333' : 'rgba(232,232,232,0.25)'}`,
-                    }}
-                    aria-hidden="true"
-                  >
-                    {emailCopy && (
-                      <svg width="13" height="10" viewBox="0 0 13 11" fill="none">
-                        <path d="M1 5.5L5 9.5L12 1" stroke="#0F0F0F" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                    )}
-                  </div>
-                </div>
-                <div className="flex flex-col gap-0.5">
-                  <span className="text-xs font-bold" style={{ color: 'rgba(232,232,232,0.6)' }}>
-                    Optional: Email me a copy of this NDA
-                  </span>
-                  <span className="text-[10px] font-mono" style={{ color: 'rgba(232,232,232,0.3)' }}>
-                    We&apos;ll send the full agreement text to {email || 'your email'}
-                  </span>
-                </div>
+                <input
+                  type="checkbox"
+                  checked={emailCopy}
+                  onChange={e => setEmailCopy(e.target.checked)}
+                  disabled={!scrolledToBottom}
+                  className="w-4 h-4 rounded accent-[#B87333] cursor-pointer"
+                  style={{ accentColor: '#B87333' }}
+                />
+                <span className="text-xs font-mono" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                  Optional: Send me a copy of this agreement via email
+                </span>
               </label>
 
               {/* Error */}
