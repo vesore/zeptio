@@ -289,9 +289,9 @@ export default function WaitlistForm() {
             />
           </div>
 
-          {/* NDA body */}
+          {/* NDA body — scrollable */}
           <div className="flex-1 min-h-0 overflow-y-auto">
-            <div className="max-w-2xl mx-auto w-full px-5 pt-1 pb-8 flex flex-col gap-0 sm:gap-3">
+            <div className="max-w-2xl mx-auto w-full px-5 pt-1 pb-4 flex flex-col gap-0 sm:gap-3">
 
               {/* Title */}
               <h1
@@ -304,7 +304,7 @@ export default function WaitlistForm() {
               {/* Scroll hint */}
               {!scrolledToBottom && (
                 <p
-                  className="text-xs font-mono text-center"
+                  className="text-xs font-mono text-center pt-1"
                   style={{ color: 'rgba(184,115,51,0.6)' }}
                 >
                   Scroll to the bottom of the agreement to unlock the signature field
@@ -315,7 +315,7 @@ export default function WaitlistForm() {
               <div
                 ref={ndaRef}
                 onScroll={handleNdaScroll}
-                className="rounded-xl px-5 py-5 text-xs font-mono leading-relaxed whitespace-pre-wrap overflow-y-scroll"
+                className="rounded-xl px-5 py-5 text-xs font-mono leading-relaxed whitespace-pre-wrap overflow-y-scroll mt-2"
                 style={{
                   background: 'rgba(255,255,255,0.02)',
                   border: '1px solid rgba(232,232,232,0.08)',
@@ -330,7 +330,7 @@ export default function WaitlistForm() {
               {/* Scroll complete badge */}
               {scrolledToBottom && (
                 <div
-                  className="flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-mono"
+                  className="flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-mono mt-2"
                   style={{
                     background: 'rgba(184,115,51,0.08)',
                     border: '1px solid rgba(184,115,51,0.25)',
@@ -342,8 +342,8 @@ export default function WaitlistForm() {
                 </div>
               )}
 
-              {/* Signature field — outside the scroll box */}
-              <div className="flex flex-col gap-2">
+              {/* Signature field */}
+              <div className="flex flex-col gap-1.5 mt-2">
                 <label
                   className="text-xs font-mono"
                   style={{ color: scrolledToBottom ? 'rgba(232,232,232,0.5)' : 'rgba(232,232,232,0.2)' }}
@@ -392,7 +392,7 @@ export default function WaitlistForm() {
 
               {/* Optional email copy checkbox */}
               <label
-                className="flex items-start gap-3 cursor-pointer select-none rounded-xl px-4 py-3 transition-colors duration-150"
+                className="flex items-start gap-3 cursor-pointer select-none rounded-xl px-4 py-3 transition-colors duration-150 mt-1"
                 style={{
                   opacity: scrolledToBottom ? 1 : 0.3,
                   background: emailCopy ? 'rgba(184,115,51,0.06)' : 'rgba(255,255,255,0.02)',
@@ -433,51 +433,54 @@ export default function WaitlistForm() {
                 </div>
               </label>
 
-              {/* Error */}
-              {submitState === 'error' && (
-                <p
-                  role="alert"
-                  className="text-xs font-mono rounded-xl px-4 py-3 break-all"
-                  style={{
-                    background: 'rgba(248,113,113,0.08)',
-                    border: '1px solid rgba(248,113,113,0.2)',
-                    color: '#f87171',
-                  }}
-                >
-                  {errMsg}
-                </p>
-              )}
-
-              {/* Accept button — always visible, circuit green */}
-              <button
-                type="button"
-                onClick={handleAgree}
-                disabled={!canSubmit}
-                className="w-full py-4 sm:py-5 rounded-xl text-base font-black tracking-widest uppercase transition-all duration-200 focus-visible:outline-none"
-                style={{
-                  background: canSubmit ? '#00FF88' : 'rgba(0,255,136,0.06)',
-                  color: canSubmit ? '#0F0F0F' : 'rgba(0,255,136,0.2)',
-                  border: `1.5px solid ${canSubmit ? '#00FF88' : 'rgba(0,255,136,0.15)'}`,
-                  boxShadow: canSubmit ? '0 0 28px rgba(0,255,136,0.4)' : 'none',
-                  cursor: canSubmit ? 'pointer' : 'not-allowed',
-                }}
-                aria-disabled={!canSubmit}
-              >
-                {submitState === 'loading' ? (
-                  <span className="flex items-center justify-center gap-2">
-                    <span
-                      aria-hidden="true"
-                      className="inline-block w-4 h-4 rounded-full border-2 animate-spin"
-                      style={{ borderColor: 'rgba(0,0,0,0.2)', borderTopColor: '#0F0F0F' }}
-                    />
-                    Submitting…
-                  </span>
-                ) : (
-                  'I Accept & Request Access'
-                )}
-              </button>
-
             </div>
+          </div>
+
+          {/* Sticky footer — accept button always visible above keyboard */}
+          <div
+            className="shrink-0 px-5 py-4 max-w-2xl mx-auto w-full"
+            style={{ borderTop: '1px solid rgba(232,232,232,0.06)' }}
+          >
+            {submitState === 'error' && (
+              <p
+                role="alert"
+                className="text-xs font-mono rounded-xl px-4 py-3 break-all mb-3"
+                style={{
+                  background: 'rgba(248,113,113,0.08)',
+                  border: '1px solid rgba(248,113,113,0.2)',
+                  color: '#f87171',
+                }}
+              >
+                {errMsg}
+              </p>
+            )}
+            <button
+              type="button"
+              onClick={handleAgree}
+              disabled={!canSubmit}
+              className="w-full py-4 rounded-xl text-base font-black tracking-widest uppercase transition-all duration-200 focus-visible:outline-none"
+              style={{
+                background: canSubmit ? '#00FF88' : 'rgba(0,255,136,0.06)',
+                color: canSubmit ? '#0F0F0F' : 'rgba(0,255,136,0.2)',
+                border: `1.5px solid ${canSubmit ? '#00FF88' : 'rgba(0,255,136,0.15)'}`,
+                boxShadow: canSubmit ? '0 0 28px rgba(0,255,136,0.4)' : 'none',
+                cursor: canSubmit ? 'pointer' : 'not-allowed',
+              }}
+              aria-disabled={!canSubmit}
+            >
+              {submitState === 'loading' ? (
+                <span className="flex items-center justify-center gap-2">
+                  <span
+                    aria-hidden="true"
+                    className="inline-block w-4 h-4 rounded-full border-2 animate-spin"
+                    style={{ borderColor: 'rgba(0,0,0,0.2)', borderTopColor: '#0F0F0F' }}
+                  />
+                  Submitting…
+                </span>
+              ) : (
+                'I Accept & Request Access'
+              )}
+            </button>
           </div>
 
         </div>
