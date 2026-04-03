@@ -38,14 +38,14 @@ export default async function LandingPage({ searchParams }: Props) {
           <img
             src="/icon.svg"
             alt="Zeptio"
-            width={80}
-            height={80}
-            style={{ borderRadius: '16px', filter: 'drop-shadow(0 0 18px rgba(0,255,136,0.25))' }}
+            width={120}
+            height={120}
+            style={{ borderRadius: '24px', filter: 'drop-shadow(0 0 24px rgba(0,255,136,0.3))' }}
           />
           {/* Wordmark */}
           <p
-            className="font-mono font-black tracking-widest text-5xl uppercase"
-            style={{ color: '#00FF88', textShadow: '0 0 24px rgba(0,255,136,0.45), 0 0 48px rgba(0,255,136,0.15)' }}
+            className="font-mono font-black tracking-widest text-7xl uppercase"
+            style={{ color: '#00FF88', textShadow: '0 0 32px rgba(0,255,136,0.5), 0 0 64px rgba(0,255,136,0.2)' }}
           >
             ZEPTIO
           </p>

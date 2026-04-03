@@ -5,7 +5,7 @@ export default function SupportPage() {
     <main className="min-h-screen flex items-center justify-center px-6">
       <div className="max-w-md w-full text-center flex flex-col items-center gap-8">
 
-        <p className="font-mono font-bold tracking-widest text-sm uppercase" style={{ color: '#00FF88' }}>Zeptio</p>
+        <p className="font-mono font-bold tracking-widest text-sm uppercase" style={{ color: '#00FF88' }}>Zeptio LLC</p>
 
         <div>
           <h1 className="text-4xl font-black tracking-tight text-white mb-4">
@@ -23,6 +23,8 @@ export default function SupportPage() {
         >
           contact@zeptio.app
         </a>
+
+        <p className="text-xs font-mono" style={{ color: 'rgba(255,255,255,0.2)' }}>© 2026 Zeptio LLC. All rights reserved.</p>
 
         <div className="flex gap-6 text-sm pt-4" style={{ color: 'rgba(255,255,255,0.3)' }}>
           <Link href="/privacy" className="hover:text-[#00FF88] transition-colors duration-200">Privacy Policy</Link>

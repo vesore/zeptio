@@ -102,7 +102,7 @@ export default function PressPage() {
             className="font-mono font-black tracking-widest text-lg mb-6"
             style={{ color: '#B87333', textShadow: '0 0 16px rgba(184,115,51,0.35)' }}
           >
-            Zeptio
+            Zeptio LLC
           </p>
           <h1
             className="text-3xl sm:text-4xl font-black tracking-tight leading-tight mb-4"
@@ -175,12 +175,12 @@ export default function PressPage() {
 
         {/* ── ABOUT ── */}
         <section aria-labelledby="about-heading">
-          <SectionLabel>About Zeptio</SectionLabel>
-          <h2 id="about-heading" className="sr-only">About Zeptio</h2>
+          <SectionLabel>About Zeptio LLC</SectionLabel>
+          <h2 id="about-heading" className="sr-only">About Zeptio LLC</h2>
 
           <div className="flex flex-col gap-5 text-base leading-relaxed" style={{ color: 'rgba(232,232,232,0.65)' }}>
             <p>
-              Zeptio is an AI skills training game built on the belief that prompting is a real, learnable skill — and that the best way to learn it is by doing. Most AI tools teach you their interface. Zeptio teaches you how to think. Through a series of progressively harder challenges across four themed worlds, players develop the habits of clarity, precision, structure, and critical diagnosis that separate people who get mediocre AI output from people who get great AI output.
+              Zeptio LLC is an Ohio Limited Liability Company. Zeptio is an AI skills training game built on the belief that prompting is a real, learnable skill — and that the best way to learn it is by doing. Most AI tools teach you their interface. Zeptio teaches you how to think. Through a series of progressively harder challenges across four themed worlds, players develop the habits of clarity, precision, structure, and critical diagnosis that separate people who get mediocre AI output from people who get great AI output.
             </p>
             <p>
               The game is designed for professionals, students, writers, developers, and anyone who relies on AI tools in their daily work. Each world is built around a core skill, each level pushes that skill further, and a scoring engine powered by Claude provides instant, specific feedback on every submission. There are no subscriptions, no ads, and no artificial barriers — just a clean, focused experience that makes you measurably better at working with AI.
@@ -271,7 +271,7 @@ export default function PressPage() {
           </div>
 
           <p className="mt-8 text-xs font-mono leading-relaxed" style={{ color: 'rgba(232,232,232,0.25)' }}>
-            Screenshots and additional assets available on request. Zeptio is currently in closed beta.
+            Screenshots and additional assets available on request. Zeptio LLC is currently in closed beta.
           </p>
         </section>
 
@@ -279,7 +279,7 @@ export default function PressPage() {
         <div className="mt-16 pt-6 flex items-center justify-between"
           style={{ borderTop: '1px solid rgba(232,232,232,0.06)' }}>
           <p className="text-xs font-mono" style={{ color: 'rgba(232,232,232,0.2)' }}>
-            © 2026 Zeptio
+            © 2026 Zeptio LLC. All rights reserved.
           </p>
           <a href="/" className="text-xs font-mono transition-colors duration-200 hover:text-[#B87333]"
             style={{ color: 'rgba(232,232,232,0.25)' }}>

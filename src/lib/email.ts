@@ -3,7 +3,7 @@ import { Resend } from 'resend'
 
 const NDA_TEXT = `BETA TESTER NON-DISCLOSURE AGREEMENT
 
-This Beta Tester Non-Disclosure Agreement ("Agreement") is entered into as of the date of electronic signature below, between Zeptio ("Company") and the individual whose name appears in the signature block below ("Beta Tester").
+This Beta Tester Non-Disclosure Agreement ("Agreement") is entered into as of the date of electronic signature below, between Zeptio LLC, an Ohio Limited Liability Company ("Company"), and the individual whose name appears in the signature block below ("Beta Tester").
 
 1. CONFIDENTIALITY
 

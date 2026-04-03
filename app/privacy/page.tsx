@@ -9,7 +9,7 @@ export default function PrivacyPage() {
           ← Back
         </Link>
 
-        <p className="font-mono font-bold tracking-widest text-sm uppercase mb-4" style={{ color: '#00FF88' }}>Zeptio</p>
+        <p className="font-mono font-bold tracking-widest text-sm uppercase mb-4" style={{ color: '#00FF88' }}>Zeptio LLC</p>
         <h1 className="text-4xl font-black tracking-tight text-white mb-2">Privacy Policy</h1>
         <p className="text-sm mb-12" style={{ color: 'rgba(255,255,255,0.4)' }}>Last updated: March 2026</p>
 
@@ -22,7 +22,7 @@ export default function PrivacyPage() {
 
           <section>
             <h2 className="text-xl font-black tracking-tight text-white mb-3">How we use it</h2>
-            <p>We use your information to provide the Zeptio service — logging you in, saving your scores, and personalizing your experience. We also use aggregate, anonymized data to improve the game. We will never sell your personal information to third parties.</p>
+            <p>We use your information to provide the Zeptio service — logging you in, saving your scores, and personalizing your experience. We also use aggregate, anonymized data to improve the game. Zeptio LLC will never sell your personal information to third parties.</p>
           </section>
 
           <section>
@@ -38,7 +38,7 @@ export default function PrivacyPage() {
           <section>
             <h2 className="text-xl font-black tracking-tight text-white mb-3">Contact</h2>
             <p>
-              Questions about your privacy? Email us at{' '}
+              Questions about your privacy? Email Zeptio LLC at{' '}
               <a href="mailto:contact@zeptio.app" className="font-bold transition-colors duration-200 hover:opacity-80" style={{ color: '#00FF88' }}>
                 contact@zeptio.app
               </a>
@@ -47,7 +47,9 @@ export default function PrivacyPage() {
 
         </div>
 
-        <div className="mt-16 pt-8 flex gap-6 text-sm" style={{ borderTop: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.3)' }}>
+        <p className="mt-12 text-xs font-mono" style={{ color: 'rgba(255,255,255,0.2)' }}>© 2026 Zeptio LLC. All rights reserved.</p>
+
+        <div className="mt-6 pt-8 flex gap-6 text-sm" style={{ borderTop: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.3)' }}>
           <Link href="/terms" className="hover:text-[#00FF88] transition-colors duration-200">Terms of Service</Link>
           <Link href="/support" className="hover:text-[#00FF88] transition-colors duration-200">Support</Link>
         </div>

@@ -5,7 +5,7 @@ import { useState, useRef, useCallback } from 'react'
 /* ─── NDA text ─────────────────────────────────────────────────────────── */
 const NDA_TEXT = `BETA TESTER NON-DISCLOSURE AGREEMENT
 
-This Beta Tester Non-Disclosure Agreement ("Agreement") is entered into as of the date of electronic signature below, between Zeptio ("Company") and the individual whose name appears in the signature block below ("Beta Tester").
+This Beta Tester Non-Disclosure Agreement ("Agreement") is entered into as of the date of electronic signature below, between Zeptio LLC, an Ohio Limited Liability Company ("Company"), and the individual whose name appears in the signature block below ("Beta Tester").
 
 1. CONFIDENTIALITY
 
@@ -289,9 +289,9 @@ export default function WaitlistForm() {
             />
           </div>
 
-          {/* NDA body — scrollable */}
-          <div className="flex-1 min-h-0 overflow-y-auto flex flex-col">
-            <div className="max-w-2xl mx-auto w-full px-5 pt-6 pb-2 flex flex-col gap-5">
+          {/* NDA body */}
+          <div className="flex-1 min-h-0 overflow-y-auto">
+            <div className="max-w-2xl mx-auto w-full px-5 pt-6 pb-8 flex flex-col gap-5">
 
               {/* Title */}
               <h1
@@ -307,21 +307,21 @@ export default function WaitlistForm() {
                   className="text-xs font-mono text-center"
                   style={{ color: 'rgba(184,115,51,0.6)' }}
                 >
-                  Scroll to the bottom to unlock the signature field
+                  Scroll to the bottom of the agreement to unlock the signature field
                 </p>
               )}
 
-              {/* NDA text */}
+              {/* NDA text — fixed height scrollable box */}
               <div
                 ref={ndaRef}
                 onScroll={handleNdaScroll}
-                className="rounded-xl px-5 py-5 text-xs font-mono leading-relaxed whitespace-pre-wrap overflow-y-auto"
+                className="rounded-xl px-5 py-5 text-xs font-mono leading-relaxed whitespace-pre-wrap overflow-y-scroll"
                 style={{
                   background: 'rgba(255,255,255,0.02)',
                   border: '1px solid rgba(232,232,232,0.08)',
                   color: 'rgba(232,232,232,0.55)',
-                  maxHeight: '38vh',
-                  minHeight: '160px',
+                  maxHeight: '16rem',
+                  minHeight: '10rem',
                 }}
               >
                 {NDA_TEXT}
@@ -342,7 +342,7 @@ export default function WaitlistForm() {
                 </div>
               )}
 
-              {/* Signature field */}
+              {/* Signature field — outside the scroll box */}
               <div className="flex flex-col gap-2">
                 <label
                   className="text-xs font-mono"
@@ -358,7 +358,7 @@ export default function WaitlistForm() {
                   id="nda-signature"
                   type="text"
                   autoComplete="off"
-                  placeholder={scrolledToBottom ? fullName : 'Scroll to the bottom first'}
+                  placeholder={scrolledToBottom ? fullName : 'Scroll to the bottom of the NDA first'}
                   value={signature}
                   onChange={e => setSignature(e.target.value)}
                   disabled={!scrolledToBottom}
@@ -390,10 +390,14 @@ export default function WaitlistForm() {
                 )}
               </div>
 
-              {/* Email copy checkbox */}
+              {/* Optional email copy checkbox */}
               <label
-                className="flex items-start gap-3 cursor-pointer select-none py-1"
-                style={{ opacity: scrolledToBottom ? 1 : 0.3 }}
+                className="flex items-start gap-3 cursor-pointer select-none rounded-xl px-4 py-3 transition-colors duration-150"
+                style={{
+                  opacity: scrolledToBottom ? 1 : 0.3,
+                  background: emailCopy ? 'rgba(184,115,51,0.06)' : 'rgba(255,255,255,0.02)',
+                  border: `1.5px solid ${emailCopy ? 'rgba(184,115,51,0.3)' : 'rgba(232,232,232,0.08)'}`,
+                }}
               >
                 <div className="relative mt-0.5 shrink-0">
                   <input
@@ -406,22 +410,27 @@ export default function WaitlistForm() {
                   <div
                     className="rounded flex items-center justify-center transition-all duration-150"
                     style={{
-                      width: '18px', height: '18px',
+                      width: '22px', height: '22px',
                       background: emailCopy ? '#B87333' : 'rgba(255,255,255,0.04)',
-                      border: `1.5px solid ${emailCopy ? '#B87333' : 'rgba(232,232,232,0.2)'}`,
+                      border: `2px solid ${emailCopy ? '#B87333' : 'rgba(232,232,232,0.25)'}`,
                     }}
                     aria-hidden="true"
                   >
                     {emailCopy && (
-                      <svg width="11" height="9" viewBox="0 0 13 11" fill="none">
+                      <svg width="13" height="10" viewBox="0 0 13 11" fill="none">
                         <path d="M1 5.5L5 9.5L12 1" stroke="#0F0F0F" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
                       </svg>
                     )}
                   </div>
                 </div>
-                <span className="text-xs font-mono leading-relaxed" style={{ color: 'rgba(232,232,232,0.5)' }}>
-                  Email me a copy of this agreement
-                </span>
+                <div className="flex flex-col gap-0.5">
+                  <span className="text-xs font-bold" style={{ color: 'rgba(232,232,232,0.6)' }}>
+                    Optional: Email me a copy of this NDA
+                  </span>
+                  <span className="text-[10px] font-mono" style={{ color: 'rgba(232,232,232,0.3)' }}>
+                    We&apos;ll send the full agreement text to {email || 'your email'}
+                  </span>
+                </div>
               </label>
 
               {/* Error */}
@@ -439,41 +448,34 @@ export default function WaitlistForm() {
                 </p>
               )}
 
-              {/* Agree button — final step, circuit green */}
-              <div className="flex flex-col gap-2 mb-6">
-                <p className="text-xs font-mono text-center" style={{ color: 'rgba(232,232,232,0.35)' }}>
-                  Final step — clicking below submits your signed NDA and requests access
-                </p>
-                <button
-                  type="button"
-                  onClick={handleAgree}
-                  disabled={!canSubmit}
-                  className="w-full py-5 rounded-xl text-base font-black tracking-widest uppercase transition-all duration-200 focus-visible:outline-none"
-                  style={{
-                    background: canSubmit
-                      ? '#00FF88'
-                      : 'rgba(0,255,136,0.06)',
-                    color: canSubmit ? '#0F0F0F' : 'rgba(0,255,136,0.2)',
-                    border: `1.5px solid ${canSubmit ? '#00FF88' : 'rgba(0,255,136,0.15)'}`,
-                    boxShadow: canSubmit ? '0 0 24px rgba(0,255,136,0.35)' : 'none',
-                    cursor: canSubmit ? 'pointer' : 'not-allowed',
-                  }}
-                  aria-disabled={!canSubmit}
-                >
-                  {submitState === 'loading' ? (
-                    <span className="flex items-center justify-center gap-2">
-                      <span
-                        aria-hidden="true"
-                        className="inline-block w-4 h-4 rounded-full border-2 animate-spin"
-                        style={{ borderColor: 'rgba(0,0,0,0.2)', borderTopColor: '#0F0F0F' }}
-                      />
-                      Submitting…
-                    </span>
-                  ) : (
-                    'I Accept &amp; Request Access'
-                  )}
-                </button>
-              </div>
+              {/* Accept button — always visible, circuit green */}
+              <button
+                type="button"
+                onClick={handleAgree}
+                disabled={!canSubmit}
+                className="w-full py-5 rounded-xl text-base font-black tracking-widest uppercase transition-all duration-200 focus-visible:outline-none"
+                style={{
+                  background: canSubmit ? '#00FF88' : 'rgba(0,255,136,0.06)',
+                  color: canSubmit ? '#0F0F0F' : 'rgba(0,255,136,0.2)',
+                  border: `1.5px solid ${canSubmit ? '#00FF88' : 'rgba(0,255,136,0.15)'}`,
+                  boxShadow: canSubmit ? '0 0 28px rgba(0,255,136,0.4)' : 'none',
+                  cursor: canSubmit ? 'pointer' : 'not-allowed',
+                }}
+                aria-disabled={!canSubmit}
+              >
+                {submitState === 'loading' ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <span
+                      aria-hidden="true"
+                      className="inline-block w-4 h-4 rounded-full border-2 animate-spin"
+                      style={{ borderColor: 'rgba(0,0,0,0.2)', borderTopColor: '#0F0F0F' }}
+                    />
+                    Submitting…
+                  </span>
+                ) : (
+                  'I Accept & Request Access'
+                )}
+              </button>
 
             </div>
           </div>
