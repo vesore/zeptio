@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useRef, useCallback } from 'react'
-import { createClient } from '@/src/lib/supabase/client'
 
 /* ─── NDA text ─────────────────────────────────────────────────────────── */
 const NDA_TEXT = `BETA TESTER NON-DISCLOSURE AGREEMENT
@@ -117,33 +116,25 @@ export default function WaitlistForm() {
     setSubmitState('loading')
     setErrMsg('')
 
-    /* open mailto if requested */
-    if (emailCopy) {
-      const subject = encodeURIComponent('Your Zeptio Beta NDA — Signed Copy')
-      const dateStr = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
-      const body = encodeURIComponent(
-        `Signed by: ${signature}\nDate: ${dateStr}\n\n${'─'.repeat(60)}\n\n${NDA_TEXT}`
-      )
-      window.open(`mailto:${email}?subject=${subject}&body=${body}`, '_blank')
-    }
+    const res = await fetch('/api/nda', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name:      fullName,
+        email:     email.trim().toLowerCase(),
+        signature: signature.trim(),
+        wantsCopy: emailCopy,
+      }),
+    })
 
-    const supabase = createClient()
-    const { error } = await supabase.from('waitlist').upsert(
-      {
-        name:         fullName,
-        email:        email.trim().toLowerCase(),
-        accepted_nda: true,
-        signature:    signature.trim(),
-      },
-      { onConflict: 'email' }
-    )
-
-    if (error) {
-      setErrMsg(error.message)
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}))
+      setErrMsg((data as { error?: string }).error ?? 'Something went wrong. Please try again.')
       setSubmitState('error')
-    } else {
-      setPhase('success')
+      return
     }
+
+    setPhase('success')
   }
 
   /* ── success view ── */
@@ -241,7 +232,7 @@ export default function WaitlistForm() {
             cursor: formReady ? 'pointer' : 'not-allowed',
           }}
         >
-          Request Access
+          Review &amp; Sign NDA
         </button>
 
       </form>
@@ -448,35 +439,41 @@ export default function WaitlistForm() {
                 </p>
               )}
 
-              {/* Agree button */}
-              <button
-                type="button"
-                onClick={handleAgree}
-                disabled={!canSubmit}
-                className="w-full py-4 rounded-xl text-sm font-black tracking-widest uppercase transition-all duration-200 focus-visible:outline-none mb-6"
-                style={{
-                  background: canSubmit
-                    ? 'linear-gradient(135deg, #B87333 0%, #8B5E2A 100%)'
-                    : 'rgba(184,115,51,0.08)',
-                  color: canSubmit ? '#0F0F0F' : 'rgba(184,115,51,0.25)',
-                  border: '1.5px solid rgba(184,115,51,0.3)',
-                  cursor: canSubmit ? 'pointer' : 'not-allowed',
-                }}
-                aria-disabled={!canSubmit}
-              >
-                {submitState === 'loading' ? (
-                  <span className="flex items-center justify-center gap-2">
-                    <span
-                      aria-hidden="true"
-                      className="inline-block w-4 h-4 rounded-full border-2 animate-spin"
-                      style={{ borderColor: 'rgba(0,0,0,0.2)', borderTopColor: '#0F0F0F' }}
-                    />
-                    Submitting…
-                  </span>
-                ) : (
-                  'I Agree & Request Access'
-                )}
-              </button>
+              {/* Agree button — final step, circuit green */}
+              <div className="flex flex-col gap-2 mb-6">
+                <p className="text-xs font-mono text-center" style={{ color: 'rgba(232,232,232,0.35)' }}>
+                  Final step — clicking below submits your signed NDA and requests access
+                </p>
+                <button
+                  type="button"
+                  onClick={handleAgree}
+                  disabled={!canSubmit}
+                  className="w-full py-5 rounded-xl text-base font-black tracking-widest uppercase transition-all duration-200 focus-visible:outline-none"
+                  style={{
+                    background: canSubmit
+                      ? '#00FF88'
+                      : 'rgba(0,255,136,0.06)',
+                    color: canSubmit ? '#0F0F0F' : 'rgba(0,255,136,0.2)',
+                    border: `1.5px solid ${canSubmit ? '#00FF88' : 'rgba(0,255,136,0.15)'}`,
+                    boxShadow: canSubmit ? '0 0 24px rgba(0,255,136,0.35)' : 'none',
+                    cursor: canSubmit ? 'pointer' : 'not-allowed',
+                  }}
+                  aria-disabled={!canSubmit}
+                >
+                  {submitState === 'loading' ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <span
+                        aria-hidden="true"
+                        className="inline-block w-4 h-4 rounded-full border-2 animate-spin"
+                        style={{ borderColor: 'rgba(0,0,0,0.2)', borderTopColor: '#0F0F0F' }}
+                      />
+                      Submitting…
+                    </span>
+                  ) : (
+                    'I Accept &amp; Request Access'
+                  )}
+                </button>
+              </div>
 
             </div>
           </div>

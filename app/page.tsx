@@ -33,20 +33,27 @@ export default async function LandingPage({ searchParams }: Props) {
       <div className="relative z-10 w-full max-w-md mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center text-center gap-8">
 
         {/* Logo */}
-        <p
-          className="font-mono font-black tracking-widest text-sm uppercase"
-          style={{ color: '#B87333', textShadow: '0 0 16px rgba(184,115,51,0.4)' }}
-        >
-          Zeptio
-        </p>
-
-        {/* Tagline */}
-        <h1
-          className="text-3xl sm:text-4xl font-black tracking-tight leading-tight"
-          style={{ color: '#E8E8E8' }}
-        >
-          Learn AI prompting<br />through play.
-        </h1>
+        <div className="flex flex-col items-center gap-3">
+          {/* Z circuit board icon */}
+          <img
+            src="/icon.svg"
+            alt="Zeptio"
+            width={80}
+            height={80}
+            style={{ borderRadius: '16px', filter: 'drop-shadow(0 0 18px rgba(0,255,136,0.25))' }}
+          />
+          {/* Wordmark */}
+          <p
+            className="font-mono font-black tracking-widest text-5xl uppercase"
+            style={{ color: '#00FF88', textShadow: '0 0 24px rgba(0,255,136,0.45), 0 0 48px rgba(0,255,136,0.15)' }}
+          >
+            ZEPTIO
+          </p>
+          {/* Tagline */}
+          <p className="text-lg" style={{ color: '#8B8FA8' }}>
+            Learn AI prompting through play.
+          </p>
+        </div>
 
         {/* Access required error */}
         {error === 'access_required' && (
