@@ -291,7 +291,7 @@ export default function WaitlistForm() {
 
           {/* NDA body */}
           <div className="flex-1 min-h-0 overflow-y-auto">
-            <div className="max-w-2xl mx-auto w-full px-5 pt-6 pb-8 flex flex-col gap-5">
+            <div className="max-w-2xl mx-auto w-full px-5 pt-4 pb-8 flex flex-col gap-3 sm:gap-5">
 
               {/* Title */}
               <h1
@@ -311,7 +311,7 @@ export default function WaitlistForm() {
                 </p>
               )}
 
-              {/* NDA text — fixed height scrollable box */}
+              {/* NDA text — viewport-capped scrollable box */}
               <div
                 ref={ndaRef}
                 onScroll={handleNdaScroll}
@@ -320,8 +320,8 @@ export default function WaitlistForm() {
                   background: 'rgba(255,255,255,0.02)',
                   border: '1px solid rgba(232,232,232,0.08)',
                   color: 'rgba(232,232,232,0.55)',
-                  maxHeight: '16rem',
-                  minHeight: '10rem',
+                  maxHeight: 'min(16rem, 30vh)',
+                  minHeight: '8rem',
                 }}
               >
                 {NDA_TEXT}
@@ -453,7 +453,7 @@ export default function WaitlistForm() {
                 type="button"
                 onClick={handleAgree}
                 disabled={!canSubmit}
-                className="w-full py-5 rounded-xl text-base font-black tracking-widest uppercase transition-all duration-200 focus-visible:outline-none"
+                className="w-full py-4 sm:py-5 rounded-xl text-base font-black tracking-widest uppercase transition-all duration-200 focus-visible:outline-none"
                 style={{
                   background: canSubmit ? '#00FF88' : 'rgba(0,255,136,0.06)',
                   color: canSubmit ? '#0F0F0F' : 'rgba(0,255,136,0.2)',
