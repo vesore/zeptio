@@ -291,11 +291,11 @@ export default function WaitlistForm() {
 
           {/* NDA body */}
           <div className="flex-1 min-h-0 overflow-y-auto">
-            <div className="max-w-2xl mx-auto w-full px-5 pt-4 pb-8 flex flex-col gap-3 sm:gap-5">
+            <div className="max-w-2xl mx-auto w-full px-5 pt-2 pb-8 flex flex-col gap-3 sm:gap-4">
 
               {/* Title */}
               <h1
-                className="text-lg font-black tracking-wide text-center leading-snug"
+                className="text-base font-black tracking-wide text-center leading-snug"
                 style={{ color: '#E8E8E8' }}
               >
                 Beta Tester Non-Disclosure Agreement
