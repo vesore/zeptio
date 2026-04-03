@@ -18,7 +18,7 @@ export default async function LandingPage({ searchParams }: Props) {
 
   return (
     <main
-      className="min-h-screen w-full max-w-full overflow-x-hidden flex items-center justify-center"
+      className="min-h-screen w-full max-w-full overflow-x-hidden flex items-start justify-center pt-12 pb-10"
       style={{ background: '#0F0F0F' }}
     >
       {/* Subtle copper radial glow behind content */}

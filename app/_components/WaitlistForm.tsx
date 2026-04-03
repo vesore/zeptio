@@ -240,8 +240,8 @@ export default function WaitlistForm() {
       {/* ── NDA Full-screen Modal ────────────────────────────────────── */}
       {phase === 'nda' && (
         <div
-          className="fixed inset-0 z-50 flex flex-col"
-          style={{ background: '#0F0F0F' }}
+          className="fixed inset-x-0 top-0 z-50 flex flex-col"
+          style={{ background: '#0F0F0F', height: '100dvh' }}
           role="dialog"
           aria-modal="true"
           aria-label="Beta Tester Non-Disclosure Agreement"
