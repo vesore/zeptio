@@ -362,10 +362,8 @@ export default function WaitlistForm() {
                   value={signature}
                   onChange={e => setSignature(e.target.value)}
                   disabled={!scrolledToBottom}
-                  className="w-full rounded-xl text-xl font-bold font-mono placeholder:text-white/25 outline-none transition-all duration-200"
+                  className={`${inputBase} font-mono`}
                   style={{
-                    padding: '1rem 1.5rem',
-                    minHeight: '3.75rem',
                     background: '#1A1A1A',
                     border: `2px solid ${
                       !scrolledToBottom
