@@ -95,7 +95,28 @@ export default function NDASignForm({ firstName, lastName, email }: Props) {
       className="min-h-screen w-full overflow-x-hidden"
       style={{ background: '#0F0F0F', color: '#E8E8E8' }}
     >
-      <div className="max-w-2xl mx-auto px-5 pt-10 pb-16 flex flex-col gap-8">
+      {/* Top bar */}
+      <div
+        className="sticky top-0 z-10 flex items-center justify-between px-5 py-4"
+        style={{ background: '#0F0F0F', borderBottom: '1px solid rgba(232,232,232,0.08)' }}
+      >
+        <a
+          href="/"
+          className="text-sm font-mono transition-opacity duration-200 hover:opacity-60"
+          style={{ color: 'rgba(232,232,232,0.4)' }}
+        >
+          ← Back
+        </a>
+        <span
+          className="font-mono font-black tracking-widest text-sm"
+          style={{ color: '#B87333' }}
+        >
+          Zeptio LLC
+        </span>
+        <div className="w-12" aria-hidden="true" />
+      </div>
+
+      <div className="max-w-2xl mx-auto px-5 pt-8 pb-16 flex flex-col gap-8">
 
         {/* Logo */}
         <div className="flex flex-col items-center gap-3 text-center">
@@ -113,15 +134,6 @@ export default function NDASignForm({ firstName, lastName, email }: Props) {
             ZEPTIO
           </p>
         </div>
-
-        {/* Back link */}
-        <a
-          href="/"
-          className="text-sm font-mono transition-opacity duration-200 hover:opacity-60 -mt-4"
-          style={{ color: 'rgba(232,232,232,0.35)' }}
-        >
-          ← Back
-        </a>
 
         {/* Heading */}
         <div className="flex flex-col gap-1">
