@@ -1,13 +1,14 @@
 import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
 import { createClient } from '@/src/lib/supabase/server'
-import WordBudget from '@/src/components/game/WordBudget'
+import GameRouter from '@/src/components/game/GameRouter'
 import { MASTERY_LEVELS } from '@/src/lib/game/mastery-levels'
 import { CLARITY_LEVELS } from '@/src/lib/game/clarity-levels'
 import { CONSTRAINTS_LEVELS } from '@/src/lib/game/constraints-levels'
 import { STRUCTURE_LEVELS } from '@/src/lib/game/structure-levels'
 import { DEBUG_LEVELS } from '@/src/lib/game/debug-levels'
 import { DEFAULT_ROBOT_CONFIG, type RobotConfig } from '@/app/profile/_components/RobotSVG'
+import { getGameType } from '@/src/lib/gameRandomizer'
 
 interface Props {
   params: Promise<{ level: string }>
@@ -93,9 +94,11 @@ export default async function MasteryLevelPage({ params }: Props) {
     ? { ...DEFAULT_ROBOT_CONFIG, ...(rawRobot as Partial<RobotConfig>) }
     : DEFAULT_ROBOT_CONFIG
 
+  const { gameType, isFirstVisit } = await getGameType(user.id, 'mastery', level.id, supabase)
+
   const levelConfig = {
     world: 'mastery' as const,
-    level: level.id, // 41-50
+    level: level.id,
     challenge: level.goal,
     criteria: level.criteria,
     max_xp: level.max_xp,
@@ -106,7 +109,6 @@ export default async function MasteryLevelPage({ params }: Props) {
 
   return (
     <div className="min-h-screen w-full max-w-full overflow-x-hidden" style={{ background: '#0F0F0F' }}>
-      {/* Nav bar */}
       <div className="w-full max-w-2xl mx-auto px-3 sm:px-6 lg:px-8 pt-3 sm:pt-6 mt-0 sm:mt-6 flex items-center justify-between">
         <Link
           href="/dashboard/mastery"
@@ -128,14 +130,15 @@ export default async function MasteryLevelPage({ params }: Props) {
         </div>
       </div>
 
-      <WordBudget
-        goal={level.goal}
+      <GameRouter
+        gameType={gameType}
         wordLimit={level.wordLimit}
-        levelId={level.id}
         levelConfig={levelConfig}
+        levelId={level.id}
         nextLevelUrl={nextLevelUrl}
         robotConfig={robotConfig}
         keyRule={level.keyRule}
+        isFirstVisit={isFirstVisit}
       />
     </div>
   )

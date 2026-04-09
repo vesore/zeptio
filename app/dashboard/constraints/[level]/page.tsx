@@ -1,9 +1,10 @@
 import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
 import { createClient } from '@/src/lib/supabase/server'
-import WordBudget from '@/src/components/game/WordBudget'
+import GameRouter from '@/src/components/game/GameRouter'
 import { CONSTRAINTS_LEVELS } from '@/src/lib/game/constraints-levels'
 import { DEFAULT_ROBOT_CONFIG, type RobotConfig } from '@/app/profile/_components/RobotSVG'
+import { getGameType } from '@/src/lib/gameRandomizer'
 
 const CONSTRAINTS_KEY_RULES = [
   'Limits force creativity.',
@@ -22,21 +23,6 @@ interface Props {
   params: Promise<{ level: string }>
 }
 
-/** Average score for level IDs [fromId..toId] inclusive */
-function avgRange(bestScores: Map<number, number>, fromId: number, toId: number): number {
-  let sum = 0
-  const count = toId - fromId + 1
-  for (let id = fromId; id <= toId; id++) sum += bestScores.get(id) ?? 0
-  return sum / count
-}
-
-/**
- * New unlock rules for Constraints (levelIndex is 1-based, level IDs are 11-20):
- *  levelIndex 1     — always unlocked
- *  levelIndex 2–5   — prev level scored 60+
- *  levelIndex 6–8   — prev 60+ AND avg(levels 1–5 of this world) ≥ 70
- *  levelIndex 9–10  — prev 60+ AND avg(levels 1–8 of this world) ≥ 80
- */
 function isLevelUnlocked(levelIndex: number, bestScores: Map<number, number>, levels: typeof CONSTRAINTS_LEVELS): boolean {
   if (levelIndex === 1) return true
   const prevId = levels[levelIndex - 2].id
@@ -85,6 +71,8 @@ export default async function ConstraintsLevelPage({ params }: Props) {
     ? { ...DEFAULT_ROBOT_CONFIG, ...(rawRobot as Partial<RobotConfig>) }
     : DEFAULT_ROBOT_CONFIG
 
+  const { gameType, isFirstVisit } = await getGameType(user.id, 'constraints', level.id, supabase)
+
   const levelConfig = {
     world: 'constraints' as const,
     level: level.id,
@@ -98,7 +86,6 @@ export default async function ConstraintsLevelPage({ params }: Props) {
 
   return (
     <div className="min-h-screen w-full max-w-full overflow-x-hidden" style={{ background: '#0F0F0F' }}>
-      {/* Nav bar */}
       <div className="w-full max-w-2xl mx-auto px-3 sm:px-6 lg:px-8 pt-3 sm:pt-6 mt-0 sm:mt-6 flex items-center justify-between">
         <Link
           href="/dashboard/constraints"
@@ -117,14 +104,15 @@ export default async function ConstraintsLevelPage({ params }: Props) {
         </div>
       </div>
 
-      <WordBudget
-        goal={level.goal}
+      <GameRouter
+        gameType={gameType}
         wordLimit={level.wordLimit}
-        levelId={level.id}
         levelConfig={levelConfig}
+        levelId={level.id}
         nextLevelUrl={nextLevelUrl}
         robotConfig={robotConfig}
         keyRule={CONSTRAINTS_KEY_RULES[levelIndex - 1]}
+        isFirstVisit={isFirstVisit}
       />
     </div>
   )

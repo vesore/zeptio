@@ -1,9 +1,10 @@
 import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
 import { createClient } from '@/src/lib/supabase/server'
-import WordBudget from '@/src/components/game/WordBudget'
+import GameRouter from '@/src/components/game/GameRouter'
 import { CLARITY_LEVELS } from '@/src/lib/game/clarity-levels'
 import { DEFAULT_ROBOT_CONFIG, type RobotConfig } from '@/app/profile/_components/RobotSVG'
+import { getGameType } from '@/src/lib/gameRandomizer'
 
 const CLARITY_KEY_RULES = [
   'Clear prompts get clear answers.',
@@ -22,7 +23,6 @@ interface Props {
   params: Promise<{ level: string }>
 }
 
-/** Average score for level IDs [fromId..toId] inclusive */
 function avgRange(bestScores: Map<number, number>, fromId: number, toId: number): number {
   let sum = 0
   const count = toId - fromId + 1
@@ -30,13 +30,6 @@ function avgRange(bestScores: Map<number, number>, fromId: number, toId: number)
   return sum / count
 }
 
-/**
- * New unlock rules (levelId 1-indexed, matching clarity IDs 1-10):
- *  levelId 1     — always unlocked
- *  levelId 2–5   — prev level scored 60+
- *  levelId 6–8   — prev 60+ AND avg(1–5) ≥ 70
- *  levelId 9–10  — prev 60+ AND avg(1–8) ≥ 80
- */
 function isLevelUnlocked(levelId: number, bestScores: Map<number, number>): boolean {
   if (levelId === 1) return true
   const prevScore = bestScores.get(levelId - 1) ?? 0
@@ -76,6 +69,8 @@ export default async function ClarityLevelPage({ params }: Props) {
     ? { ...DEFAULT_ROBOT_CONFIG, ...(rawRobot as Partial<RobotConfig>) }
     : DEFAULT_ROBOT_CONFIG
 
+  const { gameType, isFirstVisit } = await getGameType(user.id, 'clarity', level.id, supabase)
+
   const levelConfig = {
     world: 'clarity' as const,
     level: level.id,
@@ -89,7 +84,6 @@ export default async function ClarityLevelPage({ params }: Props) {
 
   return (
     <div className="scanlines min-h-screen w-full max-w-full overflow-x-hidden" style={{ background: '#0F0F0F' }}>
-      {/* Nav bar */}
       <div className="w-full max-w-2xl mx-auto px-3 sm:px-6 lg:px-8 pt-3 sm:pt-6 mt-0 sm:mt-6 flex items-center justify-between">
         <Link
           href="/dashboard/clarity"
@@ -108,14 +102,15 @@ export default async function ClarityLevelPage({ params }: Props) {
         </div>
       </div>
 
-      <WordBudget
-        goal={level.goal}
+      <GameRouter
+        gameType={gameType}
         wordLimit={level.wordLimit}
-        levelId={level.id}
         levelConfig={levelConfig}
+        levelId={level.id}
         nextLevelUrl={nextLevelUrl}
         robotConfig={robotConfig}
         keyRule={CLARITY_KEY_RULES[levelId - 1]}
+        isFirstVisit={isFirstVisit}
       />
     </div>
   )

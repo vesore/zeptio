@@ -1,9 +1,10 @@
 import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
 import { createClient } from '@/src/lib/supabase/server'
-import WordBudget from '@/src/components/game/WordBudget'
+import GameRouter from '@/src/components/game/GameRouter'
 import { STRUCTURE_LEVELS } from '@/src/lib/game/structure-levels'
 import { DEFAULT_ROBOT_CONFIG, type RobotConfig } from '@/app/profile/_components/RobotSVG'
+import { getGameType } from '@/src/lib/gameRandomizer'
 
 const STRUCTURE_KEY_RULES = [
   'Structure is invisible when done right.',
@@ -70,6 +71,8 @@ export default async function StructureLevelPage({ params }: Props) {
     ? { ...DEFAULT_ROBOT_CONFIG, ...(rawRobot as Partial<RobotConfig>) }
     : DEFAULT_ROBOT_CONFIG
 
+  const { gameType, isFirstVisit } = await getGameType(user.id, 'structure', level.id, supabase)
+
   const levelConfig = {
     world: 'structure' as const,
     level: level.id,
@@ -101,14 +104,15 @@ export default async function StructureLevelPage({ params }: Props) {
         </div>
       </div>
 
-      <WordBudget
-        goal={level.goal}
+      <GameRouter
+        gameType={gameType}
         wordLimit={level.wordLimit}
-        levelId={level.id}
         levelConfig={levelConfig}
+        levelId={level.id}
         nextLevelUrl={nextLevelUrl}
         robotConfig={robotConfig}
         keyRule={STRUCTURE_KEY_RULES[levelIndex - 1]}
+        isFirstVisit={isFirstVisit}
       />
     </div>
   )
