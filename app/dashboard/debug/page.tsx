@@ -94,7 +94,7 @@ export default async function DebugPage() {
           bestScores={bestScores}
           robotConfig={robotConfig}
           accent={ACCENT}
-          baseLevelHref={i => `/dashboard/debug/${i}`}
+          baseLevelHref="/dashboard/debug"
         />
 
       </div>

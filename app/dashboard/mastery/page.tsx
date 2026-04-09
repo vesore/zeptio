@@ -178,7 +178,7 @@ export default async function MasteryPage() {
           bestScores={bestScores}
           robotConfig={robotConfig}
           accent={ACCENT}
-          baseLevelHref={i => `/dashboard/mastery/${i}`}
+          baseLevelHref="/dashboard/mastery"
           unlockedOverride={unlockedOverride}
         />
 

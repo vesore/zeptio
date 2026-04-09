@@ -41,8 +41,8 @@ interface WorldGalaxyMapProps {
   robotConfig?: RobotConfig
   /** Hex accent color for completed planets, e.g. '#B87333' */
   accent:       string
-  /** Returns the URL for a 1-based level index, e.g. (i) => `/dashboard/structure/${i}` */
-  baseLevelHref: (levelIndex: number) => string
+  /** Base URL for level pages, e.g. `/dashboard/structure` */
+  baseLevelHref: string
   /**
    * Optional override for unlock status (one boolean per level, 0-indexed).
    * When provided, this replaces the default unlock logic entirely.
@@ -219,7 +219,7 @@ export default function WorldGalaxyMap({
           return (
             <Link
               key={level.id}
-              href={baseLevelHref(i + 1)}
+              href={`${baseLevelHref}/${i + 1}`}
               style={{ ...wrapperStyle, cursor: 'pointer' }}
               aria-label={`Level ${i + 1}: ${level.title}${best !== undefined ? `, best score ${best}/100` : ''}`}
             >

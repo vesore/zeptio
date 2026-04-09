@@ -94,7 +94,7 @@ export default async function ConstraintsPage() {
           bestScores={bestScores}
           robotConfig={robotConfig}
           accent={ACCENT}
-          baseLevelHref={i => `/dashboard/constraints/${i}`}
+          baseLevelHref="/dashboard/constraints"
         />
 
       </div>

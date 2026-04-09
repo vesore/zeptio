@@ -94,7 +94,7 @@ export default async function StructurePage() {
           bestScores={bestScores}
           robotConfig={robotConfig}
           accent={ACCENT}
-          baseLevelHref={i => `/dashboard/structure/${i}`}
+          baseLevelHref="/dashboard/structure"
         />
 
       </div>
