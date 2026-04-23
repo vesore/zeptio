@@ -1,15 +1,17 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/src/lib/supabase/client'
 
 type State = 'idle' | 'loading' | 'error'
 
 export default function LoginPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const isWelcomeBack = searchParams.get('welcome') === '1'
   const [email, setEmail]       = useState('')
-  const [password, setPassword] = useState('zeptio2024')
+  const [password, setPassword] = useState('Zeptio2026')
   const [state, setState]       = useState<State>('idle')
   const [errMsg, setErrMsg]     = useState('')
 
@@ -116,9 +118,15 @@ export default function LoginPage() {
 
         <div className="rounded-3xl p-6 sm:p-8 glass">
           <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white mb-1">Let&apos;s play.</h1>
-          <p className="text-sm mb-6" style={{ color: 'rgba(255,255,255,0.5)' }}>
-            Sign in or create your account.
-          </p>
+          {isWelcomeBack ? (
+            <p className="text-sm mb-6" style={{ color: '#00FF88' }}>
+              Welcome back! Sign in to continue.
+            </p>
+          ) : (
+            <p className="text-sm mb-6" style={{ color: 'rgba(255,255,255,0.5)' }}>
+              Sign in to your account.
+            </p>
+          )}
 
           {/* Google Sign In */}
           <button
