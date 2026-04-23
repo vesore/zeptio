@@ -1,14 +1,12 @@
 'use client'
 
-export const dynamic = 'force-dynamic'
-
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/src/lib/supabase/client'
 
 type State = 'idle' | 'loading' | 'error'
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const isWelcomeBack = searchParams.get('welcome') === '1'
@@ -61,7 +59,6 @@ export default function LoginPage() {
       .maybeSingle()
 
     if (existingProfile) {
-      // User exists but credentials are wrong — don't attempt sign-up
       setErrMsg('Invalid login credentials')
       setState('error')
       return
@@ -242,5 +239,13 @@ export default function LoginPage() {
         </div>
       </div>
     </main>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginForm />
+    </Suspense>
   )
 }
