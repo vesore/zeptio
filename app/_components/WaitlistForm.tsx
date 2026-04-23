@@ -193,12 +193,12 @@ export default function WaitlistForm() {
       </button>
 
       {/* Returning user link */}
-      <p className="text-center text-xs" style={{ color: 'rgba(232,232,232,0.3)' }}>
-        Already have access?{' '}
+      <p className="text-center text-sm" style={{ color: 'rgba(232,232,232,0.4)' }}>
+        Already have an account?{' '}
         <a
           href="/auth/login"
-          className="transition-opacity duration-200 hover:opacity-60"
-          style={{ color: 'rgba(232,232,232,0.5)' }}
+          className="font-semibold transition-opacity duration-200 hover:opacity-70"
+          style={{ color: '#00FF88' }}
         >
           Sign in →
         </a>

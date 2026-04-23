@@ -15,14 +15,14 @@ export default async function LandingPage() {
       className="min-h-screen w-full max-w-full overflow-x-hidden flex items-center justify-center"
       style={{ background: '#0F0F0F' }}
     >
-      {/* Top-right Sign In button */}
+      {/* Top-right Sign In text link */}
       <div className="fixed top-4 right-4 z-20">
         <a
           href="/auth/login"
-          className="rounded-full px-6 py-2 text-sm font-semibold transition-all duration-200 hover:shadow-[0_0_16px_rgba(0,255,136,0.4)] hover:bg-[rgba(0,255,136,0.08)]"
-          style={{ border: '1px solid #00FF88', color: '#00FF88' }}
+          className="text-xs font-mono transition-opacity duration-200 hover:opacity-60"
+          style={{ color: '#00FF88' }}
         >
-          Sign In
+          Sign in →
         </a>
       </div>
 
