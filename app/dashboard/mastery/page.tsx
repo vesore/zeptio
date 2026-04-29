@@ -126,7 +126,7 @@ export default async function MasteryPage() {
         <div className="pt-5 pb-2 flex items-center justify-between">
           <Link
             href="/dashboard"
-            className="text-sm font-mono transition-colors duration-200 hover:text-[#9B4AE2]"
+            className="text-sm transition-colors duration-200 hover:text-[#9B4AE2]"
             style={{ color: '#999999' }}
           >
             ← Home
@@ -141,11 +141,11 @@ export default async function MasteryPage() {
 
         {/* Neon title */}
         <div className="pt-6 pb-2 text-center">
-          <p className="text-xs font-mono tracking-widest uppercase mb-2" style={{ color: 'rgba(155,74,226,0.5)' }}>
+          <p className="text-xs tracking-widest uppercase mb-2" style={{ color: 'rgba(155,74,226,0.5)' }}>
             ◎ The Core
           </p>
           <h1
-            className="mastery-title-glow text-4xl sm:text-5xl font-black tracking-wider uppercase"
+            className="mastery-title-glow fredoka text-4xl sm:text-5xl font-black tracking-wider uppercase"
             style={{
               color: ACCENT,
               letterSpacing: '0.12em',

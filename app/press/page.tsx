@@ -123,18 +123,18 @@ export default function PressPage() {
 
             {/* Name + Subtitle */}
             <div className="flex flex-col gap-1.5">
-              <p className="text-[10px] font-mono tracking-widest uppercase" style={{ color: 'rgba(232,232,232,0.3)' }}>App Name</p>
-              <p className="text-2xl font-black tracking-wide" style={{ color: '#1A1A1A' }}>Zeptio</p>
+              <p className="text-[10px] tracking-widest uppercase" style={{ color: 'rgba(232,232,232,0.3)' }}>App Name</p>
+              <p className="fredoka text-2xl font-black tracking-wide" style={{ color: '#1A1A1A' }}>Zeptio</p>
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <p className="text-[10px] font-mono tracking-widest uppercase" style={{ color: 'rgba(232,232,232,0.3)' }}>Subtitle</p>
+              <p className="text-[10px] tracking-widest uppercase" style={{ color: 'rgba(232,232,232,0.3)' }}>Subtitle</p>
               <p className="text-lg font-bold" style={{ color: '#1A1A1A' }}>Learn AI Prompting Through Play</p>
             </div>
 
             {/* Description */}
             <div className="flex flex-col gap-3">
-              <p className="text-[10px] font-mono tracking-widest uppercase" style={{ color: 'rgba(232,232,232,0.3)' }}>Description</p>
+              <p className="text-[10px] tracking-widest uppercase" style={{ color: 'rgba(232,232,232,0.3)' }}>Description</p>
               <div
                 className="rounded-xl p-5 sm:p-6"
                 style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(232,232,232,0.07)' }}
@@ -150,7 +150,7 @@ export default function PressPage() {
 
             {/* Keywords */}
             <div className="flex flex-col gap-3">
-              <p className="text-[10px] font-mono tracking-widest uppercase" style={{ color: 'rgba(232,232,232,0.3)' }}>Keywords</p>
+              <p className="text-[10px] tracking-widest uppercase" style={{ color: 'rgba(232,232,232,0.3)' }}>Keywords</p>
               <div className="flex flex-wrap gap-2">
                 {keywords.map(kw => (
                   <span
@@ -249,7 +249,7 @@ export default function PressPage() {
 
           <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-1">
-              <p className="text-[10px] font-mono tracking-widest uppercase" style={{ color: 'rgba(232,232,232,0.3)' }}>Press & Media</p>
+              <p className="text-[10px] tracking-widest uppercase" style={{ color: 'rgba(232,232,232,0.3)' }}>Press & Media</p>
               <a
                 href="mailto:contact@zeptio.app"
                 className="text-base font-bold transition-colors duration-200 hover:text-[#B87333]"
@@ -259,7 +259,7 @@ export default function PressPage() {
               </a>
             </div>
             <div className="flex flex-col gap-1">
-              <p className="text-[10px] font-mono tracking-widest uppercase" style={{ color: 'rgba(232,232,232,0.3)' }}>Website</p>
+              <p className="text-[10px] tracking-widest uppercase" style={{ color: 'rgba(232,232,232,0.3)' }}>Website</p>
               <a
                 href="https://zeptio.app"
                 className="text-base font-bold transition-colors duration-200 hover:text-[#B87333]"
@@ -281,7 +281,7 @@ export default function PressPage() {
           <p className="text-xs font-mono" style={{ color: 'rgba(232,232,232,0.2)' }}>
             © 2026 Zeptio LLC. All rights reserved.
           </p>
-          <a href="/" className="text-xs font-mono transition-colors duration-200 hover:text-[#B87333]"
+          <a href="/" className="text-xs transition-colors duration-200 hover:text-[#B87333]"
             style={{ color: 'rgba(232,232,232,0.25)' }}>
             ← Back to Zeptio
           </a>

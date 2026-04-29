@@ -42,7 +42,7 @@ export default function WaitlistTable({ rows: initialRows }: { rows: WaitlistRow
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-black tracking-tight text-white">Waitlist</h1>
+          <h1 className="fredoka text-3xl font-black tracking-tight text-white">Waitlist</h1>
           <p className="text-sm mt-1" style={{ color: '#777777' }}>
             Manage beta access approvals
           </p>

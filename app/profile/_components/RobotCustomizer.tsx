@@ -125,7 +125,7 @@ export default function RobotCustomizer({ initialConfig, unlockedParts, bodyUnlo
       <div className="flex flex-col gap-1.5">
         <label
           htmlFor="robot-name-input"
-          className="text-xs font-mono font-semibold uppercase tracking-widest"
+          className="text-xs font-semibold uppercase tracking-widest"
           style={{ color: '#4A90E2' }}
         >
           Robot Name
@@ -154,7 +154,7 @@ export default function RobotCustomizer({ initialConfig, unlockedParts, bodyUnlo
 
       {/* Style picker */}
       <div>
-        <p className="text-xs font-mono font-semibold uppercase tracking-widest mb-3" style={{ color: '#4A90E2' }}>
+        <p className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: '#4A90E2' }}>
           Head Style
         </p>
         <div className="grid grid-cols-4 gap-2">
@@ -193,7 +193,7 @@ export default function RobotCustomizer({ initialConfig, unlockedParts, bodyUnlo
       {/* Parts (only shown when body is unlocked) */}
       {bodyUnlocked && (
         <div>
-          <p className="text-xs font-mono font-semibold uppercase tracking-widest mb-3" style={{ color: '#4A90E2' }}>
+          <p className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: '#4A90E2' }}>
             Equip Parts
           </p>
           <div className="grid grid-cols-2 gap-2">

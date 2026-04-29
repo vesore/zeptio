@@ -214,7 +214,7 @@ export default async function DashboardPage() {
         <div className="flex justify-start">
           <Link
             href="/journal"
-            className="text-xs font-mono transition-colors duration-200"
+            className="text-xs transition-colors duration-200"
             style={{ color: '#AAAAAA' }}
             onMouseEnter={(e) => ((e.target as HTMLElement).style.color = '#1A1A1A')}
             onMouseLeave={(e) => ((e.target as HTMLElement).style.color = '#AAAAAA')}
@@ -226,8 +226,8 @@ export default async function DashboardPage() {
 
         <div className="flex justify-center">
           <span
-            className="font-black tracking-widest text-2xl sm:text-3xl uppercase"
-            style={{ color: '#1A1A1A', fontFamily: 'Arial, sans-serif', letterSpacing: '0.15em' }}
+            className="fredoka font-black text-2xl sm:text-3xl uppercase"
+            style={{ color: '#1A1A1A', letterSpacing: '0.06em' }}
             aria-label="Zeptio"
           >
             Zeptio
@@ -299,7 +299,7 @@ export default async function DashboardPage() {
                   <span className="text-xl leading-none" aria-hidden="true">{world.emoji}</span>
                   <div className="flex flex-col min-w-0">
                     <div className="flex items-center gap-1">
-                      <h2 className="text-[10px] font-black tracking-widest leading-none truncate"
+                      <h2 className="fredoka text-[10px] font-black tracking-widest leading-none truncate"
                         style={{ color: '#1A1A1A' }}>
                         {world.name}
                       </h2>
@@ -353,7 +353,7 @@ export default async function DashboardPage() {
           >
             <span className="text-xl leading-none">❤️</span>
             <div className="flex flex-col">
-              <h2 className="text-[10px] font-black tracking-widest" style={{ color: '#1A1A1A' }}>MASTERY</h2>
+              <h2 className="fredoka text-[10px] font-black tracking-widest" style={{ color: '#1A1A1A' }}>MASTERY</h2>
               <p className="text-[9px] font-medium" style={{ color: '#9B4AE2' }}>The Core · Double XP</p>
             </div>
           </Link>
@@ -372,7 +372,7 @@ export default async function DashboardPage() {
           >
             <span className="text-xl leading-none" style={{ filter: 'grayscale(1)', opacity: 0.3 }}>❤️</span>
             <div className="flex flex-col">
-              <h2 className="text-[10px] font-black tracking-widest" style={{ color: '#BBBBBB' }}>MASTERY</h2>
+              <h2 className="fredoka text-[10px] font-black tracking-widest" style={{ color: '#BBBBBB' }}>MASTERY</h2>
               <p className="text-[9px] font-medium" style={{ color: '#CCCCCC' }}>Score 80+ on Level 1 of all worlds 🔒</p>
             </div>
           </div>
@@ -391,7 +391,7 @@ export default async function DashboardPage() {
       {/* ── ROBOT ASSEMBLY AREA ──────────────────── */}
       <div className="relative z-10 shrink-0 flex flex-col items-center" style={{ height: '88px' }}
         aria-label="Robot assembly progress" aria-hidden="true">
-        <p className="text-[9px] font-mono uppercase tracking-widest mt-1" style={{ color: '#CCCCCC' }}>
+        <p className="text-[9px] uppercase tracking-widest mt-1" style={{ color: '#CCCCCC' }}>
           Assembly
         </p>
         <svg width="130" height="76" viewBox="0 0 130 76" aria-hidden="true">

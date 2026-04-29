@@ -77,7 +77,7 @@ export default function GameRobot({
               padding: '6px 10px',
               borderRadius: '12px',
               fontSize: '10px',
-              fontFamily: 'monospace',
+              fontFamily: 'var(--font-nunito)',
               fontWeight: 600,
               color: '#1A1A1A',
               background: 'rgba(255,255,255,0.96)',

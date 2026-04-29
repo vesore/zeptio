@@ -174,7 +174,7 @@ export default function WorldGalaxyMap({
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               background: completed ? accent : isCurrent ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.03)',
               border: `2px solid ${completed ? accent : isCurrent ? 'rgba(255,255,255,0.45)' : 'rgba(0,0,0,0.06)'}`,
-              fontSize: '15px', fontWeight: 900, fontFamily: 'monospace',
+              fontSize: '15px', fontWeight: 900, fontFamily: 'var(--font-fredoka)',
               color: completed ? '#0F0F0F' : isCurrent ? 'white' : 'rgba(255,255,255,0.2)',
               flexShrink: 0,
             }}
@@ -186,13 +186,13 @@ export default function WorldGalaxyMap({
         const label = (
           <div style={{ textAlign: 'center', marginTop: '5px', width: '84px' }}>
             <p style={{
-              fontSize: '8.5px', fontFamily: 'monospace', fontWeight: 600, lineHeight: 1.3,
+              fontSize: '8.5px', fontFamily: 'var(--font-fredoka)', fontWeight: 600, lineHeight: 1.3,
               color: completed ? accent : isCurrent ? 'rgba(255,255,255,0.8)' : 'rgba(255,255,255,0.2)',
             }}>
               {level.title}
             </p>
             {best !== undefined && (
-              <p style={{ fontSize: '8px', fontFamily: 'monospace', marginTop: '2px',
+              <p style={{ fontSize: '8px', fontFamily: 'var(--font-fredoka)', marginTop: '2px',
                 color: best >= 80 ? '#00FF88' : best >= 60 ? '#B87333' : '#C84B1F' }}>
                 {best}/100
               </p>

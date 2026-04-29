@@ -172,7 +172,7 @@ export default function GalaxyMap({ bestScores, robotConfig = DEFAULT_ROBOT_CONF
               border: `2px solid ${completed ? '#00FF88' : isCurrent ? 'rgba(255,255,255,0.45)' : 'rgba(0,0,0,0.06)'}`,
               fontSize:   '15px',
               fontWeight: 900,
-              fontFamily: 'monospace',
+              fontFamily: 'var(--font-fredoka)',
               color: completed ? '#0F0F0F' : isCurrent ? 'white' : 'rgba(255,255,255,0.2)',
               flexShrink: 0,
             }}
@@ -185,7 +185,7 @@ export default function GalaxyMap({ bestScores, robotConfig = DEFAULT_ROBOT_CONF
           <div style={{ textAlign: 'center', marginTop: '5px', width: '84px' }}>
             <p style={{
               fontSize: '8.5px',
-              fontFamily: 'monospace',
+              fontFamily: 'var(--font-fredoka)',
               fontWeight: 600,
               lineHeight: 1.3,
               color: completed
@@ -199,7 +199,7 @@ export default function GalaxyMap({ bestScores, robotConfig = DEFAULT_ROBOT_CONF
             {best !== undefined && (
               <p style={{
                 fontSize: '8px',
-                fontFamily: 'monospace',
+                fontFamily: 'var(--font-fredoka)',
                 marginTop: '2px',
                 color: best >= 80 ? '#00FF88' : best >= 60 ? '#B87333' : '#C84B1F',
               }}>

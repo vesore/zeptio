@@ -254,16 +254,16 @@ export default function WordBudget({
           }}
         >
           <p
-            className="text-xs font-mono font-semibold uppercase tracking-widest mb-6 text-center"
+            className="text-xs font-semibold uppercase tracking-widest mb-6 text-center"
             style={{ color: accent }}
           >
             Key Rule
           </p>
           <p
-            className="text-2xl sm:text-3xl font-black text-center leading-tight mb-10"
+            className="fredoka text-2xl sm:text-3xl font-black text-center leading-tight mb-10"
             style={{
               color: '#1A1A1A',
-              fontFamily: 'monospace',
+              fontFamily: 'var(--font-fredoka)',
               letterSpacing: '0.02em',
             }}
           >
@@ -313,7 +313,7 @@ export default function WordBudget({
             style={{
               fontSize: 'clamp(1.6rem, 5vw, 2.6rem)',
               fontWeight: 900,
-              fontFamily: 'monospace',
+              fontFamily: 'var(--font-fredoka)',
               letterSpacing: '0.12em',
               color: accent,
               textShadow: `0 0 24px ${accent}88, 0 0 48px ${accent}44`,
@@ -377,7 +377,7 @@ export default function WordBudget({
 
           {/* Goal */}
           <div>
-            <p className="text-xs font-mono font-semibold uppercase tracking-widest mb-3"
+            <p className="text-xs font-semibold uppercase tracking-widest mb-3"
               style={{ color: accent }} id="goal-label">
               Goal
             </p>
@@ -397,7 +397,7 @@ export default function WordBudget({
           {/* Textarea + word counter */}
           <div className="flex flex-col gap-3">
             <label htmlFor="prompt-textarea"
-              className="text-xs font-mono font-semibold uppercase tracking-widest"
+              className="text-xs font-semibold uppercase tracking-widest"
               style={{ color: accent }}>
               Your Prompt
             </label>
@@ -482,7 +482,7 @@ export default function WordBudget({
               {/* Score display */}
               <div className="flex flex-col items-center gap-2 py-6" aria-hidden="true">
                 <span
-                  className={`text-7xl sm:text-8xl font-black tabular-nums leading-none transition-colors duration-300 ${scoreLanded ? 'score-glow' : ''}`}
+                  className={`fredoka text-7xl sm:text-8xl font-black tabular-nums leading-none transition-colors duration-300 ${scoreLanded ? 'score-glow' : ''}`}
                   style={{ color: scoreColor }}
                 >
                   {displayScore}
@@ -519,7 +519,7 @@ export default function WordBudget({
                   border: '1px solid #EEEEEE',
                 }}
               >
-                <p className="text-xs font-mono font-semibold uppercase tracking-widest mb-3"
+                <p className="text-xs font-semibold uppercase tracking-widest mb-3"
                   style={{ color: accent }} id="feedback-label">
                   Feedback
                 </p>
@@ -539,7 +539,7 @@ export default function WordBudget({
                 }}
               >
                 <label htmlFor="reflection-input"
-                  className="text-xs font-mono font-semibold uppercase tracking-widest"
+                  className="text-xs font-semibold uppercase tracking-widest"
                   style={{ color: accent }}>
                   Reflection
                 </label>

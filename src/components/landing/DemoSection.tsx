@@ -270,8 +270,8 @@ export default function DemoSection() {
           {/* Top bar: world label + attempt dots */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span aria-hidden="true" style={{ color: '#E8FF47', fontFamily: 'monospace', fontSize: '12px' }}>◎</span>
-              <span className="text-xs font-mono tracking-widest uppercase" style={{ color: '#E8FF47' }}>
+              <span aria-hidden="true" style={{ color: '#E8FF47', fontFamily: 'var(--font-fredoka)', fontSize: '12px' }}>◎</span>
+              <span className="text-xs tracking-widest uppercase" style={{ color: '#E8FF47' }}>
                 Clarity
               </span>
               <span className="text-xs font-mono" style={{ color: 'rgba(255,255,255,0.18)' }}>·</span>
@@ -307,7 +307,7 @@ export default function DemoSection() {
               border: '1px solid rgba(255,255,255,0.07)',
             }}
           >
-            <p className="text-xs font-mono tracking-widest uppercase mb-1.5" style={{ color: 'rgba(232,255,71,0.65)' }}>
+            <p className="text-xs tracking-widest uppercase mb-1.5" style={{ color: 'rgba(232,255,71,0.65)' }}>
               Challenge
             </p>
             <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.75)' }}>
@@ -317,7 +317,7 @@ export default function DemoSection() {
 
           {/* Prompt input */}
           <div>
-            <p className="text-xs font-mono tracking-widest uppercase mb-2" style={{ color: 'rgba(255,255,255,0.35)' }}>
+            <p className="text-xs tracking-widest uppercase mb-2" style={{ color: 'rgba(255,255,255,0.35)' }}>
               Your Prompt
             </p>
             <div
@@ -459,7 +459,7 @@ export default function DemoSection() {
                 }}
               >
                 <p
-                  className="text-xs font-mono tracking-widest uppercase mb-2"
+                  className="text-xs tracking-widest uppercase mb-2"
                   style={{ color: 'rgba(232,255,71,0.65)' }}
                 >
                   Feedback
@@ -482,7 +482,7 @@ export default function DemoSection() {
           </p>
           <Link
             href="/auth/login"
-            className="inline-flex items-center gap-1.5 rounded-lg px-4 py-2 text-xs font-mono font-bold tracking-widest uppercase text-[#1a1a2e] transition-all duration-200 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E8FF47] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0b1e]"
+            className="inline-flex items-center gap-1.5 rounded-lg px-4 py-2 text-xs font-bold tracking-widest uppercase text-[#1a1a2e] transition-all duration-200 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E8FF47] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0b1e]"
             style={{ backgroundColor: '#E8FF47' }}
           >
             Play now →

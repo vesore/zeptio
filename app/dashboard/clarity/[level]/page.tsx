@@ -87,7 +87,7 @@ export default async function ClarityLevelPage({ params }: Props) {
       <div className="w-full max-w-2xl mx-auto px-3 sm:px-6 lg:px-8 pt-3 sm:pt-6 mt-0 sm:mt-6 flex items-center justify-between">
         <Link
           href="/dashboard/clarity"
-          className="inline-flex items-center gap-2 text-sm font-mono transition-colors duration-200 hover:text-[#00FF88]"
+          className="inline-flex items-center gap-2 text-sm transition-colors duration-200 hover:text-[#00FF88]"
           style={{ color: '#888888' }}
         >
           ← Clarity

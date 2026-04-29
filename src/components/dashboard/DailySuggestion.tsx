@@ -50,7 +50,7 @@ export default function DailySuggestion({ worldName, worldHref, worldAccent }: D
       aria-label={`Today's focus: ${worldName}`}
     >
       <div className="flex-1 pl-1">
-        <p className="text-xs font-mono font-semibold uppercase tracking-widest" style={{ color: worldAccent }}>
+        <p className="text-xs font-semibold uppercase tracking-widest" style={{ color: worldAccent }}>
           Today&apos;s Focus
         </p>
         <p className="text-sm font-bold mt-0.5">

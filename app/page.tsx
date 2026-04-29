@@ -19,7 +19,7 @@ export default async function LandingPage() {
       <div className="fixed top-4 right-4 z-20">
         <a
           href="/auth/login"
-          className="text-xs font-mono transition-opacity duration-200 hover:opacity-60"
+          className="text-xs transition-opacity duration-200 hover:opacity-60"
           style={{ color: '#4A90E2' }}
         >
           Sign in →
@@ -47,7 +47,7 @@ export default async function LandingPage() {
             style={{ borderRadius: '24px', filter: 'drop-shadow(0 0 24px rgba(74,144,226,0.3))' }}
           />
           <p
-            className="font-mono font-black tracking-widest text-7xl uppercase"
+            className="fredoka font-black text-7xl"
             style={{ color: '#4A90E2', textShadow: '0 0 32px rgba(74,144,226,0.5), 0 0 64px rgba(74,144,226,0.2)' }}
           >
             ZEPTIO

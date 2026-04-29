@@ -206,13 +206,13 @@ export default async function JournalPage() {
         <div className="pt-6 pb-4 flex items-center justify-between">
           <Link
             href="/dashboard"
-            className="text-sm font-mono transition-colors duration-200 hover:text-[#00FF88]"
+            className="text-sm transition-colors duration-200 hover:text-[#00FF88]"
             style={{ color: '#999999' }}
           >
             ← Home
           </Link>
           <h1
-            className="text-2xl font-black tracking-widest uppercase font-mono"
+            className="fredoka text-2xl font-black tracking-widest uppercase font-mono"
             style={{
               color: '#E2A04A',
               textShadow: '0 0 16px rgba(226,160,74,0.5)',
@@ -391,7 +391,7 @@ export default async function JournalPage() {
                   <p className="text-[8px] font-mono uppercase tracking-wider mb-1" style={{ color: `rgba(${world.accentRgb},0.6)` }}>
                     {world.name} · Level {index + 1}
                   </p>
-                  <p className="text-sm font-bold leading-snug" style={{ color: '#1A1A1A', fontFamily: 'monospace' }}>
+                  <p className="text-sm font-bold leading-snug" style={{ color: '#1A1A1A', fontFamily: 'var(--font-fredoka)' }}>
                     &ldquo;{rule}&rdquo;
                   </p>
                 </div>

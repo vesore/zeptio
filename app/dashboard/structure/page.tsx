@@ -41,7 +41,7 @@ export default async function StructurePage() {
         <div className="pt-5 pb-2 flex items-center justify-between">
           <Link
             href="/dashboard"
-            className="text-sm font-mono transition-colors duration-200 hover:text-[#8B8FA8]"
+            className="text-sm transition-colors duration-200 hover:text-[#8B8FA8]"
             style={{ color: '#999999' }}
           >
             ← Home
@@ -56,11 +56,11 @@ export default async function StructurePage() {
 
         {/* Neon title */}
         <div className="pt-6 pb-2 text-center">
-          <p className="text-xs font-mono tracking-widest uppercase mb-2" style={{ color: 'rgba(102,102,102,0.5)' }}>
+          <p className="text-xs tracking-widest uppercase mb-2" style={{ color: 'rgba(102,102,102,0.5)' }}>
             ◎ World Three
           </p>
           <h1
-            className="text-4xl sm:text-5xl font-black tracking-wider uppercase"
+            className="fredoka text-4xl sm:text-5xl font-black tracking-wider uppercase"
             style={{
               color: ACCENT,
               textShadow: '0 0 20px rgba(102,102,102,0.5), 0 0 60px rgba(102,102,102,0.2)',

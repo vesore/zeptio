@@ -116,7 +116,7 @@ function LoginForm() {
         </p>
 
         <div className="rounded-3xl p-6 sm:p-8 glass">
-          <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white mb-1">Let&apos;s play.</h1>
+          <h1 className="fredoka text-2xl sm:text-3xl font-black tracking-tight text-white mb-1">Let&apos;s play.</h1>
           {isWelcomeBack ? (
             <p className="text-sm mb-6" style={{ color: '#4A90E2' }}>
               Welcome back! Sign in to continue.
@@ -146,7 +146,7 @@ function LoginForm() {
           {/* Divider */}
           <div className="flex items-center gap-3">
             <div className="flex-1 h-px" style={{ backgroundColor: 'rgba(0,0,0,0.08)' }} />
-            <span className="text-xs font-mono tracking-widest uppercase" style={{ color: '#999999' }}>or</span>
+            <span className="text-xs tracking-widest uppercase" style={{ color: '#999999' }}>or</span>
             <div className="flex-1 h-px" style={{ backgroundColor: 'rgba(0,0,0,0.08)' }} />
           </div>
 
@@ -155,7 +155,7 @@ function LoginForm() {
             <div className="flex flex-col gap-1.5">
               <label
                 htmlFor="email"
-                className="text-xs font-mono tracking-widest uppercase"
+                className="text-xs tracking-widest uppercase"
                 style={{ color: '#666666' }}
               >
                 Email
@@ -184,7 +184,7 @@ function LoginForm() {
             <div className="flex flex-col gap-1.5">
               <label
                 htmlFor="password"
-                className="text-xs font-mono tracking-widest uppercase"
+                className="text-xs tracking-widest uppercase"
                 style={{ color: '#666666' }}
               >
                 Password

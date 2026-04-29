@@ -40,7 +40,7 @@ export default async function ClarityPage() {
         <div className="pt-5 pb-2 flex items-center justify-between">
           <Link
             href="/dashboard"
-            className="text-sm font-mono transition-colors duration-200 hover:text-[#00FF88]"
+            className="text-sm transition-colors duration-200 hover:text-[#00FF88]"
             style={{ color: '#999999' }}
           >
             ← Home
@@ -56,13 +56,13 @@ export default async function ClarityPage() {
         {/* ── Neon title ── */}
         <div className="pt-6 pb-2 text-center">
           <p
-            className="text-xs font-mono tracking-widest uppercase mb-2"
+            className="text-xs tracking-widest uppercase mb-2"
             style={{ color: 'rgba(74,144,226,0.45)' }}
           >
             ◎ World One
           </p>
           <h1
-            className="text-4xl sm:text-5xl font-black tracking-wider uppercase"
+            className="fredoka text-4xl sm:text-5xl font-black tracking-wider uppercase"
             style={{
               color: '#4A90E2',
               textShadow: '0 0 20px rgba(74,144,226,0.6), 0 0 60px rgba(74,144,226,0.25)',

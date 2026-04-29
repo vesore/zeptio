@@ -62,7 +62,7 @@ export default function GameRouter({
           }}
         >
           <p
-            className="text-xs font-mono font-semibold uppercase tracking-widest mb-6 text-center"
+            className="text-xs font-semibold uppercase tracking-widest mb-6 text-center"
             style={{ color: 'rgba(74,144,226,0.5)' }}
           >
             Key Rule
@@ -72,7 +72,7 @@ export default function GameRouter({
             style={{
               color: '#1A1A1A',
               textShadow: '0 0 20px rgba(74,144,226,0.15)',
-              fontFamily: 'monospace',
+              fontFamily: 'var(--font-fredoka)',
               letterSpacing: '0.02em',
             }}
           >

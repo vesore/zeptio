@@ -52,7 +52,7 @@ export default function ProfileExtrasForm({ initialBio, initialFavoriteWorld }: 
       <div className="flex flex-col gap-1.5">
         <label
           htmlFor="bio-input"
-          className="text-xs font-mono font-semibold uppercase tracking-widest"
+          className="text-xs font-semibold uppercase tracking-widest"
           style={{ color: '#4A90E2' }}
         >
           Bio
@@ -83,7 +83,7 @@ export default function ProfileExtrasForm({ initialBio, initialFavoriteWorld }: 
       <div className="flex flex-col gap-1.5">
         <label
           htmlFor="world-select"
-          className="text-xs font-mono font-semibold uppercase tracking-widest"
+          className="text-xs font-semibold uppercase tracking-widest"
           style={{ color: '#4A90E2' }}
         >
           Favorite World

@@ -195,7 +195,7 @@ export default function ChainPrompting({
 
       {showCelebration && (
         <div style={{ position: 'fixed', top: '50%', left: '50%', zIndex: 60, pointerEvents: 'none', animation: 'levelComplete 3.2s ease-in-out forwards', whiteSpace: 'nowrap' }} aria-hidden="true">
-          <span style={{ fontSize: 'clamp(1.6rem,5vw,2.6rem)', fontWeight: 900, fontFamily: 'monospace', letterSpacing: '0.12em', color: '#4A90E2', textShadow: '0 0 24px rgba(74,144,226,0.9)' }}>LEVEL COMPLETE!</span>
+          <span style={{ fontSize: 'clamp(1.6rem,5vw,2.6rem)', fontWeight: 900, fontFamily: 'var(--font-fredoka)', letterSpacing: '0.08em', color: '#4A90E2', textShadow: '0 0 24px rgba(74,144,226,0.9)' }}>LEVEL COMPLETE!</span>
         </div>
       )}
       {showCelebration && (
@@ -210,13 +210,13 @@ export default function ChainPrompting({
         <div className="w-full rounded-3xl p-5 sm:p-8 flex flex-col gap-5 sm:gap-6" style={{ background: '#FAFAFA', border: '1.5px solid #E8E8E8',  }}>
 
           <div className="flex items-center gap-2">
-            <span className="text-xs font-mono font-semibold uppercase tracking-widest px-3 py-1 rounded-full" style={{ background: 'rgba(226,160,74,0.1)', color: '#E2A04A', border: '1px solid rgba(226,160,74,0.2)' }}>
+            <span className="text-xs font-semibold uppercase tracking-widest px-3 py-1 rounded-full" style={{ background: 'rgba(226,160,74,0.1)', color: '#E2A04A', border: '1px solid rgba(226,160,74,0.2)' }}>
               Chain Prompting
             </span>
           </div>
 
           <div>
-            <p className="text-xs font-mono font-semibold uppercase tracking-widest mb-2" style={{ color: '#4A90E2' }}>Goal</p>
+            <p className="text-xs font-semibold uppercase tracking-widest mb-2" style={{ color: '#4A90E2' }}>Goal</p>
             <p className="text-base font-bold leading-relaxed" style={{ color: '#1A1A1A' }}>{levelConfig.challenge}</p>
           </div>
 
@@ -304,7 +304,7 @@ export default function ChainPrompting({
             <div className="flex flex-col gap-5 animate-in fade-in duration-500">
               {/* Per-step breakdown */}
               <div className="flex flex-col gap-2">
-                <p className="text-xs font-mono font-semibold uppercase tracking-widest" style={{ color: '#4A90E2' }}>Chain Scores</p>
+                <p className="text-xs font-semibold uppercase tracking-widest" style={{ color: '#4A90E2' }}>Chain Scores</p>
                 {stepResults.map((r, i) => r && (
                   <div key={i} className="flex items-center gap-3 rounded-xl px-4 py-2" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
                     <span className="text-xs font-mono" style={{ color: '#999999' }}>Step {i + 1}</span>
@@ -315,8 +315,8 @@ export default function ChainPrompting({
               </div>
 
               <div className="flex flex-col items-center gap-2 py-4" aria-hidden="true">
-                <p className="text-xs font-mono uppercase tracking-widest mb-1" style={{ color: 'rgba(74,144,226,0.5)' }}>Average Score</p>
-                <span className={`text-7xl sm:text-8xl font-black tabular-nums leading-none transition-colors duration-300 ${scoreLanded ? 'score-glow' : ''}`} style={{ color: scoreColor }}>{displayScore}</span>
+                <p className="text-xs uppercase tracking-widest mb-1" style={{ color: 'rgba(74,144,226,0.5)' }}>Average Score</p>
+                <span className={`fredoka text-7xl sm:text-8xl font-black tabular-nums leading-none transition-colors duration-300 ${scoreLanded ? 'score-glow' : ''}`} style={{ color: scoreColor }}>{displayScore}</span>
                 <span className="text-xs uppercase tracking-widest mt-1" style={{ color: '#888888' }}>out of 100</span>
                 {scoreLanded && <span className="text-base font-bold mt-1 animate-in fade-in duration-300" style={{ color: scoreColor }}>{getCongratulatoryMessage(finalScore)}</span>}
                 {scoreLanded && <span className="rounded-full px-4 py-1.5 text-xs font-bold mt-1 animate-in fade-in duration-300" style={{ background: 'rgba(74,144,226,0.12)', color: '#4A90E2', border: '1px solid rgba(74,144,226,0.25)' }}>+{Math.round(stepResults.filter(Boolean).reduce((s, r) => s + (r?.xp_earned ?? 0), 0) / 3)} XP</span>}
@@ -324,13 +324,13 @@ export default function ChainPrompting({
 
               {stepResults[2] && (
                 <div className="rounded-3xl p-6 transition-opacity duration-500" style={{ opacity: feedbackVisible ? 1 : 0, background: '#FAFAFA', border: '1px solid #F0F0F0' }}>
-                  <p className="text-xs font-mono font-semibold uppercase tracking-widest mb-3" style={{ color: '#4A90E2' }}>Feedback — Step 3</p>
+                  <p className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: '#4A90E2' }}>Feedback — Step 3</p>
                   <p className="text-sm leading-relaxed" style={{ color: '#444444' }}>{stepResults[2]?.feedback}</p>
                 </div>
               )}
 
               <div className="rounded-3xl p-6 flex flex-col gap-3 transition-opacity duration-500" style={{ opacity: feedbackVisible ? 1 : 0, background: 'rgba(226,160,74,0.04)', border: '1px solid rgba(226,160,74,0.15)' }}>
-                <label className="text-xs font-mono font-semibold uppercase tracking-widest" style={{ color: '#E2A04A' }}>Reflection</label>
+                <label className="text-xs font-semibold uppercase tracking-widest" style={{ color: '#E2A04A' }}>Reflection</label>
                 <p className="text-sm" style={{ color: '#666666' }}>How did each step build on the previous one?</p>
                 <div className="flex gap-2 items-start">
                   <textarea className="flex-1 rounded-xl p-3 text-sm resize-none outline-none focus-visible:ring-1 focus-visible:ring-[#B87333]" style={{ background: '#FAFAFA', border: '1px solid rgba(226,160,74,0.2)', color: 'rgba(255,255,255,0.8)', minHeight: '60px', caretColor: '#E2A04A' }} placeholder="Type your reflection…" value={reflection} onChange={(e) => setReflection(e.target.value.slice(0, 100))} disabled={reflectionSaved} />

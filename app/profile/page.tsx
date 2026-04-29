@@ -108,7 +108,7 @@ export default async function ProfilePage() {
   const initialFavoriteWorld = (profile as { favorite_world?: string })?.favorite_world ?? ''
 
   return (
-    <main className="min-h-screen w-full max-w-full text-white overflow-hidden">
+    <main className="min-h-screen w-full max-w-full overflow-hidden">
 
       {/* Header */}
       <header
@@ -117,12 +117,12 @@ export default async function ProfilePage() {
       >
         <Link
           href="/dashboard"
-          className="text-sm font-mono transition-colors duration-200 hover:text-[#00FF88]"
+          className="text-sm transition-colors duration-200 hover:text-[#4A90E2]"
           style={{ color: '#888888' }}
         >
           ← Dashboard
         </Link>
-        <span className="text-[#00FF88] font-mono font-bold tracking-widest text-sm uppercase">
+        <span className="fredoka font-bold text-sm uppercase text-[#4A90E2]">
           Zeptio
         </span>
       </header>
@@ -131,7 +131,7 @@ export default async function ProfilePage() {
 
         {/* ── ROBOT AVATAR ──────────────────────────────────── */}
         <section>
-          <p className="text-xs font-mono font-semibold uppercase tracking-widest mb-4" style={{ color: '#4A90E2' }}>
+          <p className="text-xs font-semibold uppercase tracking-widest mb-4" style={{ color: '#4A90E2' }}>
             Your Robot
           </p>
           <RobotCustomizer initialConfig={robotConfig} unlockedParts={unlockedParts} bodyUnlocked={bodyUnlocked} />
@@ -139,17 +139,17 @@ export default async function ProfilePage() {
 
         {/* ── PROFILE ───────────────────────────────────────── */}
         <section className="rounded-3xl glass p-5 sm:p-6 overflow-hidden" style={{ border: '1px solid rgba(0,0,0,0.06)' }}>
-          <p className="text-xs font-mono font-semibold uppercase tracking-widest mb-4" style={{ color: '#4A90E2' }}>
+          <p className="text-xs font-semibold uppercase tracking-widest mb-4" style={{ color: '#4A90E2' }}>
             Profile
           </p>
           <div className="flex flex-col gap-4">
             <div>
               <EditNameForm initialName={displayName} />
-              <p className="mt-1 text-sm font-mono truncate" style={{ color: '#888888' }}>
+              <p className="mt-1 text-sm truncate" style={{ color: '#888888' }}>
                 {user.email}
               </p>
               {memberSince && (
-                <p className="mt-0.5 text-xs font-mono" style={{ color: '#999999' }}>
+                <p className="mt-0.5 text-xs" style={{ color: '#999999' }}>
                   Member since {memberSince}
                 </p>
               )}
@@ -165,7 +165,7 @@ export default async function ProfilePage() {
 
         {/* ── BADGES ────────────────────────────────────────── */}
         <section>
-          <p className="text-xs font-mono font-semibold uppercase tracking-widest mb-4" style={{ color: '#4A90E2' }}>
+          <p className="text-xs font-semibold uppercase tracking-widest mb-4" style={{ color: '#4A90E2' }}>
             Badges
           </p>
           <div className="grid grid-cols-3 gap-2 sm:gap-3">
@@ -188,7 +188,7 @@ export default async function ProfilePage() {
                     </span>
                     {earned && (
                       <span
-                        className="text-[9px] font-bold font-mono rounded-full px-1.5 py-0.5 uppercase tracking-wider shrink-0"
+                        className="text-[9px] font-bold rounded-full px-1.5 py-0.5 uppercase tracking-wider shrink-0"
                         style={{ background: 'rgba(74,144,226,0.15)', color: '#4A90E2' }}
                       >
                         ✓
@@ -196,7 +196,7 @@ export default async function ProfilePage() {
                     )}
                   </div>
                   <div>
-                    <p className="text-xs font-bold text-white leading-tight">{badge.name}</p>
+                    <p className="text-xs font-bold leading-tight">{badge.name}</p>
                     <p className="text-[10px] mt-0.5 leading-snug" style={{ color: '#888888' }}>
                       {badge.description}
                     </p>
