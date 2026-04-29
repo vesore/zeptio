@@ -214,10 +214,7 @@ export default async function DashboardPage() {
         <div className="flex justify-start">
           <Link
             href="/journal"
-            className="text-xs transition-colors duration-200"
-            style={{ color: '#AAAAAA' }}
-            onMouseEnter={(e) => ((e.target as HTMLElement).style.color = '#1A1A1A')}
-            onMouseLeave={(e) => ((e.target as HTMLElement).style.color = '#AAAAAA')}
+            className="text-xs transition-colors duration-200 text-[#AAAAAA] hover:text-[#1A1A1A]"
             aria-label="Learning Journal"
           >
             Journal
