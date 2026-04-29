@@ -5,15 +5,15 @@ export default function PrivacyPage() {
     <main className="min-h-screen py-16 px-6">
       <div className="max-w-2xl mx-auto">
 
-        <Link href="/" className="text-sm font-mono transition-colors duration-200 hover:text-[#00FF88] mb-10 inline-block" style={{ color: 'rgba(255,255,255,0.4)' }}>
+        <Link href="/" className="text-sm font-mono transition-colors duration-200 hover:text-[#00FF88] mb-10 inline-block" style={{ color: '#888888' }}>
           ← Back
         </Link>
 
-        <p className="font-mono font-bold tracking-widest text-sm uppercase mb-4" style={{ color: '#00FF88' }}>Zeptio LLC</p>
+        <p className="font-mono font-bold tracking-widest text-sm uppercase mb-4" style={{ color: '#4A90E2' }}>Zeptio LLC</p>
         <h1 className="text-4xl font-black tracking-tight text-white mb-2">Privacy Policy</h1>
-        <p className="text-sm mb-12" style={{ color: 'rgba(255,255,255,0.4)' }}>Last updated: March 2026</p>
+        <p className="text-sm mb-12" style={{ color: '#888888' }}>Last updated: March 2026</p>
 
-        <div className="flex flex-col gap-10 text-base leading-relaxed" style={{ color: 'rgba(255,255,255,0.75)' }}>
+        <div className="flex flex-col gap-10 text-base leading-relaxed" style={{ color: '#444444' }}>
 
           <section>
             <h2 className="text-xl font-black tracking-tight text-white mb-3">What we collect</h2>
@@ -39,7 +39,7 @@ export default function PrivacyPage() {
             <h2 className="text-xl font-black tracking-tight text-white mb-3">Contact</h2>
             <p>
               Questions about your privacy? Email Zeptio LLC at{' '}
-              <a href="mailto:contact@zeptio.app" className="font-bold transition-colors duration-200 hover:opacity-80" style={{ color: '#00FF88' }}>
+              <a href="mailto:contact@zeptio.app" className="font-bold transition-colors duration-200 hover:opacity-80" style={{ color: '#4A90E2' }}>
                 contact@zeptio.app
               </a>
             </p>
@@ -47,9 +47,9 @@ export default function PrivacyPage() {
 
         </div>
 
-        <p className="mt-12 text-xs font-mono" style={{ color: 'rgba(255,255,255,0.2)' }}>© 2026 Zeptio LLC. All rights reserved.</p>
+        <p className="mt-12 text-xs font-mono" style={{ color: '#BBBBBB' }}>© 2026 Zeptio LLC. All rights reserved.</p>
 
-        <div className="mt-6 pt-8 flex gap-6 text-sm" style={{ borderTop: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.3)' }}>
+        <div className="mt-6 pt-8 flex gap-6 text-sm" style={{ borderTop: '1px solid rgba(0,0,0,0.06)', color: '#999999' }}>
           <Link href="/terms" className="hover:text-[#00FF88] transition-colors duration-200">Terms of Service</Link>
           <Link href="/support" className="hover:text-[#00FF88] transition-colors duration-200">Support</Link>
         </div>

@@ -53,7 +53,7 @@ export default function ProfileExtrasForm({ initialBio, initialFavoriteWorld }: 
         <label
           htmlFor="bio-input"
           className="text-xs font-mono font-semibold uppercase tracking-widest"
-          style={{ color: '#00FF88' }}
+          style={{ color: '#4A90E2' }}
         >
           Bio
         </label>
@@ -65,10 +65,10 @@ export default function ProfileExtrasForm({ initialBio, initialFavoriteWorld }: 
             onChange={e => { setBio(e.target.value.slice(0, 60)); setSaved(false) }}
             placeholder="Describe yourself in one line…"
             maxLength={60}
-            className="w-full rounded-2xl px-4 py-3 pr-14 text-sm font-medium outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#00FF88] glass placeholder:text-white/25"
-            style={{ color: 'white', border: '1.5px solid rgba(255,255,255,0.1)' }}
+            className="w-full rounded-2xl px-4 py-3 pr-14 text-sm font-medium outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#4A90E2] glass placeholder:text-white/25"
+            style={{ color: '#FFFFFF', border: '1.5px solid rgba(0,0,0,0.08)' }}
             onFocus={e => { e.target.style.borderColor = '#00FF88' }}
-            onBlur={e  => { e.target.style.borderColor = 'rgba(255,255,255,0.1)' }}
+            onBlur={e  => { e.target.style.borderColor = 'rgba(0,0,0,0.08)' }}
           />
           <span
             className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-mono tabular-nums pointer-events-none"
@@ -84,7 +84,7 @@ export default function ProfileExtrasForm({ initialBio, initialFavoriteWorld }: 
         <label
           htmlFor="world-select"
           className="text-xs font-mono font-semibold uppercase tracking-widest"
-          style={{ color: '#00FF88' }}
+          style={{ color: '#4A90E2' }}
         >
           Favorite World
         </label>
@@ -92,10 +92,10 @@ export default function ProfileExtrasForm({ initialBio, initialFavoriteWorld }: 
           id="world-select"
           value={favoriteWorld}
           onChange={e => { setFavoriteWorld(e.target.value); setSaved(false) }}
-          className="w-full rounded-2xl px-4 py-3 text-sm font-medium outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#00FF88] glass appearance-none"
+          className="w-full rounded-2xl px-4 py-3 text-sm font-medium outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#4A90E2] glass appearance-none"
           style={{
             color: favoriteWorld ? 'white' : 'rgba(255,255,255,0.4)',
-            border: '1.5px solid rgba(255,255,255,0.1)',
+            border: '1.5px solid rgba(0,0,0,0.08)',
             backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='rgba(176,224,32,0.6)' d='M6 8L1 3h10z'/%3E%3C/svg%3E")`,
             backgroundRepeat: 'no-repeat',
             backgroundPosition: 'right 1rem center',
@@ -106,7 +106,7 @@ export default function ProfileExtrasForm({ initialBio, initialFavoriteWorld }: 
               key={opt.value}
               value={opt.value}
               disabled={opt.disabled}
-              style={{ background: '#0F0F0F', color: opt.disabled ? 'rgba(255,255,255,0.3)' : 'white' }}
+              style={{ background: '#FFFFFF', color: opt.disabled ? 'rgba(255,255,255,0.3)' : 'white' }}
             >
               {opt.label}
             </option>
@@ -115,7 +115,7 @@ export default function ProfileExtrasForm({ initialBio, initialFavoriteWorld }: 
       </div>
 
       {error && (
-        <p className="text-xs font-mono rounded-xl px-4 py-2" style={{ background: 'rgba(248,113,113,0.1)', color: '#f87171', border: '1px solid rgba(248,113,113,0.2)' }}>
+        <p className="text-xs font-mono rounded-xl px-4 py-2" style={{ background: 'rgba(226,74,74,0.1)', color: '#E24A4A', border: '1px solid rgba(226,74,74,0.2)' }}>
           {error}
         </p>
       )}

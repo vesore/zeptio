@@ -50,28 +50,28 @@ export default function GameRouter({
 
   if (!ruleDismissed && keyRule) {
     return (
-      <div className="min-h-screen w-full flex items-center justify-center px-4" style={{ background: '#0F0F0F' }}>
+      <div className="min-h-screen w-full flex items-center justify-center px-4" style={{ background: '#FFFFFF' }}>
         <div
           className="w-full max-w-2xl mx-auto"
           style={{
-            background: 'rgba(255,255,255,0.04)',
-            border: '1px solid rgba(0,255,136,0.2)',
+            background: '#FAFAFA',
+            border: '1px solid rgba(74,144,226,0.2)',
             borderRadius: '24px',
             padding: '40px 32px',
-            boxShadow: '0 0 40px rgba(0,255,136,0.06)',
+            boxShadow: '0 0 40px rgba(74,144,226,0.06)',
           }}
         >
           <p
             className="text-xs font-mono font-semibold uppercase tracking-widest mb-6 text-center"
-            style={{ color: 'rgba(0,255,136,0.5)' }}
+            style={{ color: 'rgba(74,144,226,0.5)' }}
           >
             Key Rule
           </p>
           <p
             className="text-2xl sm:text-3xl font-black text-center leading-tight mb-4"
             style={{
-              color: '#E8E8E8',
-              textShadow: '0 0 20px rgba(0,255,136,0.15)',
+              color: '#1A1A1A',
+              textShadow: '0 0 20px rgba(74,144,226,0.15)',
               fontFamily: 'monospace',
               letterSpacing: '0.02em',
             }}
@@ -80,13 +80,13 @@ export default function GameRouter({
           </p>
           <p
             className="text-xs font-mono text-center mb-10"
-            style={{ color: 'rgba(255,255,255,0.25)' }}
+            style={{ color: '#AAAAAA' }}
           >
             Game mode: {gameType.replace(/([A-Z])/g, ' $1').trim()}
           </p>
           <button
             onClick={() => setRuleDismissed(true)}
-            className="w-full py-4 font-bold text-sm tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00FF88] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent btn-primary"
+            className="w-full py-4 font-bold text-sm tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4A90E2] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent btn-primary"
             autoFocus
           >
             Got it, let&apos;s play →

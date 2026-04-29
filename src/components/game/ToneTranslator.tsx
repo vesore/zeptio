@@ -31,7 +31,7 @@ type Tone = typeof TONES[number]
 
 const CONFETTI = Array.from({ length: 32 }, (_, i) => ({
   x:        ((i * 47 + 11) % 90) + 5,
-  color:    ['#00FF88', '#B87333', '#C84B1F', '#E8E8E8', '#8B8FA8', '#00FF88'][i % 6],
+  color:    ['#4A90E2', '#E2A04A', '#4AE27A', '#E24A4A', '#9B4AE2', '#1A1A1A'][i % 6],
   delay:    parseFloat(((i * 0.09) % 0.7).toFixed(2)),
   duration: parseFloat((((i * 0.13) % 0.8) + 0.55).toFixed(2)),
   size:     ((i * 3) % 7) + 5,
@@ -152,7 +152,7 @@ export default function ToneTranslator({
   const isSubmitDisabled = !selectedTone || !prompt.trim() || isLoading
 
   const scoreColor =
-    displayScore >= 80 ? '#E8E8E8' : displayScore >= 60 ? '#00FF88' : displayScore >= 40 ? '#B87333' : '#C84B1F'
+    displayScore >= 80 ? '#1A1A1A' : displayScore >= 60 ? '#00FF88' : displayScore >= 40 ? '#B87333' : '#E24A4A'
 
   const robotExpression: RobotExpression =
     isLoading ? 'loading'
@@ -166,7 +166,7 @@ export default function ToneTranslator({
     : 'idle'
 
   return (
-    <div className="min-h-screen w-full max-w-full overflow-x-hidden flex items-center justify-center" style={{ background: '#0F0F0F' }}>
+    <div className="min-h-screen w-full max-w-full overflow-x-hidden flex items-center justify-center" style={{ background: '#FFFFFF' }}>
       <div className="sr-only" aria-live="polite">{scoreLanded && result ? `Score: ${result.score}. ${result.feedback}` : ''}</div>
 
       <div style={{ position: 'fixed', right: '1rem', bottom: '1.5rem', zIndex: 40 }} aria-hidden="true">
@@ -175,7 +175,7 @@ export default function ToneTranslator({
 
       {showCelebration && (
         <div style={{ position: 'fixed', top: '50%', left: '50%', zIndex: 60, pointerEvents: 'none', animation: 'levelComplete 3.2s ease-in-out forwards', whiteSpace: 'nowrap' }} aria-hidden="true">
-          <span style={{ fontSize: 'clamp(1.6rem,5vw,2.6rem)', fontWeight: 900, fontFamily: 'monospace', letterSpacing: '0.12em', color: '#00FF88', textShadow: '0 0 24px rgba(0,255,136,0.9)' }}>LEVEL COMPLETE!</span>
+          <span style={{ fontSize: 'clamp(1.6rem,5vw,2.6rem)', fontWeight: 900, fontFamily: 'monospace', letterSpacing: '0.12em', color: '#4A90E2', textShadow: '0 0 24px rgba(74,144,226,0.9)' }}>LEVEL COMPLETE!</span>
         </div>
       )}
       {showCelebration && (
@@ -187,25 +187,25 @@ export default function ToneTranslator({
       )}
 
       <div className="w-full max-w-2xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
-        <div className="w-full rounded-3xl p-5 sm:p-8 flex flex-col gap-5 sm:gap-6" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.09)', backdropFilter: 'blur(12px)' }}>
+        <div className="w-full rounded-3xl p-5 sm:p-8 flex flex-col gap-5 sm:gap-6" style={{ background: '#FAFAFA', border: '1.5px solid #E8E8E8',  }}>
 
           <div className="flex items-center gap-2">
-            <span className="text-xs font-mono font-semibold uppercase tracking-widest px-3 py-1 rounded-full" style={{ background: 'rgba(184,115,51,0.1)', color: '#B87333', border: '1px solid rgba(184,115,51,0.2)' }}>
+            <span className="text-xs font-mono font-semibold uppercase tracking-widest px-3 py-1 rounded-full" style={{ background: 'rgba(226,160,74,0.1)', color: '#E2A04A', border: '1px solid rgba(226,160,74,0.2)' }}>
               Tone Translator
             </span>
           </div>
 
           <div>
-            <p className="text-xs font-mono font-semibold uppercase tracking-widest mb-2" style={{ color: '#00FF88' }}>Task</p>
-            <p className="text-base sm:text-lg font-bold leading-relaxed" style={{ color: '#E8E8E8' }}>{levelConfig.challenge}</p>
+            <p className="text-xs font-mono font-semibold uppercase tracking-widest mb-2" style={{ color: '#4A90E2' }}>Task</p>
+            <p className="text-base sm:text-lg font-bold leading-relaxed" style={{ color: '#1A1A1A' }}>{levelConfig.challenge}</p>
           </div>
 
-          <div style={{ height: '1px', background: 'rgba(255,255,255,0.08)' }} />
+          <div style={{ height: '1px', background: '#F0F0F0' }} />
 
           {/* Tone selector */}
           {result === null && (
             <div className="flex flex-col gap-3">
-              <p className="text-xs font-mono font-semibold uppercase tracking-widest" style={{ color: '#00FF88' }}>Choose a Tone</p>
+              <p className="text-xs font-mono font-semibold uppercase tracking-widest" style={{ color: '#4A90E2' }}>Choose a Tone</p>
               <div className="grid grid-cols-3 gap-3">
                 {TONES.map((t) => {
                   const isSelected = selectedTone === t
@@ -214,11 +214,11 @@ export default function ToneTranslator({
                       key={t}
                       onClick={() => setSelectedTone(t)}
                       className="rounded-2xl p-3 text-center transition-all duration-200"
-                      style={{ background: isSelected ? 'rgba(184,115,51,0.12)' : 'rgba(255,255,255,0.03)', border: `1.5px solid ${isSelected ? '#B87333' : 'rgba(255,255,255,0.08)'}`, cursor: 'pointer' }}
+                      style={{ background: isSelected ? 'rgba(226,160,74,0.12)' : 'rgba(255,255,255,0.03)', border: `1.5px solid ${isSelected ? '#B87333' : 'rgba(255,255,255,0.08)'}`, cursor: 'pointer' }}
                       aria-pressed={isSelected}
                     >
                       <span className="text-sm font-bold block" style={{ color: isSelected ? '#B87333' : '#E8E8E8' }}>{t}</span>
-                      <span className="text-xs font-mono mt-1 block" style={{ color: 'rgba(255,255,255,0.4)' }}>{TONE_HINTS[t]}</span>
+                      <span className="text-xs font-mono mt-1 block" style={{ color: '#888888' }}>{TONE_HINTS[t]}</span>
                     </button>
                   )
                 })}
@@ -226,9 +226,9 @@ export default function ToneTranslator({
 
               {/* Example hint */}
               {selectedTone && (
-                <div className="rounded-2xl p-4 mt-1 animate-in fade-in duration-300" style={{ background: 'rgba(0,255,136,0.04)', border: '1px solid rgba(0,255,136,0.1)' }}>
-                  <p className="text-xs font-mono mb-1" style={{ color: 'rgba(0,255,136,0.5)' }}>Example — {selectedTone}</p>
-                  <p className="text-xs italic" style={{ color: 'rgba(255,255,255,0.5)' }}>{TONE_EXAMPLES[selectedTone]}</p>
+                <div className="rounded-2xl p-4 mt-1 animate-in fade-in duration-300" style={{ background: 'rgba(74,144,226,0.04)', border: '1px solid rgba(74,144,226,0.1)' }}>
+                  <p className="text-xs font-mono mb-1" style={{ color: 'rgba(74,144,226,0.5)' }}>Example — {selectedTone}</p>
+                  <p className="text-xs italic" style={{ color: '#666666' }}>{TONE_EXAMPLES[selectedTone]}</p>
                 </div>
               )}
             </div>
@@ -237,12 +237,12 @@ export default function ToneTranslator({
           {/* Prompt textarea */}
           {result === null && selectedTone && (
             <div className="flex flex-col gap-3">
-              <label className="text-xs font-mono font-semibold uppercase tracking-widest" style={{ color: '#00FF88' }}>
-                Your Prompt <span style={{ color: 'rgba(0,255,136,0.4)' }}>— {selectedTone} tone</span>
+              <label className="text-xs font-mono font-semibold uppercase tracking-widest" style={{ color: '#4A90E2' }}>
+                Your Prompt <span style={{ color: 'rgba(74,144,226,0.4)' }}>— {selectedTone} tone</span>
               </label>
               <textarea
-                className="w-full rounded-2xl p-4 text-sm resize-none outline-none focus-visible:ring-2 focus-visible:ring-[#00FF88] placeholder:text-white/30"
-                style={{ background: 'rgba(255,255,255,0.04)', border: '1.5px solid rgba(255,255,255,0.1)', minHeight: '120px', caretColor: '#00FF88', color: '#00FF88', fontWeight: 700 }}
+                className="w-full rounded-2xl p-4 text-sm resize-none outline-none focus-visible:ring-2 focus-visible:ring-[#4A90E2] placeholder:text-black/25"
+                style={{ background: '#FAFAFA', border: '1.5px solid #E8E8E8', minHeight: '120px', caretColor: '#4A90E2', color: '#4A90E2', fontWeight: 700 }}
                 placeholder={`Write in a ${selectedTone.toLowerCase()} tone…`}
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
@@ -255,25 +255,25 @@ export default function ToneTranslator({
 
           {result === null && (
             <button onClick={handleSubmit} disabled={isSubmitDisabled} className={`w-full py-4 font-bold text-sm tracking-wide transition-all duration-200 btn-primary${!isSubmitDisabled ? ' neon-pulse' : ''}`}>
-              {isLoading ? <span className="flex items-center justify-center gap-2"><span className="inline-block w-4 h-4 rounded-full border-2 animate-spin" style={{ borderColor: 'rgba(15,15,15,0.3)', borderTopColor: '#0F0F0F' }} />Scoring…</span> : !selectedTone ? 'Pick a tone first' : 'Submit'}
+              {isLoading ? <span className="flex items-center justify-center gap-2"><span className="inline-block w-4 h-4 rounded-full border-2 animate-spin" style={{ borderColor: 'rgba(0,0,0,0.15)', borderTopColor: '#FFFFFF' }} />Scoring…</span> : !selectedTone ? 'Pick a tone first' : 'Submit'}
             </button>
           )}
 
-          {error && <p role="alert" className="text-sm text-center rounded-2xl py-3 px-4" style={{ background: 'rgba(248,113,113,0.1)', color: '#f87171', border: '1px solid rgba(248,113,113,0.2)' }}>{error}</p>}
+          {error && <p role="alert" className="text-sm text-center rounded-2xl py-3 px-4" style={{ background: 'rgba(248,113,113,0.1)', color: '#E24A4A', border: '1px solid rgba(248,113,113,0.2)' }}>{error}</p>}
 
           {result !== null && (
             <div className="flex flex-col gap-5 animate-in fade-in duration-500">
               <div className="flex flex-col items-center gap-2 py-6" aria-hidden="true">
                 <span className={`text-7xl sm:text-8xl font-black tabular-nums leading-none transition-colors duration-300 ${scoreLanded ? 'score-glow' : ''}`} style={{ color: scoreColor }}>{displayScore}</span>
-                <span className="text-xs uppercase tracking-widest mt-1" style={{ color: 'rgba(255,255,255,0.4)' }}>out of 100</span>
+                <span className="text-xs uppercase tracking-widest mt-1" style={{ color: '#888888' }}>out of 100</span>
                 {scoreLanded && <span className="text-base font-bold mt-1 animate-in fade-in duration-300" style={{ color: scoreColor }}>{getCongratulatoryMessage(result.score)}</span>}
-                {scoreLanded && <span className="rounded-full px-4 py-1.5 text-xs font-bold mt-1 animate-in fade-in duration-300" style={{ background: 'rgba(0,255,136,0.12)', color: '#00FF88', border: '1px solid rgba(0,255,136,0.25)' }}>+{result.xp_earned} XP</span>}
+                {scoreLanded && <span className="rounded-full px-4 py-1.5 text-xs font-bold mt-1 animate-in fade-in duration-300" style={{ background: 'rgba(74,144,226,0.12)', color: '#4A90E2', border: '1px solid rgba(74,144,226,0.25)' }}>+{result.xp_earned} XP</span>}
               </div>
 
               {/* Tone comparison insight */}
               {feedbackVisible && selectedTone && (
-                <div className="rounded-3xl p-5 animate-in fade-in duration-500" style={{ background: 'rgba(184,115,51,0.06)', border: '1px solid rgba(184,115,51,0.15)' }}>
-                  <p className="text-xs font-mono font-semibold uppercase tracking-widest mb-3" style={{ color: '#B87333' }}>How tone changes everything</p>
+                <div className="rounded-3xl p-5 animate-in fade-in duration-500" style={{ background: 'rgba(226,160,74,0.06)', border: '1px solid rgba(226,160,74,0.15)' }}>
+                  <p className="text-xs font-mono font-semibold uppercase tracking-widest mb-3" style={{ color: '#E2A04A' }}>How tone changes everything</p>
                   <div className="flex flex-col gap-2">
                     {TONES.map(t => (
                       <div key={t} className="flex gap-3 items-start">
@@ -285,17 +285,17 @@ export default function ToneTranslator({
                 </div>
               )}
 
-              <div className="rounded-3xl p-6 transition-opacity duration-500" style={{ opacity: feedbackVisible ? 1 : 0, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
-                <p className="text-xs font-mono font-semibold uppercase tracking-widest mb-3" style={{ color: '#00FF88' }}>Feedback</p>
-                <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.75)' }}>{result.feedback}</p>
+              <div className="rounded-3xl p-6 transition-opacity duration-500" style={{ opacity: feedbackVisible ? 1 : 0, background: '#FAFAFA', border: '1px solid #F0F0F0' }}>
+                <p className="text-xs font-mono font-semibold uppercase tracking-widest mb-3" style={{ color: '#4A90E2' }}>Feedback</p>
+                <p className="text-sm leading-relaxed" style={{ color: '#444444' }}>{result.feedback}</p>
               </div>
 
-              <div className="rounded-3xl p-6 flex flex-col gap-3 transition-opacity duration-500" style={{ opacity: feedbackVisible ? 1 : 0, background: 'rgba(184,115,51,0.04)', border: '1px solid rgba(184,115,51,0.15)' }}>
-                <label className="text-xs font-mono font-semibold uppercase tracking-widest" style={{ color: '#B87333' }}>Reflection</label>
-                <p className="text-sm" style={{ color: 'rgba(255,255,255,0.5)' }}>What makes the {selectedTone?.toLowerCase()} tone distinct from the others?</p>
+              <div className="rounded-3xl p-6 flex flex-col gap-3 transition-opacity duration-500" style={{ opacity: feedbackVisible ? 1 : 0, background: 'rgba(226,160,74,0.04)', border: '1px solid rgba(226,160,74,0.15)' }}>
+                <label className="text-xs font-mono font-semibold uppercase tracking-widest" style={{ color: '#E2A04A' }}>Reflection</label>
+                <p className="text-sm" style={{ color: '#666666' }}>What makes the {selectedTone?.toLowerCase()} tone distinct from the others?</p>
                 <div className="flex gap-2 items-start">
-                  <textarea className="flex-1 rounded-xl p-3 text-sm resize-none outline-none focus-visible:ring-1 focus-visible:ring-[#B87333]" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(184,115,51,0.2)', color: 'rgba(255,255,255,0.8)', minHeight: '60px', caretColor: '#B87333' }} placeholder="Type your reflection…" value={reflection} onChange={(e) => setReflection(e.target.value.slice(0, 100))} disabled={reflectionSaved} />
-                  <button onClick={handleSaveReflection} disabled={!reflection.trim() || reflectionSaved} className="shrink-0 rounded-xl px-4 py-3 text-xs font-bold" style={{ background: reflectionSaved ? 'rgba(0,255,136,0.1)' : 'rgba(184,115,51,0.15)', border: `1px solid ${reflectionSaved ? 'rgba(0,255,136,0.3)' : 'rgba(184,115,51,0.3)'}`, color: reflectionSaved ? '#00FF88' : '#B87333', cursor: reflectionSaved ? 'default' : 'pointer' }}>
+                  <textarea className="flex-1 rounded-xl p-3 text-sm resize-none outline-none focus-visible:ring-1 focus-visible:ring-[#B87333]" style={{ background: '#FAFAFA', border: '1px solid rgba(226,160,74,0.2)', color: 'rgba(255,255,255,0.8)', minHeight: '60px', caretColor: '#E2A04A' }} placeholder="Type your reflection…" value={reflection} onChange={(e) => setReflection(e.target.value.slice(0, 100))} disabled={reflectionSaved} />
+                  <button onClick={handleSaveReflection} disabled={!reflection.trim() || reflectionSaved} className="shrink-0 rounded-xl px-4 py-3 text-xs font-bold" style={{ background: reflectionSaved ? 'rgba(74,144,226,0.1)' : 'rgba(226,160,74,0.15)', border: `1px solid ${reflectionSaved ? 'rgba(74,144,226,0.3)' : 'rgba(226,160,74,0.3)'}`, color: reflectionSaved ? '#00FF88' : '#E2A04A', cursor: reflectionSaved ? 'default' : 'pointer' }}>
                     {reflectionSaved ? '✓ Saved' : 'Save'}
                   </button>
                 </div>
@@ -304,12 +304,12 @@ export default function ToneTranslator({
               <div className="flex flex-col gap-3 transition-opacity duration-500" style={{ opacity: feedbackVisible ? 1 : 0 }}>
                 {result.score >= 60 && nextLevelUrl ? (
                   <>
-                    <Link href={nextLevelUrl} className="w-full py-4 font-bold text-sm tracking-wide text-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00FF88] btn-primary">Next Level →</Link>
-                    <button onClick={handleReset} className="w-full rounded-full py-4 font-bold text-sm" style={{ border: '1.5px solid rgba(0,255,136,0.3)', color: 'rgba(0,255,136,0.5)', cursor: 'pointer' }}>Try Again</button>
+                    <Link href={nextLevelUrl} className="w-full py-4 font-bold text-sm tracking-wide text-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4A90E2] btn-primary">Next Level →</Link>
+                    <button onClick={handleReset} className="w-full rounded-full py-4 font-bold text-sm" style={{ border: '1.5px solid rgba(74,144,226,0.3)', color: 'rgba(74,144,226,0.5)', cursor: 'pointer' }}>Try Again</button>
                   </>
                 ) : (
                   <>
-                    {result.score < 60 && <p className="text-xs text-center font-mono" style={{ color: 'rgba(255,255,255,0.35)' }}>Score 60 or higher to advance.</p>}
+                    {result.score < 60 && <p className="text-xs text-center font-mono" style={{ color: '#999999' }}>Score 60 or higher to advance.</p>}
                     <button onClick={handleReset} className="w-full py-4 font-bold text-sm tracking-wide btn-primary">Try Again</button>
                   </>
                 )}

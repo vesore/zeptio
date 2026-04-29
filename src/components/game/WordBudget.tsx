@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import GameRobot, { type RobotExpression } from './GameRobot'
 import { DEFAULT_ROBOT_CONFIG, type RobotConfig } from '@/app/profile/_components/RobotSVG'
+import { assembleSound, levelCompleteSound, scoreRevealSound } from '@/src/lib/sounds'
 
 interface LevelConfig {
   world: 'clarity' | 'constraints' | 'structure' | 'debug' | 'mastery'
@@ -29,6 +30,14 @@ interface WordBudgetProps {
   keyRule?: string
 }
 
+const WORLD_ACCENT: Record<string, string> = {
+  clarity:     '#4A90E2',
+  constraints: '#E2A04A',
+  structure:   '#4AE27A',
+  debug:       '#E24A4A',
+  mastery:     '#9B4AE2',
+}
+
 function countWords(text: string): number {
   return text.trim() === '' ? 0 : text.trim().split(/\s+/).length
 }
@@ -41,10 +50,9 @@ function getCongratulatoryMessage(score: number): string {
   return 'Keep practicing!'
 }
 
-// Deterministic confetti pieces — avoids hydration mismatch
 const CONFETTI = Array.from({ length: 32 }, (_, i) => ({
   x:        ((i * 47 + 11) % 90) + 5,
-  color:    ['#00FF88', '#B87333', '#C84B1F', '#E8E8E8', '#8B8FA8', '#00FF88'][i % 6],
+  color:    ['#4A90E2', '#E2A04A', '#4AE27A', '#E24A4A', '#9B4AE2', '#1A1A1A'][i % 6],
   delay:    parseFloat(((i * 0.09) % 0.7).toFixed(2)),
   duration: parseFloat((((i * 0.13) % 0.8) + 0.55).toFixed(2)),
   size:     ((i * 3) % 7) + 5,
@@ -60,6 +68,8 @@ export default function WordBudget({
   robotConfig = DEFAULT_ROBOT_CONFIG,
   keyRule,
 }: WordBudgetProps) {
+  const accent = WORLD_ACCENT[levelConfig.world] ?? '#4A90E2'
+
   const [ruleDismissed, setRuleDismissed]         = useState(!keyRule)
   const [prompt, setPrompt]                       = useState('')
   const [isLoading, setIsLoading]                 = useState(false)
@@ -75,7 +85,6 @@ export default function WordBudget({
   const [reflectionSaved, setReflectionSaved]     = useState(false)
   const animationRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
-  // Typing animation for goal text on mount
   useEffect(() => {
     setDisplayedGoal('')
     let i = 0
@@ -87,7 +96,6 @@ export default function WordBudget({
     return () => clearInterval(timer)
   }, [goal])
 
-  // Screen reader announcement
   useEffect(() => {
     if (result) {
       setAnnouncement(`Score: ${result.score} out of 100. You earned ${result.xp_earned} XP. Feedback: ${result.feedback}`)
@@ -96,7 +104,6 @@ export default function WordBudget({
     }
   }, [result])
 
-  // Score count-up over 1.5s, then reveal feedback
   useEffect(() => {
     if (result === null) {
       setScoreLanded(false)
@@ -120,6 +127,8 @@ export default function WordBudget({
       if (current >= target) {
         setDisplayScore(target)
         setScoreLanded(true)
+        assembleSound()
+        scoreRevealSound(target)
         if (animationRef.current) clearInterval(animationRef.current)
         setTimeout(() => setFeedbackVisible(true), 600)
       } else {
@@ -132,10 +141,10 @@ export default function WordBudget({
     }
   }, [result])
 
-  // Celebration when score lands ≥ 60 and next level exists
   useEffect(() => {
     if (scoreLanded && result && result.score >= 60 && nextLevelUrl) {
       setShowCelebration(true)
+      levelCompleteSound()
       const timer = setTimeout(() => setShowCelebration(false), 3200)
       return () => clearTimeout(timer)
     }
@@ -214,47 +223,46 @@ export default function WordBudget({
   const isSubmitDisabled = isOverLimit || isLoading || prompt.trim() === ''
 
   const scoreColor =
-    displayScore >= 80 ? '#E8E8E8'
-    : displayScore >= 60 ? '#00FF88'
-    : displayScore >= 40 ? '#B87333'
-    : '#C84B1F'
+    displayScore >= 80 ? '#1A1A1A'
+    : displayScore >= 60 ? '#4AE27A'
+    : displayScore >= 40 ? '#E2A04A'
+    : '#E24A4A'
 
   const robotExpression: RobotExpression =
-    isLoading                           ? 'loading'
-    : result !== null && !scoreLanded   ? 'loading'
-    : result !== null && result.score === 100 ? 'perfect'
-    : result !== null && result.score >= 80   ? 'excited'
-    : result !== null && result.score >= 60   ? 'happy'
-    : result !== null && result.score >= 40   ? 'neutral'
-    : result !== null                         ? 'sad'
-    : prompt.trim() !== ''              ? 'typing'
+    isLoading                                      ? 'loading'
+    : result !== null && !scoreLanded              ? 'loading'
+    : result !== null && result.score === 100      ? 'perfect'
+    : result !== null && result.score >= 80        ? 'excited'
+    : result !== null && result.score >= 60        ? 'happy'
+    : result !== null && result.score >= 40        ? 'neutral'
+    : result !== null                              ? 'sad'
+    : prompt.trim() !== ''                         ? 'typing'
     : 'idle'
 
   // ── KEY RULE GATE ──────────────────────────────────────────────────────────
   if (!ruleDismissed && keyRule) {
     return (
-      <div className="min-h-screen w-full flex items-center justify-center px-4" style={{ background: '#0F0F0F' }}>
+      <div className="min-h-screen w-full flex items-center justify-center px-4" style={{ background: '#FFFFFF' }}>
         <div
           className="w-full max-w-2xl mx-auto"
           style={{
-            background: 'rgba(255,255,255,0.04)',
-            border: '1px solid rgba(0,255,136,0.2)',
+            background: '#F5F5F5',
+            border: `1.5px solid ${accent}40`,
             borderRadius: '24px',
             padding: '40px 32px',
-            boxShadow: '0 0 40px rgba(0,255,136,0.06)',
+            boxShadow: '0 4px 24px rgba(0,0,0,0.08)',
           }}
         >
           <p
             className="text-xs font-mono font-semibold uppercase tracking-widest mb-6 text-center"
-            style={{ color: 'rgba(0,255,136,0.5)' }}
+            style={{ color: accent }}
           >
             Key Rule
           </p>
           <p
             className="text-2xl sm:text-3xl font-black text-center leading-tight mb-10"
             style={{
-              color: '#E8E8E8',
-              textShadow: '0 0 20px rgba(0,255,136,0.15)',
+              color: '#1A1A1A',
               fontFamily: 'monospace',
               letterSpacing: '0.02em',
             }}
@@ -263,7 +271,8 @@ export default function WordBudget({
           </p>
           <button
             onClick={() => setRuleDismissed(true)}
-            className="w-full py-4 font-bold text-sm tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00FF88] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent btn-primary"
+            className="w-full py-4 font-bold text-sm tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 btn-primary"
+            style={{ '--tw-ring-color': accent } as React.CSSProperties}
             autoFocus
           >
             Got it, let&apos;s play
@@ -275,19 +284,18 @@ export default function WordBudget({
 
   // ── MAIN GAME UI ───────────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen w-full max-w-full overflow-x-hidden flex items-center justify-center" style={{ background: '#0F0F0F' }}>
-      {/* Screen-reader live region */}
+    <div className="min-h-screen w-full max-w-full overflow-x-hidden flex items-center justify-center" style={{ background: '#FFFFFF' }}>
       <div className="sr-only" aria-live="polite" aria-atomic="true">{announcement}</div>
 
-      {/* Robot companion — fixed bottom-right, always visible */}
+      {/* Robot companion */}
       <div
         style={{ position: 'fixed', right: '1rem', bottom: '1.5rem', zIndex: 40 }}
         aria-hidden="true"
       >
-        <GameRobot config={robotConfig} expression={robotExpression} size={80} showBubble />
+        <GameRobot config={robotConfig} expression={robotExpression} size={80} showBubble worldAccent={accent} />
       </div>
 
-      {/* "LEVEL COMPLETE!" banner — centered overlay */}
+      {/* Level Complete banner */}
       {showCelebration && (
         <div
           style={{
@@ -307,8 +315,8 @@ export default function WordBudget({
               fontWeight: 900,
               fontFamily: 'monospace',
               letterSpacing: '0.12em',
-              color: '#00FF88',
-              textShadow: '0 0 24px rgba(0,255,136,0.9), 0 0 60px rgba(0,255,136,0.5)',
+              color: accent,
+              textShadow: `0 0 24px ${accent}88, 0 0 48px ${accent}44`,
             }}
           >
             LEVEL COMPLETE!
@@ -346,22 +354,22 @@ export default function WordBudget({
           className="w-full rounded-3xl p-5 sm:p-8 flex flex-col gap-5 sm:gap-6"
           role="main"
           style={{
-            background: 'rgba(255,255,255,0.04)',
-            border: '1px solid rgba(255,255,255,0.09)',
-            backdropFilter: 'blur(12px)',
+            background: '#FFFFFF',
+            border: '1.5px solid #E8E8E8',
+            boxShadow: '0 4px 24px rgba(0,0,0,0.07)',
           }}
         >
 
-          {/* Key Rule pill (visible after dismissal, as a reminder) */}
+          {/* Key Rule reminder pill */}
           {keyRule && (
             <div
               className="rounded-2xl px-4 py-3 text-center"
               style={{
-                background: 'rgba(0,255,136,0.04)',
-                border: '1px solid rgba(0,255,136,0.12)',
+                background: `rgba(${accent.slice(1).match(/../g)?.map(h => parseInt(h, 16)).join(',')},0.06)`,
+                border: `1px solid ${accent}30`,
               }}
             >
-              <p className="text-xs font-mono" style={{ color: 'rgba(0,255,136,0.5)' }}>
+              <p className="text-xs font-mono" style={{ color: accent }}>
                 &ldquo;{keyRule}&rdquo;
               </p>
             </div>
@@ -369,11 +377,13 @@ export default function WordBudget({
 
           {/* Goal */}
           <div>
-            <p className="text-xs font-mono font-semibold uppercase tracking-widest mb-3" style={{ color: '#00FF88' }} id="goal-label">
+            <p className="text-xs font-mono font-semibold uppercase tracking-widest mb-3"
+              style={{ color: accent }} id="goal-label">
               Goal
             </p>
             <p
-              className={`text-base sm:text-lg font-bold text-white leading-relaxed ${displayedGoal.length < goal.length ? 'typing-cursor' : 'typing-cursor-done'}`}
+              className={`text-base sm:text-lg font-bold leading-relaxed ${displayedGoal.length < goal.length ? 'typing-cursor' : 'typing-cursor-done'}`}
+              style={{ color: '#1A1A1A' }}
               aria-labelledby="goal-label"
               aria-label={goal}
             >
@@ -382,23 +392,25 @@ export default function WordBudget({
           </div>
 
           {/* Divider */}
-          <div role="separator" style={{ height: '1px', background: 'rgba(255,255,255,0.08)' }} />
+          <div role="separator" style={{ height: '1px', background: '#F0F0F0' }} />
 
           {/* Textarea + word counter */}
           <div className="flex flex-col gap-3">
-            <label htmlFor="prompt-textarea" className="text-xs font-mono font-semibold uppercase tracking-widest" style={{ color: '#00FF88' }}>
+            <label htmlFor="prompt-textarea"
+              className="text-xs font-mono font-semibold uppercase tracking-widest"
+              style={{ color: accent }}>
               Your Prompt
             </label>
             <textarea
               id="prompt-textarea"
-              className="w-full rounded-2xl p-4 text-sm resize-none outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#00FF88] placeholder:text-white/30"
+              className="w-full rounded-2xl p-4 text-sm resize-none outline-none transition-all duration-200 focus-visible:ring-2 placeholder:text-black/25"
               style={{
-                background: 'rgba(255,255,255,0.04)',
-                border: `1.5px solid ${isOverLimit ? '#f87171' : 'rgba(255,255,255,0.1)'}`,
+                background: '#FAFAFA',
+                border: `1.5px solid ${isOverLimit ? '#E24A4A' : '#E8E8E8'}`,
                 minHeight: '120px',
-                caretColor: '#00FF88',
-                color: '#00FF88',
-                fontWeight: 700,
+                caretColor: accent,
+                color: '#1A1A1A',
+                fontWeight: 600,
               }}
               placeholder="Write your prompt here…"
               value={prompt}
@@ -407,19 +419,18 @@ export default function WordBudget({
               aria-describedby="word-counter"
               aria-invalid={isOverLimit}
               aria-label="Your prompt response"
-              onFocus={(e) => { if (!isOverLimit) e.target.style.borderColor = '#00FF88' }}
-              onBlur={(e)  => { e.target.style.borderColor = isOverLimit ? '#f87171' : 'rgba(255,255,255,0.1)' }}
+              onFocus={(e) => { if (!isOverLimit) e.target.style.borderColor = accent }}
+              onBlur={(e)  => { e.target.style.borderColor = isOverLimit ? '#E24A4A' : '#E8E8E8' }}
             />
 
-            {/* Word counter pill */}
             <div className="flex justify-end">
               <span
                 id="word-counter"
                 className="text-xs font-mono tabular-nums rounded-full px-3 py-1 transition-all duration-200"
                 style={{
-                  background: isOverLimit ? 'rgba(248,113,113,0.1)' : 'rgba(255,255,255,0.05)',
-                  color: isOverLimit ? '#f87171' : 'rgba(255,255,255,0.4)',
-                  border: `1px solid ${isOverLimit ? 'rgba(248,113,113,0.2)' : 'rgba(255,255,255,0.08)'}`,
+                  background: isOverLimit ? 'rgba(226,74,74,0.08)' : '#F5F5F5',
+                  color: isOverLimit ? '#E24A4A' : '#999999',
+                  border: `1px solid ${isOverLimit ? 'rgba(226,74,74,0.25)' : '#E8E8E8'}`,
                 }}
                 aria-label={`${wordCount} of ${wordLimit} words used${isOverLimit ? ', over limit' : ''}`}
               >
@@ -440,11 +451,12 @@ export default function WordBudget({
                 : isOverLimit ? 'Cannot submit: prompt exceeds word limit'
                 : 'Submit your prompt for scoring'
               }
-              className={`w-full py-4 font-bold text-sm tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00FF88] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent btn-primary${!isSubmitDisabled ? ' neon-pulse' : ''}`}
+              className={`w-full py-4 font-bold text-sm tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 btn-primary${!isSubmitDisabled ? ' neon-pulse' : ''}`}
             >
               {isLoading ? (
                 <span className="flex items-center justify-center gap-2">
-                  <span aria-hidden="true" className="inline-block w-4 h-4 rounded-full border-2 animate-spin" style={{ borderColor: 'rgba(15,15,15,0.3)', borderTopColor: '#0F0F0F' }} />
+                  <span aria-hidden="true" className="inline-block w-4 h-4 rounded-full border-2 animate-spin"
+                    style={{ borderColor: 'rgba(255,255,255,0.3)', borderTopColor: '#FFFFFF' }} />
                   Scoring…
                 </span>
               ) : isOverLimit ? (
@@ -457,7 +469,8 @@ export default function WordBudget({
 
           {/* Error */}
           {error && (
-            <p role="alert" className="text-sm text-center rounded-2xl py-3 px-4" style={{ background: 'rgba(248,113,113,0.1)', color: '#f87171', border: '1px solid rgba(248,113,113,0.2)' }}>
+            <p role="alert" className="text-sm text-center rounded-2xl py-3 px-4"
+              style={{ background: 'rgba(226,74,74,0.08)', color: '#E24A4A', border: '1px solid rgba(226,74,74,0.2)' }}>
               {error}
             </p>
           )}
@@ -474,21 +487,23 @@ export default function WordBudget({
                 >
                   {displayScore}
                 </span>
-                <span className="text-xs uppercase tracking-widest mt-1" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                <span className="text-xs uppercase tracking-widest mt-1" style={{ color: '#AAAAAA' }}>
                   out of 100
                 </span>
                 {scoreLanded && (
-                  <span
-                    className="text-base font-bold mt-1 animate-in fade-in duration-300"
-                    style={{ color: scoreColor }}
-                  >
+                  <span className="text-base font-bold mt-1 animate-in fade-in duration-300"
+                    style={{ color: scoreColor }}>
                     {getCongratulatoryMessage(result.score)}
                   </span>
                 )}
                 {scoreLanded && (
                   <span
                     className="rounded-full px-4 py-1.5 text-xs font-bold mt-1 animate-in fade-in duration-300"
-                    style={{ background: 'rgba(0,255,136,0.12)', color: '#00FF88', border: '1px solid rgba(0,255,136,0.25)' }}
+                    style={{
+                      background: `${accent}18`,
+                      color: accent,
+                      border: `1px solid ${accent}40`,
+                    }}
                   >
                     +{result.xp_earned} XP
                   </span>
@@ -500,47 +515,47 @@ export default function WordBudget({
                 className="rounded-3xl p-6 transition-opacity duration-500"
                 style={{
                   opacity: feedbackVisible ? 1 : 0,
-                  background: 'rgba(255,255,255,0.04)',
-                  border: '1px solid rgba(255,255,255,0.08)',
+                  background: '#F8F8F8',
+                  border: '1px solid #EEEEEE',
                 }}
               >
-                <p className="text-xs font-mono font-semibold uppercase tracking-widest mb-3" style={{ color: '#00FF88' }} id="feedback-label">
+                <p className="text-xs font-mono font-semibold uppercase tracking-widest mb-3"
+                  style={{ color: accent }} id="feedback-label">
                   Feedback
                 </p>
-                <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.75)' }} aria-labelledby="feedback-label">
+                <p className="text-sm leading-relaxed" style={{ color: '#555555' }}
+                  aria-labelledby="feedback-label">
                   {result.feedback}
                 </p>
               </div>
 
-              {/* Reflection question */}
+              {/* Reflection */}
               <div
                 className="rounded-3xl p-6 flex flex-col gap-3 transition-opacity duration-500"
                 style={{
                   opacity: feedbackVisible ? 1 : 0,
-                  background: 'rgba(184,115,51,0.04)',
-                  border: '1px solid rgba(184,115,51,0.15)',
+                  background: `${accent}08`,
+                  border: `1px solid ${accent}25`,
                 }}
               >
-                <label
-                  htmlFor="reflection-input"
+                <label htmlFor="reflection-input"
                   className="text-xs font-mono font-semibold uppercase tracking-widest"
-                  style={{ color: '#B87333' }}
-                >
+                  style={{ color: accent }}>
                   Reflection
                 </label>
-                <p className="text-sm" style={{ color: 'rgba(255,255,255,0.5)' }}>
+                <p className="text-sm" style={{ color: '#777777' }}>
                   What made your best attempt work better than your first?
                 </p>
                 <div className="flex gap-2 items-start">
                   <textarea
                     id="reflection-input"
-                    className="flex-1 rounded-xl p-3 text-sm resize-none outline-none transition-all duration-200 focus-visible:ring-1 focus-visible:ring-[#B87333]"
+                    className="flex-1 rounded-xl p-3 text-sm resize-none outline-none transition-all duration-200"
                     style={{
-                      background: 'rgba(255,255,255,0.04)',
-                      border: '1px solid rgba(184,115,51,0.2)',
-                      color: 'rgba(255,255,255,0.8)',
+                      background: '#FFFFFF',
+                      border: `1px solid ${accent}30`,
+                      color: '#1A1A1A',
                       minHeight: '60px',
-                      caretColor: '#B87333',
+                      caretColor: accent,
                     }}
                     placeholder="Type your reflection…"
                     value={reflection}
@@ -554,9 +569,9 @@ export default function WordBudget({
                     disabled={!reflection.trim() || reflectionSaved}
                     className="shrink-0 rounded-xl px-4 py-3 text-xs font-bold transition-all duration-200"
                     style={{
-                      background: reflectionSaved ? 'rgba(0,255,136,0.1)' : 'rgba(184,115,51,0.15)',
-                      border: `1px solid ${reflectionSaved ? 'rgba(0,255,136,0.3)' : 'rgba(184,115,51,0.3)'}`,
-                      color: reflectionSaved ? '#00FF88' : '#B87333',
+                      background: reflectionSaved ? '#F0FAF5' : '#F5F5F5',
+                      border: `1px solid ${reflectionSaved ? '#4AE27A50' : '#E0E0E0'}`,
+                      color: reflectionSaved ? '#4AE27A' : '#888888',
                       cursor: reflectionSaved ? 'default' : 'pointer',
                     }}
                     aria-label={reflectionSaved ? 'Reflection saved' : 'Save reflection'}
@@ -564,28 +579,34 @@ export default function WordBudget({
                     {reflectionSaved ? '✓ Saved' : 'Save'}
                   </button>
                 </div>
-                <p className="text-xs font-mono text-right" style={{ color: 'rgba(255,255,255,0.2)' }}>
+                <p className="text-xs font-mono text-right" style={{ color: '#CCCCCC' }}>
                   {reflection.length}/100
                 </p>
               </div>
 
               {/* Actions */}
-              <div className="flex flex-col gap-3 transition-opacity duration-500" style={{ opacity: feedbackVisible ? 1 : 0 }}>
+              <div className="flex flex-col gap-3 transition-opacity duration-500"
+                style={{ opacity: feedbackVisible ? 1 : 0 }}>
                 {result.score >= 60 && nextLevelUrl ? (
                   <>
                     <Link
                       href={nextLevelUrl}
-                      className="w-full py-4 font-bold text-sm tracking-wide text-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00FF88] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent btn-primary"
+                      className="w-full py-4 font-bold text-sm tracking-wide text-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 btn-primary"
                     >
                       Next Level →
                     </Link>
                     <button
                       onClick={handleReset}
                       aria-label="Try again — clear your prompt and start over"
-                      className="w-full rounded-full py-4 font-bold text-sm tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00FF88]"
-                      style={{ border: '1.5px solid rgba(0,255,136,0.3)', color: 'rgba(0,255,136,0.5)', cursor: 'pointer' }}
-                      onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#00FF88'; e.currentTarget.style.color = '#00FF88' }}
-                      onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(0,255,136,0.3)'; e.currentTarget.style.color = 'rgba(0,255,136,0.5)' }}
+                      className="w-full rounded-full py-4 font-bold text-sm tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2"
+                      style={{
+                        border: `1.5px solid #E0E0E0`,
+                        color: '#888888',
+                        background: 'transparent',
+                        cursor: 'pointer',
+                      }}
+                      onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#1A1A1A'; e.currentTarget.style.color = '#1A1A1A' }}
+                      onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#E0E0E0'; e.currentTarget.style.color = '#888888' }}
                     >
                       Try Again
                     </button>
@@ -593,14 +614,14 @@ export default function WordBudget({
                 ) : (
                   <>
                     {result.score < 60 && (
-                      <p className="text-xs text-center font-mono" style={{ color: 'rgba(255,255,255,0.35)' }}>
+                      <p className="text-xs text-center font-mono" style={{ color: '#AAAAAA' }}>
                         Score 60 or higher to advance to the next level.
                       </p>
                     )}
                     <button
                       onClick={handleReset}
                       aria-label="Try again — clear your prompt and start over"
-                      className="w-full py-4 font-bold text-sm tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00FF88] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent btn-primary"
+                      className="w-full py-4 font-bold text-sm tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 btn-primary"
                     >
                       Try Again
                     </button>

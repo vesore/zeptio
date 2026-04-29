@@ -43,7 +43,7 @@ export default function WaitlistTable({ rows: initialRows }: { rows: WaitlistRow
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-black tracking-tight text-white">Waitlist</h1>
-          <p className="text-sm mt-1" style={{ color: 'rgba(255,255,255,0.45)' }}>
+          <p className="text-sm mt-1" style={{ color: '#777777' }}>
             Manage beta access approvals
           </p>
         </div>
@@ -52,7 +52,7 @@ export default function WaitlistTable({ rows: initialRows }: { rows: WaitlistRow
           style={{
             background: pending > 0 ? 'rgba(176,224,32,0.12)' : 'rgba(255,255,255,0.06)',
             color: pending > 0 ? '#B0E020' : 'rgba(255,255,255,0.4)',
-            border: `1px solid ${pending > 0 ? 'rgba(176,224,32,0.3)' : 'rgba(255,255,255,0.1)'}`,
+            border: `1px solid ${pending > 0 ? 'rgba(176,224,32,0.3)' : 'rgba(0,0,0,0.08)'}`,
           }}
         >
           {pending} pending approval{pending !== 1 ? 's' : ''}
@@ -62,22 +62,22 @@ export default function WaitlistTable({ rows: initialRows }: { rows: WaitlistRow
       {error && (
         <p
           className="text-sm rounded-2xl px-4 py-3"
-          style={{ background: 'rgba(248,113,113,0.1)', color: '#f87171', border: '1px solid rgba(248,113,113,0.2)' }}
+          style={{ background: 'rgba(226,74,74,0.1)', color: '#E24A4A', border: '1px solid rgba(226,74,74,0.2)' }}
         >
           {error}
         </p>
       )}
 
       {/* Table */}
-      <div className="rounded-3xl overflow-hidden glass" style={{ border: '1px solid rgba(255,255,255,0.08)' }}>
+      <div className="rounded-3xl overflow-hidden glass" style={{ border: '1px solid rgba(0,0,0,0.06)' }}>
         <table className="w-full text-sm">
           <thead>
-            <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+            <tr style={{ borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
               {['Name', 'Email', 'Date Signed Up', 'NDA Accepted', 'Status'].map(col => (
                 <th
                   key={col}
                   className="text-left px-5 py-4 font-mono text-xs uppercase tracking-widest font-semibold"
-                  style={{ color: 'rgba(255,255,255,0.35)' }}
+                  style={{ color: '#999999' }}
                 >
                   {col}
                 </th>
@@ -87,7 +87,7 @@ export default function WaitlistTable({ rows: initialRows }: { rows: WaitlistRow
           <tbody>
             {rows.length === 0 && (
               <tr>
-                <td colSpan={5} className="px-5 py-10 text-center" style={{ color: 'rgba(255,255,255,0.3)' }}>
+                <td colSpan={5} className="px-5 py-10 text-center" style={{ color: '#999999' }}>
                   No signups yet.
                 </td>
               </tr>
@@ -96,17 +96,17 @@ export default function WaitlistTable({ rows: initialRows }: { rows: WaitlistRow
               <tr
                 key={row.id}
                 style={{
-                  borderBottom: i < rows.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none',
+                  borderBottom: i < rows.length - 1 ? '1px solid rgba(0,0,0,0.04)' : 'none',
                   background: row.status === 'approved' ? 'rgba(34,197,94,0.03)' : 'transparent',
                 }}
               >
                 <td className="px-5 py-4 font-medium text-white">
-                  {row.name ?? <span style={{ color: 'rgba(255,255,255,0.3)' }}>—</span>}
+                  {row.name ?? <span style={{ color: '#999999' }}>—</span>}
                 </td>
                 <td className="px-5 py-4" style={{ color: 'rgba(255,255,255,0.65)' }}>
                   {row.email}
                 </td>
-                <td className="px-5 py-4 font-mono text-xs" style={{ color: 'rgba(255,255,255,0.45)' }}>
+                <td className="px-5 py-4 font-mono text-xs" style={{ color: '#777777' }}>
                   {new Date(row.created_at).toLocaleDateString('en-US', {
                     month: 'short', day: 'numeric', year: 'numeric',
                   })}
@@ -122,7 +122,7 @@ export default function WaitlistTable({ rows: initialRows }: { rows: WaitlistRow
                   ) : (
                     <span
                       className="rounded-full px-3 py-1 text-xs font-bold"
-                      style={{ background: 'rgba(248,113,113,0.1)', color: '#f87171', border: '1px solid rgba(248,113,113,0.2)' }}
+                      style={{ background: 'rgba(226,74,74,0.1)', color: '#E24A4A', border: '1px solid rgba(226,74,74,0.2)' }}
                     >
                       No
                     </span>

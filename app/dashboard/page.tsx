@@ -7,13 +7,13 @@ import { CONSTRAINTS_LEVELS } from '@/src/lib/game/constraints-levels'
 import { STRUCTURE_LEVELS }   from '@/src/lib/game/structure-levels'
 import { DEBUG_LEVELS }       from '@/src/lib/game/debug-levels'
 import DailySuggestion from '@/src/components/dashboard/DailySuggestion'
+import SoundToggle from '@/src/components/SoundToggle'
 
 const CLARITY_COUNT     = CLARITY_LEVELS.length
 const CONSTRAINTS_COUNT = CONSTRAINTS_LEVELS.length
 const STRUCTURE_COUNT   = STRUCTURE_LEVELS.length
 const DEBUG_COUNT       = DEBUG_LEVELS.length
 
-/** XP thresholds for robot part unlocks */
 const PART_THRESHOLDS = [100, 300, 500, 700, 1000] as const
 
 function partsUnlocked(totalXp: number): number {
@@ -42,14 +42,20 @@ function worldAvgOf(best: Map<number, number>, count: number): number {
   return Array.from(best.values()).reduce((a, b) => a + b, 0) / count
 }
 
-// Deterministic particles (SSR-safe)
-const particles = Array.from({ length: 20 }, (_, i) => ({
-  left:     `${(i * 127 + 43) % 97}%`,
-  top:      `${(i * 83  + 17) % 93}%`,
-  delay:    `${((i * 53) % 40) / 10}s`,
-  duration: `${4 + ((i * 37) % 40) / 10}s`,
-  size:     ((i * 29) % 3) + 1,
-}))
+function completedLevels(best: Map<number, number>): number {
+  return Array.from(best.values()).filter(s => s >= 60).length
+}
+
+/** Compute SVG polygon points for a gear centered at (cx, cy) */
+function gearPoints(cx: number, cy: number, outerR: number, innerR: number, teeth: number): string {
+  const pts: string[] = []
+  for (let i = 0; i < teeth * 2; i++) {
+    const angle = (i * Math.PI) / teeth - Math.PI / 2
+    const r = i % 2 === 0 ? outerR : innerR
+    pts.push(`${(cx + r * Math.cos(angle)).toFixed(1)},${(cy + r * Math.sin(angle)).toFixed(1)}`)
+  }
+  return pts.join(' ')
+}
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -79,7 +85,6 @@ export default async function DashboardPage() {
     ? { ...DEFAULT_ROBOT_CONFIG, ...(rawRobotConfig as Partial<RobotConfig>) }
     : DEFAULT_ROBOT_CONFIG
 
-  // Total XP (all worlds, deduplicated by best per level)
   const bestPerLevel = new Map<number, number>()
   for (const row of xpRows ?? []) {
     const cur = bestPerLevel.get(row.level_id) ?? 0
@@ -88,19 +93,16 @@ export default async function DashboardPage() {
   const totalXp = Array.from(bestPerLevel.values()).reduce((s, v) => s + v, 0)
   const streak  = streakRow?.current_streak ?? 0
 
-  // Per-world best score maps
   const clarityBest     = buildBestMap(clarityRows)
   const constraintsBest = buildBestMap(constraintsRows)
   const structureBest   = buildBestMap(structureRows)
   const debugBest       = buildBestMap(debugRows)
 
-  // World completion checks (all 60+)
   const clarityAllComplete     = clarityBest.size >= CLARITY_COUNT && Array.from(clarityBest.values()).every(s => s >= 60)
   const constraintsAllComplete = constraintsBest.size >= CONSTRAINTS_COUNT && Array.from(constraintsBest.values()).every(s => s >= 60)
   const structureAllComplete   = structureBest.size >= STRUCTURE_COUNT && Array.from(structureBest.values()).every(s => s >= 60)
   const debugAllComplete       = debugBest.size >= DEBUG_COUNT && Array.from(debugBest.values()).every(s => s >= 60)
 
-  // Per-world total XP → robot parts
   const clarityXp     = worldTotalXp(clarityBest)
   const constraintsXp = worldTotalXp(constraintsBest)
   const structureXp   = worldTotalXp(structureBest)
@@ -111,29 +113,23 @@ export default async function DashboardPage() {
   const armParts   = partsUnlocked(structureXp)
   const eyeParts   = partsUnlocked(debugXp)
 
-  const allWorldsComplete = clarityAllComplete && constraintsAllComplete && structureAllComplete && debugAllComplete
-
-  // Mastery unlocks when Level 1 of ALL 4 worlds scored 80+
-  // Clarity level 1 = ID 1, Constraints level 1 = ID 11, Structure level 1 = ID 21, Debug level 1 = ID 31
   const masteryUnlocked =
     (clarityBest.get(1) ?? 0) >= 80 &&
     (constraintsBest.get(11) ?? 0) >= 80 &&
     (structureBest.get(21) ?? 0) >= 80 &&
     (debugBest.get(31) ?? 0) >= 80
 
-  // Active world — most advanced world with any attempts
   const activeWorld =
-    debugBest.size > 0       ? 'debug'
-    : structureBest.size > 0 ? 'structure'
+    debugBest.size > 0         ? 'debug'
+    : structureBest.size > 0   ? 'structure'
     : constraintsBest.size > 0 ? 'constraints'
     : 'clarity'
 
-  // Daily suggestion — world with lowest avg score (only count worlds with any score)
-  const worldAvgs: Array<{ id: string; name: string; href: string; accent: string; avg: number }> = [
-    { id: 'clarity',     name: 'Clarity',     href: '/dashboard/clarity',     accent: '#00FF88', avg: worldAvgOf(clarityBest, CLARITY_COUNT) },
-    { id: 'constraints', name: 'Constraints', href: '/dashboard/constraints', accent: '#B87333', avg: worldAvgOf(constraintsBest, CONSTRAINTS_COUNT) },
-    { id: 'structure',   name: 'Structure',   href: '/dashboard/structure',   accent: '#8B8FA8', avg: worldAvgOf(structureBest, STRUCTURE_COUNT) },
-    { id: 'debug',       name: 'Debug',       href: '/dashboard/debug',       accent: '#C84B1F', avg: worldAvgOf(debugBest, DEBUG_COUNT) },
+  const worldAvgs = [
+    { id: 'clarity',     name: 'Clarity',     href: '/dashboard/clarity',     accent: '#4A90E2', avg: worldAvgOf(clarityBest, CLARITY_COUNT) },
+    { id: 'constraints', name: 'Constraints', href: '/dashboard/constraints', accent: '#E2A04A', avg: worldAvgOf(constraintsBest, CONSTRAINTS_COUNT) },
+    { id: 'structure',   name: 'Structure',   href: '/dashboard/structure',   accent: '#4AE27A', avg: worldAvgOf(structureBest, STRUCTURE_COUNT) },
+    { id: 'debug',       name: 'Debug',       href: '/dashboard/debug',       accent: '#E24A4A', avg: worldAvgOf(debugBest, DEBUG_COUNT) },
   ]
   const worldsAttempted = worldAvgs.filter(w => w.avg > 0)
   const weakestWorld = worldsAttempted.length > 0
@@ -143,357 +139,241 @@ export default async function DashboardPage() {
   type WorldDef = {
     id: string; name: string; subtitle: string; emoji: string; levelCount: number;
     accent: string; accentRgb: string; href: string; completed: boolean;
-    parts: number; totalXp: number; partLabel: string;
+    parts: number; totalXp: number; partLabel: string; levelsComplete: number;
   }
 
   const WORLDS: WorldDef[] = [
     {
       id: 'clarity', name: 'CLARITY', subtitle: 'The Brain', emoji: '🧠',
-      levelCount: CLARITY_COUNT, accent: '#00FF88', accentRgb: '0,255,136',
+      levelCount: CLARITY_COUNT, accent: '#4A90E2', accentRgb: '74,144,226',
       href: '/dashboard/clarity', completed: clarityAllComplete,
       parts: brainParts, totalXp: clarityXp, partLabel: 'Brain Parts',
+      levelsComplete: completedLevels(clarityBest),
     },
     {
       id: 'constraints', name: 'CONSTRAINTS', subtitle: 'The Gears', emoji: '⚙️',
-      levelCount: CONSTRAINTS_COUNT, accent: '#B87333', accentRgb: '184,115,51',
+      levelCount: CONSTRAINTS_COUNT, accent: '#E2A04A', accentRgb: '226,160,74',
       href: '/dashboard/constraints', completed: constraintsAllComplete,
       parts: gearParts, totalXp: constraintsXp, partLabel: 'Gear Parts',
+      levelsComplete: completedLevels(constraintsBest),
     },
     {
       id: 'structure', name: 'STRUCTURE', subtitle: 'The Arms', emoji: '🦾',
-      levelCount: STRUCTURE_COUNT, accent: '#8B8FA8', accentRgb: '139,143,168',
+      levelCount: STRUCTURE_COUNT, accent: '#4AE27A', accentRgb: '74,226,122',
       href: '/dashboard/structure', completed: structureAllComplete,
       parts: armParts, totalXp: structureXp, partLabel: 'Arm Parts',
+      levelsComplete: completedLevels(structureBest),
     },
     {
       id: 'debug', name: 'DEBUG', subtitle: 'The Eyes', emoji: '👁️',
-      levelCount: DEBUG_COUNT, accent: '#C84B1F', accentRgb: '200,75,31',
+      levelCount: DEBUG_COUNT, accent: '#E24A4A', accentRgb: '226,74,74',
       href: '/dashboard/debug', completed: debugAllComplete,
       parts: eyeParts, totalXp: debugXp, partLabel: 'Eye Parts',
+      levelsComplete: completedLevels(debugBest),
     },
   ]
 
+  // Pre-compute belt parts gear polygon points (server-side)
+  const leftGear  = gearPoints(28, 44, 15, 10, 8)
+  const rightGear = gearPoints(332, 44, 15, 10, 8)
+
   return (
     <main
-      className="text-white overflow-hidden flex flex-col relative"
-      style={{ background: '#0F0F0F', height: '100dvh' }}
+      className="overflow-hidden flex flex-col relative"
+      style={{ background: '#FFFFFF', height: '100dvh', color: '#1A1A1A' }}
     >
-      {/* CSS animations */}
       <style>{`
-        @keyframes holoFlicker {
-          0%,94%,100% { opacity:1; }
-          95% { opacity:0.65; }
-          96% { opacity:1; }
-          97% { opacity:0.8; }
-          98% { opacity:1; }
+        @keyframes masteryCardPulse {
+          0%,100% { box-shadow: 0 0 0 1.5px rgba(155,74,226,0.3), 0 4px 16px rgba(155,74,226,0.08); }
+          50%      { box-shadow: 0 0 0 1.5px rgba(155,74,226,0.7), 0 8px 28px rgba(155,74,226,0.2); }
         }
-        .holo-flicker { animation: holoFlicker 7s ease-in-out infinite; }
+        .mastery-card-pulse { animation: masteryCardPulse 2.4s ease-in-out infinite; }
 
-        @keyframes masteryPulse {
-          0%,100% { box-shadow:0 0 0 1.5px rgba(255,0,68,0.4),0 0 16px rgba(255,0,68,0.15); }
-          50%      { box-shadow:0 0 0 1.5px rgba(255,0,68,0.9),0 0 32px rgba(255,0,68,0.4); }
-        }
-        .mastery-pulse { animation: masteryPulse 2.4s ease-in-out infinite; }
+        .world-card-clarity:hover     { box-shadow: 0 6px 24px rgba(74,144,226,0.18); border-color: #4A90E2 !important; }
+        .world-card-constraints:hover { box-shadow: 0 6px 24px rgba(226,160,74,0.18); border-color: #E2A04A !important; }
+        .world-card-structure:hover   { box-shadow: 0 6px 24px rgba(74,226,122,0.18); border-color: #4AE27A !important; }
+        .world-card-debug:hover       { box-shadow: 0 6px 24px rgba(226,74,74,0.18); border-color: #E24A4A !important; }
 
-        .world-card-clarity:hover     { box-shadow:0 0 0 1.5px #00FF88,0 0 24px rgba(0,255,136,0.35); }
-        .world-card-constraints:hover { box-shadow:0 0 0 1.5px #B87333,0 0 24px rgba(184,115,51,0.35); }
-        .world-card-structure:hover   { box-shadow:0 0 0 1.5px #8B8FA8,0 0 24px rgba(139,143,168,0.25); }
-        .world-card-debug:hover       { box-shadow:0 0 0 1.5px #C84B1F,0 0 24px rgba(200,75,31,0.35); }
+        @keyframes partGlow1 { 0%,100%{filter:drop-shadow(0 0 4px #4A90E2);} 50%{filter:drop-shadow(0 0 10px #4A90E2);} }
+        @keyframes partGlow2 { 0%,100%{filter:drop-shadow(0 0 4px #E2A04A);} 50%{filter:drop-shadow(0 0 10px #E2A04A);} }
+        @keyframes partGlow3 { 0%,100%{filter:drop-shadow(0 0 4px #4AE27A);} 50%{filter:drop-shadow(0 0 10px #4AE27A);} }
+        @keyframes partGlow4 { 0%,100%{filter:drop-shadow(0 0 4px #E24A4A);} 50%{filter:drop-shadow(0 0 10px #E24A4A);} }
+        @keyframes partGlow5 { 0%,100%{filter:drop-shadow(0 0 4px #9B4AE2);} 50%{filter:drop-shadow(0 0 10px #9B4AE2);} }
+
+        .part-glow-1 { animation: partBob1 2.1s ease-in-out infinite, partGlow1 1.8s ease-in-out infinite; }
+        .part-glow-2 { animation: partBob2 1.9s ease-in-out infinite, partGlow2 2.2s ease-in-out infinite; }
+        .part-glow-3 { animation: partBob3 2.4s ease-in-out infinite, partGlow3 1.9s ease-in-out infinite; }
+        .part-glow-4 { animation: partBob4 2.0s ease-in-out infinite, partGlow4 2.1s ease-in-out infinite; }
+        .part-glow-5 { animation: partBob5 2.2s ease-in-out infinite, partGlow5 2.0s ease-in-out infinite; }
+
+        .part-grey { animation: partBob1 2.5s ease-in-out infinite; filter: grayscale(1); opacity: 0.3; }
       `}</style>
 
-      {/* Scanlines */}
-      <div
-        className="pointer-events-none fixed inset-0 z-50"
-        style={{ background: 'repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.07) 2px,rgba(0,0,0,0.07) 4px)' }}
-        aria-hidden="true"
-      />
-
-      {/* Holographic grid */}
-      <div
-        className="pointer-events-none absolute inset-0 z-0"
-        style={{
-          backgroundImage: 'linear-gradient(rgba(0,200,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,200,255,0.03) 1px,transparent 1px)',
-          backgroundSize: '60px 60px',
-        }}
-        aria-hidden="true"
-      />
-
-      {/* Floating particles */}
-      {particles.map((p, i) => (
-        <div key={i} className="pointer-events-none absolute rounded-full" style={{
-          left: p.left, top: p.top, width: p.size, height: p.size,
-          background: '#00FF88',
-          animation: `particleDrift ${p.duration} ${p.delay} ease-in-out infinite`,
-          opacity: 0,
-        }} aria-hidden="true" />
-      ))}
-
       {/* ── TOP BAR ──────────────────────────────── */}
-      <div className="relative z-10 shrink-0 grid grid-cols-3 items-center px-4 pt-4 pb-1">
+      <div className="relative z-10 shrink-0 grid grid-cols-3 items-center px-4 pt-3 pb-1">
         <div className="flex justify-start">
           <Link
             href="/journal"
-            className="text-xs font-mono transition-colors duration-200 hover:text-[#B87333]"
-            style={{ color: 'rgba(255,255,255,0.3)' }}
+            className="text-xs font-mono transition-colors duration-200"
+            style={{ color: '#AAAAAA' }}
+            onMouseEnter={(e) => ((e.target as HTMLElement).style.color = '#1A1A1A')}
+            onMouseLeave={(e) => ((e.target as HTMLElement).style.color = '#AAAAAA')}
             aria-label="Learning Journal"
           >
             Journal
           </Link>
         </div>
+
         <div className="flex justify-center">
           <span
-            className="holo-flicker font-mono font-black tracking-widest text-3xl sm:text-4xl uppercase"
-            style={{ color: '#00FF88', textShadow: '0 0 20px rgba(0,255,136,0.8),0 0 60px rgba(0,255,136,0.35)' }}
+            className="font-black tracking-widest text-2xl sm:text-3xl uppercase"
+            style={{ color: '#1A1A1A', fontFamily: 'Arial, sans-serif', letterSpacing: '0.15em' }}
             aria-label="Zeptio"
           >
             Zeptio
           </span>
         </div>
-        <div className="flex justify-end">
+
+        <div className="flex justify-end items-center gap-2">
+          <SoundToggle />
           <Link
             href="/profile"
             aria-label="View your profile"
-            className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center transition-all duration-200 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00FF88] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0F0F0F]"
-            style={{ background: 'rgba(0,255,136,0.08)', border: '1.5px solid rgba(0,255,136,0.3)' }}
+            className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center transition-all duration-200 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4A90E2] focus-visible:ring-offset-2"
+            style={{ background: '#F5F5F5', border: '1.5px solid #E0E0E0' }}
           >
-            <RobotSVG config={robotConfig} size={48} headOnly />
+            <RobotSVG config={robotConfig} size={40} headOnly />
           </Link>
         </div>
       </div>
 
       {/* ── STATS PILLS ──────────────────────────── */}
-      <div className="relative z-10 shrink-0 flex flex-row items-center justify-center gap-3 sm:gap-6 px-4 py-2" aria-label="Your stats">
-        <div className="inline-flex items-center justify-center rounded-full text-base font-bold whitespace-nowrap px-8 py-3"
-          style={{ background: 'rgba(0,255,136,0.06)', border: '1px solid rgba(0,255,136,0.2)', boxShadow: '0 0 20px rgba(0,255,136,0.08)' }}>
-          <span className="text-white">Score</span>
+      <div className="relative z-10 shrink-0 flex flex-row items-center justify-center gap-3 px-4 py-1.5" aria-label="Your stats">
+        <div className="inline-flex items-center justify-center rounded-full text-sm font-bold whitespace-nowrap px-5 py-2"
+          style={{ background: '#F5F5F5', border: '1.5px solid #E0E0E0' }}>
+          <span style={{ color: '#666666' }}>Score</span>
           <span>&nbsp;&nbsp;</span>
-          <span className="text-[#00FF88] tabular-nums">{totalXp}</span>
+          <span className="tabular-nums" style={{ color: '#1A1A1A' }}>{totalXp}</span>
         </div>
-        <div className="inline-flex items-center justify-center rounded-full text-base font-bold whitespace-nowrap px-8 py-3"
-          style={{ background: 'rgba(0,255,136,0.06)', border: '1px solid rgba(0,255,136,0.2)', boxShadow: '0 0 20px rgba(0,255,136,0.08)' }}>
-          <span className="text-white">🔥 Streak</span>
+        <div className="inline-flex items-center justify-center rounded-full text-sm font-bold whitespace-nowrap px-5 py-2"
+          style={{ background: '#F5F5F5', border: '1.5px solid #E0E0E0' }}>
+          <span style={{ color: '#666666' }}>🔥 Streak</span>
           <span>&nbsp;&nbsp;</span>
-          <span className="text-[#00FF88] tabular-nums">{streak}</span>
+          <span className="tabular-nums" style={{ color: '#1A1A1A' }}>{streak}</span>
         </div>
-      </div>
-
-      {/* ── ROBOT SILHOUETTE ─────────────────────── */}
-      <div className="relative z-10 shrink-0 flex justify-center py-1" aria-label="Robot build progress" aria-hidden="true">
-        <svg width="90" height="78" viewBox="0 0 90 78" aria-hidden="true">
-          {/* Head — Clarity (🧠 Brain) */}
-          <rect x="28" y="2" width="34" height="26" rx="7"
-            fill={brainParts > 0 ? 'rgba(0,255,136,0.12)' : 'rgba(255,255,255,0.03)'}
-            stroke={brainParts > 0 ? '#00FF88' : 'rgba(255,255,255,0.1)'}
-            strokeWidth="1.5"
-          />
-          {/* Eyes — Debug (👁️ Eyes) */}
-          <circle cx="37" cy="13" r="4"
-            fill={eyeParts > 0 ? '#00FF88' : 'rgba(255,255,255,0.06)'}
-            opacity={eyeParts > 0 ? 0.9 : 1}
-          />
-          <circle cx="53" cy="13" r="4"
-            fill={eyeParts > 0 ? '#00FF88' : 'rgba(255,255,255,0.06)'}
-            opacity={eyeParts > 0 ? 0.9 : 1}
-          />
-          {eyeParts > 0 && <>
-            <circle cx="37" cy="13" r="2" fill="#0F0F0F" />
-            <circle cx="53" cy="13" r="2" fill="#0F0F0F" />
-          </>}
-          {/* Neck */}
-          <rect x="40" y="28" width="10" height="7" rx="2"
-            fill={brainParts > 0 ? 'rgba(0,255,136,0.08)' : 'rgba(255,255,255,0.03)'}
-            stroke={brainParts > 0 ? 'rgba(0,255,136,0.3)' : 'rgba(255,255,255,0.07)'}
-            strokeWidth="1"
-          />
-          {/* Torso — Constraints (⚙️ Gears) */}
-          <rect x="18" y="35" width="54" height="34" rx="6"
-            fill={gearParts > 0 ? 'rgba(184,115,51,0.12)' : 'rgba(255,255,255,0.03)'}
-            stroke={gearParts > 0 ? '#B87333' : 'rgba(255,255,255,0.1)'}
-            strokeWidth="1.5"
-          />
-          {gearParts > 0 && <>
-            <circle cx="35" cy="50" r="5" fill="none" stroke="#B87333" strokeWidth="1.2" opacity="0.6" />
-            <circle cx="45" cy="50" r="3" fill="none" stroke="#B87333" strokeWidth="1.2" opacity="0.4" />
-            <circle cx="55" cy="50" r="5" fill="none" stroke="#B87333" strokeWidth="1.2" opacity="0.6" />
-          </>}
-          {/* Left arm — Structure (🦾 Arms) */}
-          <rect x="4" y="37" width="13" height="28" rx="4"
-            fill={armParts > 0 ? 'rgba(139,143,168,0.15)' : 'rgba(255,255,255,0.03)'}
-            stroke={armParts > 0 ? '#8B8FA8' : 'rgba(255,255,255,0.1)'}
-            strokeWidth="1.5"
-          />
-          {/* Right arm — Structure (🦾 Arms) */}
-          <rect x="73" y="37" width="13" height="28" rx="4"
-            fill={armParts > 0 ? 'rgba(139,143,168,0.15)' : 'rgba(255,255,255,0.03)'}
-            stroke={armParts > 0 ? '#8B8FA8' : 'rgba(255,255,255,0.1)'}
-            strokeWidth="1.5"
-          />
-          {armParts > 0 && <>
-            <rect x="8"  y="48" width="5" height="2" rx="1" fill="#8B8FA8" opacity="0.5" />
-            <rect x="77" y="48" width="5" height="2" rx="1" fill="#8B8FA8" opacity="0.5" />
-          </>}
-          {/* Part count dots */}
-          {([
-            { parts: brainParts, x: 37, y: 22, color: '#00FF88' },
-            { parts: eyeParts,   x: 53, y: 22, color: '#C84B1F' },
-            { parts: gearParts,  x: 45, y: 61, color: '#B87333' },
-            { parts: armParts,   x: 10, y: 58, color: '#8B8FA8' },
-          ] as Array<{ parts: number; x: number; y: number; color: string }>).map(({ parts: p, x, y, color }) =>
-            p > 0 ? (
-              <text key={`${x}-${y}`} x={x} y={y} textAnchor="middle" fontSize="5" fontFamily="monospace" fill={color} opacity="0.8">
-                {p}/5
-              </text>
-            ) : null
-          )}
-        </svg>
       </div>
 
       {/* ── WORLD GRID + MASTERY + SUGGESTION ─── */}
-      <div className="relative z-10 flex-1 min-h-0 px-3 sm:px-6 py-2 flex flex-col gap-2 sm:gap-3">
+      <div className="relative z-10 flex-1 min-h-0 px-3 sm:px-5 py-1.5 flex flex-col gap-2">
 
-        <div className="grid grid-cols-2 gap-2 sm:gap-3 flex-1 min-h-0" role="list" aria-label="Game worlds">
+        <div className="grid grid-cols-2 gap-2 flex-1 min-h-0" role="list" aria-label="Game worlds">
           {WORLDS.map((world) => {
             const isActive = world.id === activeWorld
             const nextThreshold = nextPartThreshold(world.totalXp)
 
-            const cardContent = (
-              <>
-                {/* Top edge accent gradient */}
-                <div className="absolute top-0 left-0 right-0 pointer-events-none" style={{
-                  height: '2px',
-                  background: `linear-gradient(90deg,transparent,${world.accent},transparent)`,
-                  opacity: 0.65,
-                }} aria-hidden="true" />
-
-                {/* Holographic inner glow */}
-                <div className="absolute inset-0 rounded-2xl pointer-events-none" style={{
-                  boxShadow: `0 0 20px rgba(${world.accentRgb},0.15),inset 0 0 12px rgba(${world.accentRgb},0.04)`,
-                }} aria-hidden="true" />
-
-                <div className="absolute inset-0 flex flex-col items-center p-2.5 sm:p-3 z-10">
-                  {/* Emoji */}
-                  <div className="relative flex items-center justify-center mt-0.5" aria-hidden="true">
-                    <span className="text-2xl sm:text-3xl leading-none">{world.emoji}</span>
+            return (
+              <Link
+                key={world.id}
+                href={world.href}
+                className={`relative rounded-2xl overflow-hidden transition-all duration-300 flex flex-col world-card-${world.id} hover:scale-[1.02] hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2`}
+                style={{
+                  background: '#FFFFFF',
+                  border: `1.5px solid #E8E8E8`,
+                  borderLeft: `4px solid ${world.accent}`,
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+                  minHeight: 0,
+                  padding: '10px 12px 10px 10px',
+                }}
+                role="listitem"
+                aria-label={`${world.name} — ${world.levelsComplete}/${world.levelCount} levels, ${world.parts}/5 parts`}
+              >
+                {/* Active world robot indicator */}
+                {isActive && (
+                  <div className="robot-float absolute top-1 right-1" aria-hidden="true">
+                    <RobotSVG config={robotConfig} size={16} headOnly />
                   </div>
+                )}
 
-                  {/* Name + subtitle */}
-                  <div className="flex-1 flex flex-col items-center justify-center gap-0.5 mt-1">
-                    {world.completed && (
-                      <span className="inline-flex items-center justify-center w-4 h-4 rounded-full text-[9px] font-black mb-0.5"
-                        style={{ background: `rgba(${world.accentRgb},0.2)`, color: world.accent }}>✓</span>
-                    )}
-                    {isActive && (
-                      <div className="robot-float mb-0.5" aria-hidden="true">
-                        <RobotSVG config={robotConfig} size={20} headOnly />
-                      </div>
-                    )}
-                    <h2 className="text-[10px] sm:text-xs font-black tracking-widest leading-none text-center"
-                      style={{ color: '#E8E8E8' }}>
-                      {world.name}
-                    </h2>
-                    <p className="text-[9px] sm:text-[10px] font-mono tracking-wide text-center"
-                      style={{ color: '#B87333' }}>
+                {/* Emoji + Name row */}
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-xl leading-none" aria-hidden="true">{world.emoji}</span>
+                  <div className="flex flex-col min-w-0">
+                    <div className="flex items-center gap-1">
+                      <h2 className="text-[10px] font-black tracking-widest leading-none truncate"
+                        style={{ color: '#1A1A1A' }}>
+                        {world.name}
+                      </h2>
+                      {world.completed && (
+                        <span className="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full text-[8px] font-black flex-shrink-0"
+                          style={{ background: `rgba(${world.accentRgb},0.15)`, color: world.accent }}>✓</span>
+                      )}
+                    </div>
+                    <p className="text-[9px] font-medium" style={{ color: '#888888' }}>
                       {world.subtitle}
                     </p>
                   </div>
-
-                  {/* Parts + XP progress */}
-                  <div className="w-full flex flex-col items-center gap-0.5 mt-1">
-                    <p className="text-[8px] font-mono text-center" style={{ color: '#8B8FA8' }}>
-                      {`${world.partLabel}: ${world.parts}/5`}
-                    </p>
-                    <>
-                      <div className="w-full h-0.5 rounded-full overflow-hidden"
-                        style={{ background: 'rgba(255,255,255,0.06)' }}>
-                        <div className="h-full rounded-full transition-all duration-700"
-                          style={{
-                            width: `${(world.totalXp / 1000) * 100}%`,
-                            background: world.accent,
-                            opacity: 0.7,
-                          }} />
-                      </div>
-                      <p className="text-[7px] font-mono tabular-nums"
-                        style={{ color: 'rgba(139,143,168,0.5)' }}>
-                        {world.parts < 5 ? `${world.totalXp}/${nextThreshold} pts` : 'Complete'}
-                      </p>
-                    </>
-                  </div>
                 </div>
-              </>
-            )
 
-            const cardStyle = {
-              background: `linear-gradient(160deg,rgba(${world.accentRgb},0.06) 0%,rgba(26,26,26,0.95) 55%)`,
-              border: `1.5px solid rgba(${world.accentRgb},0.3)`,
-              backdropFilter: 'blur(4px)',
-            }
+                {/* Progress fraction */}
+                <p className="text-[10px] font-bold tabular-nums" style={{ color: world.accent }}>
+                  {world.levelsComplete}/{world.levelCount} levels
+                </p>
 
-            return (
-              <Link key={world.id} href={world.href}
-                className={`relative rounded-2xl overflow-hidden transition-all duration-300 h-full world-card-${world.id} hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00FF88] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0F0F0F]`}
-                style={cardStyle} role="listitem"
-                aria-label={`${world.name} — ${world.levelCount} levels, ${world.parts}/5 parts`}>
-                {cardContent}
+                {/* XP bar */}
+                <div className="w-full h-1 rounded-full overflow-hidden mt-1.5"
+                  style={{ background: '#F0F0F0' }}>
+                  <div className="h-full rounded-full transition-all duration-700"
+                    style={{
+                      width: `${Math.min((world.totalXp / 1000) * 100, 100)}%`,
+                      background: world.accent,
+                      opacity: 0.8,
+                    }} />
+                </div>
+                <p className="text-[7px] font-mono tabular-nums mt-0.5" style={{ color: '#BBBBBB' }}>
+                  {world.parts < 5 ? `${world.totalXp}/${nextThreshold} xp` : 'All parts ✓'}
+                </p>
               </Link>
             )
           })}
         </div>
 
-        {/* ── MASTERY TEASER / LINK ── */}
+        {/* ── MASTERY ROW ── */}
         {masteryUnlocked ? (
           <Link
             href="/dashboard/mastery"
-            className="mastery-pulse relative rounded-2xl overflow-hidden shrink-0 hover:scale-[1.01] transition-transform duration-300"
+            className="mastery-card-pulse relative rounded-xl overflow-hidden shrink-0 hover:scale-[1.01] transition-transform duration-300 flex items-center gap-3 px-4"
             style={{
-              background: 'linear-gradient(90deg,rgba(255,0,68,0.15) 0%,rgba(26,26,26,0.95) 50%,rgba(255,0,68,0.15) 100%)',
-              border: '1.5px solid rgba(255,0,68,0.35)',
-              height: '60px',
+              background: 'rgba(155,74,226,0.06)',
+              border: '1.5px solid rgba(155,74,226,0.35)',
+              borderLeft: '4px solid #9B4AE2',
+              height: '52px',
             }}
             role="listitem"
             aria-label="Mastery — Enter the Mastery world"
           >
-            <div className="absolute top-0 left-0 right-0 h-0.5 pointer-events-none"
-              style={{ background: 'linear-gradient(90deg,transparent,#FF0044,transparent)', opacity: 0.6 }} aria-hidden="true" />
-            <div className="absolute inset-0 flex flex-row items-center justify-center gap-3 px-4 z-10">
-              <span className="text-xl leading-none">❤️</span>
-              <div className="flex flex-col items-start gap-0">
-                <h2 className="text-[10px] font-black tracking-widest" style={{ color: '#E8E8E8' }}>MASTERY</h2>
-                <p className="text-[9px] font-mono" style={{ color: 'rgba(255,0,68,0.7)' }}>The Core</p>
-              </div>
-              <p className="ml-auto text-[8px] font-mono text-right leading-snug"
-                style={{ color: 'rgba(139,143,168,0.5)', maxWidth: '90px' }}>
-                Double XP · All skills
-              </p>
+            <span className="text-xl leading-none">❤️</span>
+            <div className="flex flex-col">
+              <h2 className="text-[10px] font-black tracking-widest" style={{ color: '#1A1A1A' }}>MASTERY</h2>
+              <p className="text-[9px] font-medium" style={{ color: '#9B4AE2' }}>The Core · Double XP</p>
             </div>
           </Link>
         ) : (
           <div
-            className="mastery-pulse relative rounded-2xl overflow-hidden shrink-0"
+            className="mastery-card-pulse relative rounded-xl overflow-hidden shrink-0 flex items-center gap-3 px-4"
             style={{
-              background: 'linear-gradient(90deg,rgba(255,0,68,0.05) 0%,#1A1A1A 50%,rgba(255,0,68,0.05) 100%)',
-              border: '1.5px solid rgba(255,0,68,0.2)',
-              height: '60px',
-              opacity: 0.65,
+              background: '#FAFAFA',
+              border: '1.5px solid #EEEEEE',
+              borderLeft: '4px solid #DDDDDD',
+              height: '52px',
+              opacity: 0.7,
             }}
             role="listitem" aria-disabled="true"
-            aria-label="Mastery — Score 80+ on Level 1 of all worlds to unlock"
+            aria-label="Mastery locked — Score 80+ on Level 1 of all worlds"
           >
-            <div className="absolute top-0 left-0 right-0 h-0.5 pointer-events-none"
-              style={{ background: 'linear-gradient(90deg,transparent,#FF0044,transparent)', opacity: 0.4 }} aria-hidden="true" />
-            <div className="absolute inset-0 flex flex-row items-center justify-center gap-3 px-4 z-10">
-              <div className="relative flex items-center justify-center" aria-hidden="true">
-                <span className="text-xl leading-none" style={{ filter: 'grayscale(1)', opacity: 0.25 }}>❤️</span>
-                <span className="absolute -bottom-1 -right-1 text-[9px] leading-none"
-                  style={{ filter: 'drop-shadow(0 0 4px rgba(200,75,31,0.6))' }}>🔒</span>
-              </div>
-              <div className="flex flex-col items-start gap-0">
-                <h2 className="text-[10px] font-black tracking-widest" style={{ color: 'rgba(232,232,232,0.18)' }}>MASTERY</h2>
-                <p className="text-[9px] font-mono" style={{ color: 'rgba(255,0,68,0.3)' }}>The Core</p>
-              </div>
-              <p className="ml-auto text-[8px] font-mono text-right leading-snug"
-                style={{ color: 'rgba(139,143,168,0.3)', maxWidth: '90px' }}>
-                Score 80+ on Level 1 of all worlds
-              </p>
+            <span className="text-xl leading-none" style={{ filter: 'grayscale(1)', opacity: 0.3 }}>❤️</span>
+            <div className="flex flex-col">
+              <h2 className="text-[10px] font-black tracking-widest" style={{ color: '#BBBBBB' }}>MASTERY</h2>
+              <p className="text-[9px] font-medium" style={{ color: '#CCCCCC' }}>Score 80+ on Level 1 of all worlds 🔒</p>
             </div>
           </div>
         )}
@@ -508,18 +388,175 @@ export default async function DashboardPage() {
         )}
       </div>
 
+      {/* ── ROBOT ASSEMBLY AREA ──────────────────── */}
+      <div className="relative z-10 shrink-0 flex flex-col items-center" style={{ height: '88px' }}
+        aria-label="Robot assembly progress" aria-hidden="true">
+        <p className="text-[9px] font-mono uppercase tracking-widest mt-1" style={{ color: '#CCCCCC' }}>
+          Assembly
+        </p>
+        <svg width="130" height="76" viewBox="0 0 130 76" aria-hidden="true">
+          {/* Platform */}
+          <ellipse cx="65" cy="74" rx="48" ry="4" fill="#F0F0F0" />
+
+          {/* Head — Clarity/Brain */}
+          <rect x="37" y="4" width="52" height="32" rx="10"
+            fill={brainParts > 0 ? '#4A90E2' : 'none'}
+            stroke={brainParts > 0 ? '#4A90E2' : '#DDDDDD'}
+            strokeWidth="2"
+            opacity={brainParts > 0 ? 0.85 : 1}
+          />
+
+          {/* Eyes — Debug */}
+          <circle cx="51" cy="20" r="7"
+            fill={eyeParts > 0 ? '#E24A4A' : 'none'}
+            stroke={eyeParts > 0 ? '#E24A4A' : '#DDDDDD'}
+            strokeWidth="1.5"
+            opacity={eyeParts > 0 ? 0.9 : 1}
+          />
+          <circle cx="79" cy="20" r="7"
+            fill={eyeParts > 0 ? '#E24A4A' : 'none'}
+            stroke={eyeParts > 0 ? '#E24A4A' : '#DDDDDD'}
+            strokeWidth="1.5"
+            opacity={eyeParts > 0 ? 0.9 : 1}
+          />
+          {eyeParts > 0 && <>
+            <circle cx="51" cy="20" r="3" fill="white" opacity="0.6" />
+            <circle cx="79" cy="20" r="3" fill="white" opacity="0.6" />
+          </>}
+
+          {/* Neck */}
+          <rect x="56" y="36" width="18" height="8" rx="3"
+            fill={brainParts > 0 ? 'rgba(74,144,226,0.15)' : 'none'}
+            stroke={brainParts > 0 ? 'rgba(74,144,226,0.4)' : '#EEEEEE'}
+            strokeWidth="1"
+          />
+
+          {/* Torso — Constraints/Gears */}
+          <rect x="22" y="44" width="86" height="26" rx="8"
+            fill={gearParts > 0 ? '#E2A04A' : 'none'}
+            stroke={gearParts > 0 ? '#E2A04A' : '#DDDDDD'}
+            strokeWidth="2"
+            opacity={gearParts > 0 ? 0.85 : 1}
+          />
+          {gearParts > 0 && <>
+            <circle cx="48" cy="57" r="5" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="1.2" />
+            <circle cx="65" cy="57" r="4" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="1.2" />
+            <circle cx="82" cy="57" r="5" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="1.2" />
+          </>}
+
+          {/* Core heart — Mastery */}
+          {masteryUnlocked && (
+            <circle cx="65" cy="57" r="5" fill="#9B4AE2" opacity="0.95" />
+          )}
+
+          {/* Left arm — Structure */}
+          <rect x="4" y="46" width="16" height="20" rx="5"
+            fill={armParts > 0 ? '#4AE27A' : 'none'}
+            stroke={armParts > 0 ? '#4AE27A' : '#DDDDDD'}
+            strokeWidth="2"
+            opacity={armParts > 0 ? 0.85 : 1}
+          />
+
+          {/* Right arm — Structure */}
+          <rect x="110" y="46" width="16" height="20" rx="5"
+            fill={armParts > 0 ? '#4AE27A' : 'none'}
+            stroke={armParts > 0 ? '#4AE27A' : '#DDDDDD'}
+            strokeWidth="2"
+            opacity={armParts > 0 ? 0.85 : 1}
+          />
+        </svg>
+      </div>
+
+      {/* ── CONVEYOR BELT ────────────────────────── */}
+      <div className="relative z-10 shrink-0" style={{ height: '76px' }} aria-hidden="true">
+        <svg width="100%" height="76" viewBox="0 0 360 76" preserveAspectRatio="xMidYMid meet">
+          <defs>
+            <clipPath id="beltClip">
+              <rect x="30" y="46" width="300" height="22" />
+            </clipPath>
+          </defs>
+
+          {/* Belt shadow */}
+          <rect x="30" y="52" width="300" height="18" rx="4" fill="rgba(0,0,0,0.07)" />
+
+          {/* Belt base */}
+          <rect x="30" y="46" width="300" height="22" rx="4" fill="#D4D4D4" />
+
+          {/* Scrolling belt ridges */}
+          <g clipPath="url(#beltClip)">
+            <g style={{ animation: 'beltScroll 0.9s linear infinite' }}>
+              {Array.from({ length: 22 }, (_, i) => (
+                <rect key={i} x={i * 20 - 20} y="48" width="13" height="18" rx="2.5" fill="#C4C4C4" />
+              ))}
+            </g>
+          </g>
+
+          {/* Belt top highlight */}
+          <rect x="30" y="46" width="300" height="3" rx="2" fill="rgba(255,255,255,0.4)" />
+
+          {/* Left gear */}
+          <g>
+            <animateTransform attributeName="transform" type="rotate"
+              from="0 28 57" to="360 28 57" dur="2s" repeatCount="indefinite" />
+            <polygon points={leftGear} fill="#B8B8B8" stroke="#A0A0A0" strokeWidth="1" />
+            <circle cx="28" cy="57" r="5" fill="#909090" />
+            <circle cx="28" cy="57" r="2" fill="#787878" />
+          </g>
+
+          {/* Right gear */}
+          <g>
+            <animateTransform attributeName="transform" type="rotate"
+              from="0 332 57" to="-360 332 57" dur="2s" repeatCount="indefinite" />
+            <polygon points={rightGear} fill="#B8B8B8" stroke="#A0A0A0" strokeWidth="1" />
+            <circle cx="332" cy="57" r="5" fill="#909090" />
+            <circle cx="332" cy="57" r="2" fill="#787878" />
+          </g>
+
+          {/* Parts on belt */}
+          {/* Brain — Clarity */}
+          <text x="72" y="42" textAnchor="middle" fontSize="22"
+            className={brainParts > 0 ? 'part-glow-1' : 'part-grey'}
+            style={{ transformOrigin: '72px 38px' }}
+          >🧠</text>
+
+          {/* Gears — Constraints */}
+          <text x="134" y="42" textAnchor="middle" fontSize="22"
+            className={gearParts > 0 ? 'part-glow-2' : 'part-grey'}
+            style={{ transformOrigin: '134px 38px' }}
+          >⚙️</text>
+
+          {/* Arms — Structure */}
+          <text x="196" y="42" textAnchor="middle" fontSize="22"
+            className={armParts > 0 ? 'part-glow-3' : 'part-grey'}
+            style={{ transformOrigin: '196px 38px' }}
+          >🦾</text>
+
+          {/* Eyes — Debug */}
+          <text x="258" y="42" textAnchor="middle" fontSize="22"
+            className={eyeParts > 0 ? 'part-glow-4' : 'part-grey'}
+            style={{ transformOrigin: '258px 38px' }}
+          >👁️</text>
+
+          {/* Core — Mastery */}
+          <text x="316" y="42" textAnchor="middle" fontSize="22"
+            className={masteryUnlocked ? 'part-glow-5' : 'part-grey'}
+            style={{ transformOrigin: '316px 38px' }}
+          >❤️</text>
+        </svg>
+      </div>
+
       {/* ── FOOTER ──────────────────────────────── */}
-      <div className="relative z-10 shrink-0 flex items-center justify-center gap-0 text-xs py-2 px-4"
-        style={{ color: 'rgba(255,255,255,0.2)' }}>
-        <a href="/privacy" className="hover:text-[#00FF88] transition-colors duration-200 px-3">Privacy</a>
+      <div className="relative z-10 shrink-0 flex items-center justify-center gap-0 text-xs py-1.5 px-4"
+        style={{ color: '#BBBBBB' }}>
+        <a href="/privacy" className="transition-colors duration-200 px-3 hover:text-[#1A1A1A]">Privacy</a>
         <span aria-hidden="true">·</span>
-        <a href="/terms"   className="hover:text-[#00FF88] transition-colors duration-200 px-3">Terms</a>
+        <a href="/terms"   className="transition-colors duration-200 px-3 hover:text-[#1A1A1A]">Terms</a>
         <span aria-hidden="true">·</span>
-        <a href="/support" className="hover:text-[#00FF88] transition-colors duration-200 px-3">Support</a>
+        <a href="/support" className="transition-colors duration-200 px-3 hover:text-[#1A1A1A]">Support</a>
         {user.email === 'vesorestyle@gmail.com' && (
           <>
             <span aria-hidden="true">·</span>
-            <a href="/admin" className="hover:text-[#00FF88] transition-colors duration-200 px-3">Admin</a>
+            <a href="/admin" className="transition-colors duration-200 px-3 hover:text-[#1A1A1A]">Admin</a>
           </>
         )}
       </div>

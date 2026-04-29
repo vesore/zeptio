@@ -73,7 +73,7 @@ const KEY_RULES: Record<string, string[]> = {
 
 // World config
 const WORLDS = [
-  { id: 'clarity',     name: 'Clarity',     accent: '#00FF88', accentRgb: '0,255,136',   levels: CLARITY_LEVELS     },
+  { id: 'clarity',     name: 'Clarity',     accent: '#4AE27A', accentRgb: '0,255,136',   levels: CLARITY_LEVELS     },
   { id: 'constraints', name: 'Constraints', accent: '#B87333', accentRgb: '184,115,51',  levels: CONSTRAINTS_LEVELS },
   { id: 'structure',   name: 'Structure',   accent: '#8B8FA8', accentRgb: '139,143,168', levels: STRUCTURE_LEVELS   },
   { id: 'debug',       name: 'Debug',       accent: '#C84B1F', accentRgb: '200,75,31',   levels: DEBUG_LEVELS       },
@@ -174,7 +174,7 @@ export default async function JournalPage() {
   return (
     <main
       className="min-h-screen w-full max-w-full overflow-x-hidden pb-16"
-      style={{ background: '#0F0F0F', color: '#E8E8E8' }}
+      style={{ background: '#FFFFFF', color: '#1A1A1A' }}
     >
       <style>{`
         @keyframes glowPulse {
@@ -207,15 +207,15 @@ export default async function JournalPage() {
           <Link
             href="/dashboard"
             className="text-sm font-mono transition-colors duration-200 hover:text-[#00FF88]"
-            style={{ color: 'rgba(255,255,255,0.35)' }}
+            style={{ color: '#999999' }}
           >
             ← Home
           </Link>
           <h1
             className="text-2xl font-black tracking-widest uppercase font-mono"
             style={{
-              color: '#B87333',
-              textShadow: '0 0 16px rgba(184,115,51,0.5)',
+              color: '#E2A04A',
+              textShadow: '0 0 16px rgba(226,160,74,0.5)',
             }}
           >
             Journal
@@ -223,11 +223,11 @@ export default async function JournalPage() {
           <div style={{ width: '48px' }} />
         </div>
 
-        <div className="w-full h-px mb-8" style={{ background: 'rgba(255,255,255,0.06)' }} />
+        <div className="w-full h-px mb-8" style={{ background: '#F5F5F5' }} />
 
         {/* ── Score Graphs ── */}
         <section aria-label="Score graphs by world">
-          <h2 className="text-xs font-mono font-bold uppercase tracking-widest mb-5" style={{ color: 'rgba(255,255,255,0.4)' }}>
+          <h2 className="text-xs font-mono font-bold uppercase tracking-widest mb-5" style={{ color: '#888888' }}>
             Progress by World
           </h2>
           <div className="flex flex-col gap-6">
@@ -251,7 +251,7 @@ export default async function JournalPage() {
                       {world.name}
                     </p>
                     {hasAny && (
-                      <p className="text-xs font-mono tabular-nums" style={{ color: 'rgba(255,255,255,0.3)' }}>
+                      <p className="text-xs font-mono tabular-nums" style={{ color: '#999999' }}>
                         avg {Math.round(scores.filter(s => s > 0).reduce((a, b) => a + b, 0) / scores.filter(s => s > 0).length)}/100
                       </p>
                     )}
@@ -262,7 +262,7 @@ export default async function JournalPage() {
                       dangerouslySetInnerHTML={{ __html: graphSvg }}
                     />
                   ) : (
-                    <p className="text-xs font-mono text-center py-4" style={{ color: 'rgba(255,255,255,0.2)' }}>
+                    <p className="text-xs font-mono text-center py-4" style={{ color: '#BBBBBB' }}>
                       No attempts yet
                     </p>
                   )}
@@ -270,7 +270,7 @@ export default async function JournalPage() {
                   {hasAny && (
                     <div className="flex justify-between mt-1 px-5">
                       {world.levels.map((_, i) => (
-                        <span key={i} className="text-[7px] font-mono tabular-nums" style={{ color: 'rgba(255,255,255,0.2)' }}>
+                        <span key={i} className="text-[7px] font-mono tabular-nums" style={{ color: '#BBBBBB' }}>
                           {i + 1}
                         </span>
                       ))}
@@ -282,11 +282,11 @@ export default async function JournalPage() {
           </div>
         </section>
 
-        <div className="w-full h-px my-8" style={{ background: 'rgba(255,255,255,0.06)' }} />
+        <div className="w-full h-px my-8" style={{ background: '#F5F5F5' }} />
 
         {/* ── First vs Best Attempts ── */}
         <section aria-label="First vs best attempts">
-          <h2 className="text-xs font-mono font-bold uppercase tracking-widest mb-5" style={{ color: 'rgba(255,255,255,0.4)' }}>
+          <h2 className="text-xs font-mono font-bold uppercase tracking-widest mb-5" style={{ color: '#888888' }}>
             First vs Best Attempt
           </h2>
           <div className="flex flex-col gap-4">
@@ -323,13 +323,13 @@ export default async function JournalPage() {
                             </span>
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="text-[10px] font-mono truncate" style={{ color: 'rgba(255,255,255,0.5)' }}>
+                            <p className="text-[10px] font-mono truncate" style={{ color: '#666666' }}>
                               {level.title}
                             </p>
                           </div>
                           <div className="flex items-center gap-3 shrink-0">
                             <div className="text-center">
-                              <p className="text-[8px] font-mono" style={{ color: 'rgba(255,255,255,0.3)' }}>First</p>
+                              <p className="text-[8px] font-mono" style={{ color: '#999999' }}>First</p>
                               <p className="text-sm font-black tabular-nums" style={{
                                 color: attempt.first >= 80 ? '#00FF88' : attempt.first >= 60 ? world.accent : '#C84B1F',
                               }}>
@@ -337,11 +337,11 @@ export default async function JournalPage() {
                               </p>
                             </div>
                             {improved && (
-                              <span className="text-xs" style={{ color: 'rgba(255,255,255,0.2)' }}>→</span>
+                              <span className="text-xs" style={{ color: '#BBBBBB' }}>→</span>
                             )}
                             {improved && (
                               <div className="text-center">
-                                <p className="text-[8px] font-mono" style={{ color: 'rgba(255,255,255,0.3)' }}>Best</p>
+                                <p className="text-[8px] font-mono" style={{ color: '#999999' }}>Best</p>
                                 <p className="text-sm font-black tabular-nums" style={{
                                   color: attempt.best >= 80 ? '#00FF88' : attempt.best >= 60 ? world.accent : '#C84B1F',
                                 }}>
@@ -358,18 +358,18 @@ export default async function JournalPage() {
               )
             })}
             {WORLDS.every(w => (worldData.get(w.id)?.size ?? 0) === 0) && (
-              <p className="text-xs font-mono text-center py-4" style={{ color: 'rgba(255,255,255,0.2)' }}>
+              <p className="text-xs font-mono text-center py-4" style={{ color: '#BBBBBB' }}>
                 Complete some levels to see your progress here.
               </p>
             )}
           </div>
         </section>
 
-        <div className="w-full h-px my-8" style={{ background: 'rgba(255,255,255,0.06)' }} />
+        <div className="w-full h-px my-8" style={{ background: '#F5F5F5' }} />
 
         {/* ── Key Rules Collection ── */}
         <section aria-label="Unlocked key rules">
-          <h2 className="text-xs font-mono font-bold uppercase tracking-widest mb-5" style={{ color: 'rgba(255,255,255,0.4)' }}>
+          <h2 className="text-xs font-mono font-bold uppercase tracking-widest mb-5" style={{ color: '#888888' }}>
             Key Rules Unlocked
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -391,7 +391,7 @@ export default async function JournalPage() {
                   <p className="text-[8px] font-mono uppercase tracking-wider mb-1" style={{ color: `rgba(${world.accentRgb},0.6)` }}>
                     {world.name} · Level {index + 1}
                   </p>
-                  <p className="text-sm font-bold leading-snug" style={{ color: '#E8E8E8', fontFamily: 'monospace' }}>
+                  <p className="text-sm font-bold leading-snug" style={{ color: '#1A1A1A', fontFamily: 'monospace' }}>
                     &ldquo;{rule}&rdquo;
                   </p>
                 </div>
@@ -399,17 +399,17 @@ export default async function JournalPage() {
             })}
           </div>
           {WORLDS.every(w => (worldData.get(w.id)?.size ?? 0) === 0) && (
-            <p className="text-xs font-mono text-center py-4" style={{ color: 'rgba(255,255,255,0.2)' }}>
+            <p className="text-xs font-mono text-center py-4" style={{ color: '#BBBBBB' }}>
               Complete levels to unlock key rules.
             </p>
           )}
         </section>
 
-        <div className="w-full h-px my-8" style={{ background: 'rgba(255,255,255,0.06)' }} />
+        <div className="w-full h-px my-8" style={{ background: '#F5F5F5' }} />
 
         {/* ── Reflections ── */}
         <section aria-label="Your reflections">
-          <h2 className="text-xs font-mono font-bold uppercase tracking-widest mb-5" style={{ color: 'rgba(255,255,255,0.4)' }}>
+          <h2 className="text-xs font-mono font-bold uppercase tracking-widest mb-5" style={{ color: '#888888' }}>
             Reflections
           </h2>
           {reflectionRows && reflectionRows.length > 0 ? (
@@ -426,7 +426,7 @@ export default async function JournalPage() {
                     key={i}
                     className="rounded-xl px-4 py-3"
                     style={{
-                      background: 'rgba(255,255,255,0.03)',
+                      background: 'rgba(0,0,0,0.03)',
                       border: '1px solid rgba(255,255,255,0.07)',
                     }}
                   >
@@ -435,7 +435,7 @@ export default async function JournalPage() {
                         style={{ color: world ? world.accent : 'rgba(255,255,255,0.3)', opacity: 0.7 }}>
                         {world?.name ?? r.world}{levelNum ? ` · Level ${levelNum}` : ''}
                       </p>
-                      <p className="text-[8px] font-mono" style={{ color: 'rgba(255,255,255,0.2)' }}>{date}</p>
+                      <p className="text-[8px] font-mono" style={{ color: '#BBBBBB' }}>{date}</p>
                     </div>
                     <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.65)' }}>
                       {r.reflection}
@@ -445,7 +445,7 @@ export default async function JournalPage() {
               })}
             </div>
           ) : (
-            <p className="text-xs font-mono text-center py-4" style={{ color: 'rgba(255,255,255,0.2)' }}>
+            <p className="text-xs font-mono text-center py-4" style={{ color: '#BBBBBB' }}>
               Your reflections will appear here after you complete levels.
             </p>
           )}

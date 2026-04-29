@@ -34,7 +34,7 @@ export default async function DebugPage() {
     : DEFAULT_ROBOT_CONFIG
 
   return (
-    <main className="min-h-screen w-full max-w-full overflow-x-hidden pb-24" style={{ background: '#0F0F0F' }}>
+    <main className="min-h-screen w-full max-w-full overflow-x-hidden pb-24" style={{ background: '#FFFFFF' }}>
       <div className="w-full max-w-lg mx-auto px-4 sm:px-6">
 
         {/* Top nav */}
@@ -42,13 +42,13 @@ export default async function DebugPage() {
           <Link
             href="/dashboard"
             className="text-sm font-mono transition-colors duration-200 hover:text-[#C84B1F]"
-            style={{ color: 'rgba(255,255,255,0.35)' }}
+            style={{ color: '#999999' }}
           >
             ← Home
           </Link>
           <span
             className="text-xs font-mono rounded-full px-3 py-1"
-            style={{ background: 'rgba(200,75,31,0.1)', color: 'rgba(200,75,31,0.7)' }}
+            style={{ background: 'rgba(226,74,74,0.1)', color: 'rgba(226,74,74,0.7)' }}
           >
             {completedCount}/{DEBUG_LEVELS.length} complete
           </span>
@@ -56,33 +56,33 @@ export default async function DebugPage() {
 
         {/* Neon title */}
         <div className="pt-6 pb-2 text-center">
-          <p className="text-xs font-mono tracking-widest uppercase mb-2" style={{ color: 'rgba(200,75,31,0.5)' }}>
+          <p className="text-xs font-mono tracking-widest uppercase mb-2" style={{ color: 'rgba(226,74,74,0.5)' }}>
             ◎ World Four
           </p>
           <h1
             className="text-4xl sm:text-5xl font-black tracking-wider uppercase"
             style={{
               color: ACCENT,
-              textShadow: '0 0 20px rgba(200,75,31,0.5), 0 0 60px rgba(200,75,31,0.2)',
+              textShadow: '0 0 20px rgba(226,74,74,0.5), 0 0 60px rgba(226,74,74,0.2)',
               letterSpacing: '0.12em',
             }}
           >
             Debug
           </h1>
-          <p className="mt-2 text-xs font-mono" style={{ color: 'rgba(255,255,255,0.3)' }}>
+          <p className="mt-2 text-xs font-mono" style={{ color: '#999999' }}>
             Score 60+ on each level to unlock the next
           </p>
         </div>
 
         {/* Progress bar */}
         <div className="my-5">
-          <div className="h-1 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.05)' }}>
+          <div className="h-1 rounded-full overflow-hidden" style={{ background: 'rgba(0,0,0,0.04)' }}>
             <div
               className="h-1 rounded-full transition-all duration-700"
               style={{
                 width: `${Math.round((completedCount / DEBUG_LEVELS.length) * 100)}%`,
                 background: `linear-gradient(90deg, ${ACCENT}, #e07040)`,
-                boxShadow: `0 0 8px rgba(200,75,31,0.6)`,
+                boxShadow: `0 0 8px rgba(226,74,74,0.6)`,
               }}
             />
           </div>

@@ -110,7 +110,7 @@ function LoginForm() {
       <div className="w-full max-w-md mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <p
           className="text-center font-mono font-bold tracking-widest text-sm uppercase mb-8"
-          style={{ color: '#00FF88' }}
+          style={{ color: '#4A90E2' }}
         >
           Zeptio
         </p>
@@ -118,11 +118,11 @@ function LoginForm() {
         <div className="rounded-3xl p-6 sm:p-8 glass">
           <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white mb-1">Let&apos;s play.</h1>
           {isWelcomeBack ? (
-            <p className="text-sm mb-6" style={{ color: '#00FF88' }}>
+            <p className="text-sm mb-6" style={{ color: '#4A90E2' }}>
               Welcome back! Sign in to continue.
             </p>
           ) : (
-            <p className="text-sm mb-6" style={{ color: 'rgba(255,255,255,0.5)' }}>
+            <p className="text-sm mb-6" style={{ color: '#666666' }}>
               Sign in to your account.
             </p>
           )}
@@ -131,7 +131,7 @@ function LoginForm() {
           <button
             type="button"
             onClick={handleGoogleSignIn}
-            className="w-full flex items-center justify-center gap-3 rounded-full py-4 font-bold text-sm tracking-wide transition-all duration-200 hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00FF88]"
+            className="w-full flex items-center justify-center gap-3 rounded-full py-4 font-bold text-sm tracking-wide transition-all duration-200 hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4A90E2]"
             style={{ backgroundColor: '#ffffff', color: '#0F0F0F' }}
           >
             <span
@@ -145,9 +145,9 @@ function LoginForm() {
 
           {/* Divider */}
           <div className="flex items-center gap-3">
-            <div className="flex-1 h-px" style={{ backgroundColor: 'rgba(255,255,255,0.1)' }} />
-            <span className="text-xs font-mono tracking-widest uppercase" style={{ color: 'rgba(255,255,255,0.3)' }}>or</span>
-            <div className="flex-1 h-px" style={{ backgroundColor: 'rgba(255,255,255,0.1)' }} />
+            <div className="flex-1 h-px" style={{ backgroundColor: 'rgba(0,0,0,0.08)' }} />
+            <span className="text-xs font-mono tracking-widest uppercase" style={{ color: '#999999' }}>or</span>
+            <div className="flex-1 h-px" style={{ backgroundColor: 'rgba(0,0,0,0.08)' }} />
           </div>
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
@@ -156,7 +156,7 @@ function LoginForm() {
               <label
                 htmlFor="email"
                 className="text-xs font-mono tracking-widest uppercase"
-                style={{ color: 'rgba(255,255,255,0.5)' }}
+                style={{ color: '#666666' }}
               >
                 Email
               </label>
@@ -169,14 +169,14 @@ function LoginForm() {
                 value={email}
                 onChange={(e) => { setEmail(e.target.value); if (state === 'error') setState('idle') }}
                 disabled={state === 'loading'}
-                className="w-full rounded-2xl px-4 py-3.5 text-base placeholder:text-white/30 outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#00FF88] glass"
+                className="w-full rounded-2xl px-4 py-3.5 text-base placeholder:text-black/25 outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#4A90E2] glass"
                 style={{
-                  border: `1.5px solid ${state === 'error' ? '#f87171' : 'rgba(255,255,255,0.1)'}`,
-                  color: '#00FF88',
+                  border: `1.5px solid ${state === 'error' ? '#f87171' : 'rgba(0,0,0,0.08)'}`,
+                  color: '#4A90E2',
                   fontWeight: 700,
                 }}
                 onFocus={(e) => { if (state !== 'error') e.target.style.borderColor = '#00FF88' }}
-                onBlur={(e)  => { if (state !== 'error') e.target.style.borderColor = 'rgba(255,255,255,0.1)' }}
+                onBlur={(e)  => { if (state !== 'error') e.target.style.borderColor = 'rgba(0,0,0,0.08)' }}
               />
             </div>
 
@@ -185,7 +185,7 @@ function LoginForm() {
               <label
                 htmlFor="password"
                 className="text-xs font-mono tracking-widest uppercase"
-                style={{ color: 'rgba(255,255,255,0.5)' }}
+                style={{ color: '#666666' }}
               >
                 Password
               </label>
@@ -196,14 +196,14 @@ function LoginForm() {
                 value={password}
                 onChange={(e) => { setPassword(e.target.value); if (state === 'error') setState('idle') }}
                 disabled={state === 'loading'}
-                className="w-full rounded-2xl px-4 py-3.5 text-base placeholder:text-white/30 outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#00FF88] glass"
+                className="w-full rounded-2xl px-4 py-3.5 text-base placeholder:text-black/25 outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#4A90E2] glass"
                 style={{
-                  border: `1.5px solid ${state === 'error' ? '#f87171' : 'rgba(255,255,255,0.1)'}`,
-                  color: '#00FF88',
+                  border: `1.5px solid ${state === 'error' ? '#f87171' : 'rgba(0,0,0,0.08)'}`,
+                  color: '#4A90E2',
                   fontWeight: 700,
                 }}
                 onFocus={(e) => { if (state !== 'error') e.target.style.borderColor = '#00FF88' }}
-                onBlur={(e)  => { if (state !== 'error') e.target.style.borderColor = 'rgba(255,255,255,0.1)' }}
+                onBlur={(e)  => { if (state !== 'error') e.target.style.borderColor = 'rgba(0,0,0,0.08)' }}
               />
             </div>
 
@@ -211,7 +211,7 @@ function LoginForm() {
               <p
                 role="alert"
                 className="text-xs rounded-2xl px-4 py-3 font-mono break-all"
-                style={{ backgroundColor: 'rgba(248,113,113,0.1)', color: '#f87171', border: '1px solid rgba(248,113,113,0.2)' }}
+                style={{ backgroundColor: 'rgba(226,74,74,0.1)', color: '#E24A4A', border: '1px solid rgba(226,74,74,0.2)' }}
               >
                 {errMsg}
               </p>
@@ -220,14 +220,14 @@ function LoginForm() {
             <button
               type="submit"
               disabled={!ready}
-              className="w-full py-4 text-sm font-bold tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00FF88] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent btn-primary"
+              className="w-full py-4 text-sm font-bold tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4A90E2] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent btn-primary"
             >
               {state === 'loading' ? (
                 <span className="flex items-center justify-center gap-2">
                   <span
                     aria-hidden="true"
                     className="inline-block w-4 h-4 rounded-full border-2 animate-spin"
-                    style={{ borderColor: 'rgba(0,255,136,0.15)', borderTopColor: 'rgba(0,255,136,0.65)' }}
+                    style={{ borderColor: 'rgba(74,144,226,0.15)', borderTopColor: 'rgba(74,144,226,0.65)' }}
                   />
                   Signing in…
                 </span>

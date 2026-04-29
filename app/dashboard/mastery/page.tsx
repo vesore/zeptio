@@ -9,7 +9,7 @@ import { DEBUG_LEVELS } from '@/src/lib/game/debug-levels'
 import WorldGalaxyMap from '@/app/dashboard/_components/WorldGalaxyMap'
 import { DEFAULT_ROBOT_CONFIG, type RobotConfig } from '@/app/profile/_components/RobotSVG'
 
-const ACCENT = '#FF0044'
+const ACCENT = '#9B4AE2'
 
 function buildBestMap(rows: Array<{ level: number; score: number }> | null): Map<number, number> {
   const map = new Map<number, number>()
@@ -111,11 +111,11 @@ export default async function MasteryPage() {
   )
 
   return (
-    <main className="min-h-screen w-full max-w-full overflow-x-hidden pb-24" style={{ background: '#0F0F0F' }}>
+    <main className="min-h-screen w-full max-w-full overflow-x-hidden pb-24" style={{ background: '#FFFFFF' }}>
       <style>{`
         @keyframes masteryGlow {
-          0%,100% { text-shadow: 0 0 20px rgba(255,0,68,0.6), 0 0 60px rgba(255,0,68,0.25); }
-          50%      { text-shadow: 0 0 30px rgba(255,0,68,0.9), 0 0 80px rgba(255,0,68,0.4); }
+          0%,100% { text-shadow: 0 0 20px rgba(155,74,226,0.6), 0 0 60px rgba(155,74,226,0.25); }
+          50%      { text-shadow: 0 0 30px rgba(155,74,226,0.9), 0 0 80px rgba(155,74,226,0.4); }
         }
         .mastery-title-glow { animation: masteryGlow 3s ease-in-out infinite; }
       `}</style>
@@ -126,14 +126,14 @@ export default async function MasteryPage() {
         <div className="pt-5 pb-2 flex items-center justify-between">
           <Link
             href="/dashboard"
-            className="text-sm font-mono transition-colors duration-200 hover:text-[#FF0044]"
-            style={{ color: 'rgba(255,255,255,0.35)' }}
+            className="text-sm font-mono transition-colors duration-200 hover:text-[#9B4AE2]"
+            style={{ color: '#999999' }}
           >
             ← Home
           </Link>
           <span
             className="text-xs font-mono rounded-full px-3 py-1"
-            style={{ background: 'rgba(255,0,68,0.1)', color: 'rgba(255,0,68,0.7)' }}
+            style={{ background: 'rgba(155,74,226,0.1)', color: 'rgba(155,74,226,0.7)' }}
           >
             {completedCount}/{MASTERY_LEVELS.length} complete
           </span>
@@ -141,7 +141,7 @@ export default async function MasteryPage() {
 
         {/* Neon title */}
         <div className="pt-6 pb-2 text-center">
-          <p className="text-xs font-mono tracking-widest uppercase mb-2" style={{ color: 'rgba(255,0,68,0.5)' }}>
+          <p className="text-xs font-mono tracking-widest uppercase mb-2" style={{ color: 'rgba(155,74,226,0.5)' }}>
             ◎ The Core
           </p>
           <h1
@@ -153,20 +153,20 @@ export default async function MasteryPage() {
           >
             Mastery
           </h1>
-          <p className="mt-2 text-xs font-mono" style={{ color: 'rgba(255,255,255,0.3)' }}>
+          <p className="mt-2 text-xs font-mono" style={{ color: '#999999' }}>
             Double XP · Score 80+ to advance · Combines all 4 worlds
           </p>
         </div>
 
         {/* Progress bar */}
         <div className="my-5">
-          <div className="h-1 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.05)' }}>
+          <div className="h-1 rounded-full overflow-hidden" style={{ background: 'rgba(0,0,0,0.04)' }}>
             <div
               className="h-1 rounded-full transition-all duration-700"
               style={{
                 width: `${Math.round((completedCount / MASTERY_LEVELS.length) * 100)}%`,
                 background: `linear-gradient(90deg, ${ACCENT}, #ff4477)`,
-                boxShadow: `0 0 8px rgba(255,0,68,0.6)`,
+                boxShadow: `0 0 8px rgba(155,74,226,0.6)`,
               }}
             />
           </div>

@@ -42,6 +42,7 @@ interface GameRobotProps {
   expression?: RobotExpression
   size?: number
   showBubble?: boolean
+  worldAccent?: string
 }
 
 export default function GameRobot({
@@ -49,6 +50,7 @@ export default function GameRobot({
   expression = 'idle',
   size = 80,
   showBubble = true,
+  worldAccent = '#4A90E2',
 }: GameRobotProps) {
   const animClass   = ANIM_CLASS[expression]
   const antennaMode = ANTENNA_MODE[expression]
@@ -77,10 +79,10 @@ export default function GameRobot({
               fontSize: '10px',
               fontFamily: 'monospace',
               fontWeight: 600,
-              color: '#00FF88',
-              background: 'rgba(15,15,15,0.92)',
-              border: '1px solid rgba(0,255,136,0.3)',
-              backdropFilter: 'blur(8px)',
+              color: '#1A1A1A',
+              background: 'rgba(255,255,255,0.96)',
+              border: `1px solid ${worldAccent}40`,
+              boxShadow: '0 2px 12px rgba(0,0,0,0.1)',
             }}
           >
             {bubbleText}
@@ -94,7 +96,7 @@ export default function GameRobot({
               height: 0,
               borderLeft: '5px solid transparent',
               borderRight: '5px solid transparent',
-              borderTop: '5px solid rgba(0,255,136,0.3)',
+              borderTop: `5px solid ${worldAccent}40`,
             }} />
           </div>
         </div>

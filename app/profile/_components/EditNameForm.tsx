@@ -70,26 +70,26 @@ export default function EditNameForm({ initialName }: { initialName: string }) {
           onChange={e => setDraft(e.target.value)}
           onKeyDown={e => { if (e.key === 'Enter') handleSave(); if (e.key === 'Escape') handleCancel() }}
           disabled={saving}
-          className="w-full min-w-0 rounded-2xl px-4 py-2 text-lg font-bold outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#00FF88] glass"
-          style={{ color: '#00FF88', border: '1.5px solid #00FF88' }}
+          className="w-full min-w-0 rounded-2xl px-4 py-2 text-lg font-bold outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#4A90E2] glass"
+          style={{ color: '#4A90E2', border: '1.5px solid #00FF88' }}
         />
         <button
           onClick={handleSave}
           disabled={saving || !draft.trim()}
           className="rounded-full px-4 py-2 text-xs font-bold transition-all duration-200"
-          style={{ background: '#00FF88', color: '#0F0F0F', opacity: saving || !draft.trim() ? 0.5 : 1 }}
+          style={{ background: '#4AE27A', color: '#0F0F0F', opacity: saving || !draft.trim() ? 0.5 : 1 }}
         >
           {saving ? 'Saving…' : 'Save'}
         </button>
         <button
           onClick={handleCancel}
           className="rounded-full px-4 py-2 text-xs font-bold transition-all duration-200 border border-white/10 hover:border-white/25"
-          style={{ background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.5)' }}
+          style={{ background: '#F5F5F5', color: '#666666' }}
         >
           Cancel
         </button>
       </div>
-      {error && <p className="text-xs font-mono" style={{ color: '#f87171' }}>{error}</p>}
+      {error && <p className="text-xs font-mono" style={{ color: '#E24A4A' }}>{error}</p>}
     </div>
   )
 }

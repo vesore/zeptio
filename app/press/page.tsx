@@ -31,7 +31,7 @@ const features = [
   {
     emoji: '🧠',
     world: 'Clarity',
-    accent: '#00FF88',
+    accent: '#4AE27A',
     tagline: 'The Brain',
     description: 'Ten levels that train precision of thought. Players learn to eliminate ambiguity, specify audience and intent, and write prompts that get exactly the output they\'re after.',
   },
@@ -67,7 +67,7 @@ function Divider() {
   return (
     <div
       className="w-full h-px my-10 sm:my-14"
-      style={{ background: 'linear-gradient(90deg,transparent,rgba(184,115,51,0.25),transparent)' }}
+      style={{ background: 'linear-gradient(90deg,transparent,rgba(226,160,74,0.25),transparent)' }}
       aria-hidden="true"
     />
   )
@@ -75,7 +75,7 @@ function Divider() {
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
-    <p className="text-xs font-mono tracking-[0.2em] uppercase mb-5" style={{ color: 'rgba(184,115,51,0.6)' }}>
+    <p className="text-xs font-mono tracking-[0.2em] uppercase mb-5" style={{ color: 'rgba(226,160,74,0.6)' }}>
       {children}
     </p>
   )
@@ -85,12 +85,12 @@ export default function PressPage() {
   return (
     <main
       className="min-h-screen w-full overflow-x-hidden"
-      style={{ background: '#0F0F0F', color: '#E8E8E8' }}
+      style={{ background: '#FFFFFF', color: '#1A1A1A' }}
     >
       {/* Copper radial glow */}
       <div
         className="pointer-events-none fixed inset-0"
-        style={{ background: 'radial-gradient(ellipse 80% 60% at 50% 0%, rgba(184,115,51,0.05) 0%, transparent 65%)' }}
+        style={{ background: 'radial-gradient(ellipse 80% 60% at 50% 0%, rgba(226,160,74,0.05) 0%, transparent 65%)' }}
         aria-hidden="true"
       />
 
@@ -100,13 +100,13 @@ export default function PressPage() {
         <div className="mb-12 sm:mb-16">
           <p
             className="font-mono font-black tracking-widest text-lg mb-6"
-            style={{ color: '#B87333', textShadow: '0 0 16px rgba(184,115,51,0.35)' }}
+            style={{ color: '#E2A04A', textShadow: '0 0 16px rgba(226,160,74,0.35)' }}
           >
             Zeptio LLC
           </p>
           <h1
             className="text-3xl sm:text-4xl font-black tracking-tight leading-tight mb-4"
-            style={{ color: '#E8E8E8' }}
+            style={{ color: '#1A1A1A' }}
           >
             Press Kit
           </h1>
@@ -124,12 +124,12 @@ export default function PressPage() {
             {/* Name + Subtitle */}
             <div className="flex flex-col gap-1.5">
               <p className="text-[10px] font-mono tracking-widest uppercase" style={{ color: 'rgba(232,232,232,0.3)' }}>App Name</p>
-              <p className="text-2xl font-black tracking-wide" style={{ color: '#E8E8E8' }}>Zeptio</p>
+              <p className="text-2xl font-black tracking-wide" style={{ color: '#1A1A1A' }}>Zeptio</p>
             </div>
 
             <div className="flex flex-col gap-1.5">
               <p className="text-[10px] font-mono tracking-widest uppercase" style={{ color: 'rgba(232,232,232,0.3)' }}>Subtitle</p>
-              <p className="text-lg font-bold" style={{ color: '#E8E8E8' }}>Learn AI Prompting Through Play</p>
+              <p className="text-lg font-bold" style={{ color: '#1A1A1A' }}>Learn AI Prompting Through Play</p>
             </div>
 
             {/* Description */}
@@ -157,9 +157,9 @@ export default function PressPage() {
                     key={kw}
                     className="text-xs font-mono rounded-lg px-3 py-1.5"
                     style={{
-                      background: 'rgba(184,115,51,0.07)',
-                      border: '1px solid rgba(184,115,51,0.2)',
-                      color: 'rgba(184,115,51,0.8)',
+                      background: 'rgba(226,160,74,0.07)',
+                      border: '1px solid rgba(226,160,74,0.2)',
+                      color: 'rgba(226,160,74,0.8)',
                     }}
                   >
                     {kw}
@@ -209,7 +209,7 @@ export default function PressPage() {
                   <span className="text-2xl leading-none" aria-hidden="true">{f.emoji}</span>
                   <div>
                     <p className="font-black tracking-wider text-sm" style={{ color: f.accent }}>{f.world}</p>
-                    <p className="text-xs font-mono" style={{ color: 'rgba(184,115,51,0.6)' }}>{f.tagline}</p>
+                    <p className="text-xs font-mono" style={{ color: 'rgba(226,160,74,0.6)' }}>{f.tagline}</p>
                   </div>
                 </div>
                 <p className="text-sm leading-relaxed" style={{ color: 'rgba(232,232,232,0.55)' }}>
@@ -253,7 +253,7 @@ export default function PressPage() {
               <a
                 href="mailto:contact@zeptio.app"
                 className="text-base font-bold transition-colors duration-200 hover:text-[#B87333]"
-                style={{ color: '#E8E8E8' }}
+                style={{ color: '#1A1A1A' }}
               >
                 contact@zeptio.app
               </a>
@@ -263,7 +263,7 @@ export default function PressPage() {
               <a
                 href="https://zeptio.app"
                 className="text-base font-bold transition-colors duration-200 hover:text-[#B87333]"
-                style={{ color: '#E8E8E8' }}
+                style={{ color: '#1A1A1A' }}
               >
                 zeptio.app
               </a>

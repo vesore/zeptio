@@ -3,94 +3,68 @@
 @tailwind utilities;
 
 :root {
-  --bg: #0F0F0F;
-  --surface: #1A1A1A;
-  --surface-mid: #242424;
-  --steel: #8B8FA8;
-  --copper: #B87333;
-  --rust: #C84B1F;
-  --chrome: #E8E8E8;
-  --circuit: #00FF88;
-  --text-primary: #E8E8E8;
-  --text-secondary: #8B8FA8;
-  --border: #2A2A2A;
-  --foreground: #E8E8E8;
+  --bg: #FFFFFF;
+  --surface: #F5F5F5;
+  --surface-mid: #EBEBEB;
+  --text-primary: #1A1A1A;
+  --text-secondary: #666666;
+  --border: #E0E0E0;
+  --foreground: #1A1A1A;
+
+  /* World accent colors */
+  --clarity: #4A90E2;
+  --constraints: #E2A04A;
+  --structure: #4AE27A;
+  --debug: #E24A4A;
+  --mastery: #9B4AE2;
 }
 
 body {
-  background: #0F0F0F;
-  background-attachment: fixed;
+  background: #FFFFFF;
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
   min-height: 100vh;
 }
 
-/* Glassmorphism card */
+/* Clean surface card */
 .glass {
-  background: rgba(26, 26, 26, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid #2A2A2A;
+  background: #F5F5F5;
+  border: 1px solid #E0E0E0;
   max-width: 100%;
   box-sizing: border-box;
 }
 
-/* Copper glow on hover for interactive elements */
-.lime-glow-hover:hover {
-  box-shadow: 0 0 24px rgba(184, 115, 51, 0.25), 0 0 48px rgba(184, 115, 51, 0.1);
-}
-
 /* Primary button */
 .btn-primary {
-  background-color: #00FF88;
-  color: #0F0F0F;
+  background-color: #1A1A1A;
+  color: #FFFFFF;
   border-radius: 9999px;
   font-weight: 700;
   transition: all 0.2s;
 }
 .btn-primary:hover {
-  box-shadow: 0 0 20px rgba(0, 255, 136, 0.5), 0 0 40px rgba(0, 255, 136, 0.2);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
   transform: translateY(-1px);
 }
 .btn-primary:disabled {
-  background-color: rgba(0, 255, 136, 0.15);
-  color: rgba(0, 255, 136, 0.4);
+  background-color: #CCCCCC;
+  color: #999999;
   box-shadow: none;
   transform: none;
   cursor: not-allowed;
 }
 
-/* Radial circuit glow behind hero elements */
-.lime-radial-glow {
-  position: relative;
-  overflow: hidden;
-  contain: layout;
-}
-.lime-radial-glow::before {
-  content: '';
-  position: absolute;
-  inset: -40%;
-  left: 0;
-  right: 0;
-  max-width: 100%;
-  background: radial-gradient(ellipse at center, rgba(0, 255, 136, 0.05) 0%, transparent 70%);
-  pointer-events: none;
-  z-index: 0;
-}
-.lime-radial-glow > * {
-  position: relative;
-  z-index: 1;
-}
-
+/* Score pulse */
 @keyframes scorePulse {
-  0%   { text-shadow: 0 0 0px transparent; }
-  40%  { text-shadow: 0 0 32px rgba(0,255,136,0.8), 0 0 64px rgba(0,255,136,0.4); }
-  100% { text-shadow: 0 0 10px rgba(0,255,136,0.2); }
+  0%   { text-shadow: none; }
+  40%  { text-shadow: 0 0 20px currentColor; }
+  100% { text-shadow: none; }
 }
 .score-glow {
   animation: scorePulse 0.9s ease-out forwards;
 }
 
+/* Typing cursor */
 @keyframes cursorBlink {
   0%, 100% { opacity: 1; }
   50%       { opacity: 0; }
@@ -99,15 +73,10 @@ body {
   content: '|';
   margin-left: 1px;
   animation: cursorBlink 0.8s step-end infinite;
-  color: #00FF88;
+  color: #1A1A1A;
 }
 .typing-cursor-done::after {
   content: '';
-}
-
-@keyframes shimmer {
-  0%   { background-position: -200% center; }
-  100% { background-position: 200% center; }
 }
 
 /* ── Galaxy Map ─────────────────────────────────── */
@@ -117,13 +86,13 @@ body {
 }
 
 @keyframes planetGlow {
-  0%, 100% { box-shadow: 0 0 10px rgba(0,255,136,0.5), 0 0 24px rgba(0,255,136,0.2); }
-  50%       { box-shadow: 0 0 20px rgba(0,255,136,0.9), 0 0 44px rgba(0,255,136,0.4); }
+  0%, 100% { box-shadow: 0 0 8px rgba(74,144,226,0.5), 0 0 20px rgba(74,144,226,0.2); }
+  50%       { box-shadow: 0 0 16px rgba(74,144,226,0.9), 0 0 36px rgba(74,144,226,0.4); }
 }
 
 @keyframes planetGlowCurrent {
-  0%, 100% { box-shadow: 0 0 12px rgba(255,255,255,0.4), 0 0 28px rgba(0,255,136,0.3); }
-  50%       { box-shadow: 0 0 26px rgba(255,255,255,0.7), 0 0 52px rgba(0,255,136,0.5); }
+  0%, 100% { box-shadow: 0 0 10px rgba(74,144,226,0.6), 0 0 24px rgba(74,144,226,0.25); }
+  50%       { box-shadow: 0 0 22px rgba(74,144,226,0.9), 0 0 48px rgba(74,144,226,0.4); }
 }
 
 @keyframes levelComplete {
@@ -148,25 +117,35 @@ body {
   50%       { transform: translateY(-6px) rotate(1.5deg); }
 }
 
-@keyframes neonPulse {
-  0%, 100% { box-shadow: 0 0 8px rgba(0,255,136,0.4), 0 0 0px rgba(0,255,136,0.1); }
-  50%       { box-shadow: 0 0 22px rgba(0,255,136,0.9), 0 0 44px rgba(0,255,136,0.4); }
+@keyframes beltScroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(20px); }
 }
 
-/* Scanlines */
-.scanlines::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 2px,
-    rgba(0,0,0,0.07) 2px,
-    rgba(0,0,0,0.07) 4px
-  );
-  pointer-events: none;
-  z-index: 100;
+@keyframes partBob1 {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-5px); }
+}
+@keyframes partBob2 {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-4px); }
+}
+@keyframes partBob3 {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-6px); }
+}
+@keyframes partBob4 {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-3px); }
+}
+@keyframes partBob5 {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-5px); }
+}
+
+@keyframes neonPulse {
+  0%, 100% { box-shadow: 0 2px 8px rgba(0,0,0,0.12); }
+  50%       { box-shadow: 0 4px 18px rgba(0,0,0,0.22); }
 }
 
 .planet-completed { animation: planetGlow 2.2s ease-in-out infinite; }
@@ -192,20 +171,27 @@ body {
 }
 .card-glow { animation: cardGlowAnim 2.6s ease-in-out infinite; }
 
-@keyframes particleDrift {
-  0%   { transform: translateY(0px) translateX(0px); opacity: 0; }
-  10%  { opacity: 1; }
-  90%  { opacity: 1; }
-  100% { transform: translateY(-80px) translateX(20px); opacity: 0; }
+/* World card hover effects — subtle elevation */
+.world-card-clarity:hover {
+  box-shadow: 0 6px 24px rgba(74,144,226,0.18);
+  border-color: #4A90E2 !important;
+}
+.world-card-constraints:hover {
+  box-shadow: 0 6px 24px rgba(226,160,74,0.18);
+  border-color: #E2A04A !important;
+}
+.world-card-structure:hover {
+  box-shadow: 0 6px 24px rgba(74,226,122,0.18);
+  border-color: #4AE27A !important;
+}
+.world-card-debug:hover {
+  box-shadow: 0 6px 24px rgba(226,74,74,0.18);
+  border-color: #E24A4A !important;
 }
 
-@keyframes neonGridPulse {
-  0%, 100% { opacity: 0.03; }
-  50%       { opacity: 0.07; }
+/* Mastery pulse — purple */
+@keyframes masteryPulse {
+  0%, 100% { box-shadow: 0 0 0 1.5px rgba(155,74,226,0.3), 0 4px 16px rgba(155,74,226,0.08); }
+  50%       { box-shadow: 0 0 0 1.5px rgba(155,74,226,0.7), 0 8px 28px rgba(155,74,226,0.2); }
 }
-
-/* World card copper hover glow */
-.world-card-link:hover {
-  box-shadow: 0 0 28px rgba(184,115,51,0.22), inset 0 0 18px rgba(184,115,51,0.04);
-  border-color: rgba(184,115,51,0.5) !important;
-}
+.mastery-pulse { animation: masteryPulse 2.4s ease-in-out infinite; }

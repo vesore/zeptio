@@ -20,7 +20,7 @@ export default async function AdminPage() {
   return (
     <main className="min-h-screen py-12 px-6">
       <div className="max-w-5xl mx-auto">
-        <p className="font-mono font-bold tracking-widest text-sm uppercase mb-8" style={{ color: '#00FF88' }}>
+        <p className="font-mono font-bold tracking-widest text-sm uppercase mb-8" style={{ color: '#4A90E2' }}>
           Zeptio Admin
         </p>
         <WaitlistTable rows={rows ?? []} />

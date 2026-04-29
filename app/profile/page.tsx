@@ -118,7 +118,7 @@ export default async function ProfilePage() {
         <Link
           href="/dashboard"
           className="text-sm font-mono transition-colors duration-200 hover:text-[#00FF88]"
-          style={{ color: 'rgba(255,255,255,0.4)' }}
+          style={{ color: '#888888' }}
         >
           ← Dashboard
         </Link>
@@ -131,25 +131,25 @@ export default async function ProfilePage() {
 
         {/* ── ROBOT AVATAR ──────────────────────────────────── */}
         <section>
-          <p className="text-xs font-mono font-semibold uppercase tracking-widest mb-4" style={{ color: '#00FF88' }}>
+          <p className="text-xs font-mono font-semibold uppercase tracking-widest mb-4" style={{ color: '#4A90E2' }}>
             Your Robot
           </p>
           <RobotCustomizer initialConfig={robotConfig} unlockedParts={unlockedParts} bodyUnlocked={bodyUnlocked} />
         </section>
 
         {/* ── PROFILE ───────────────────────────────────────── */}
-        <section className="rounded-3xl glass p-5 sm:p-6 overflow-hidden" style={{ border: '1px solid rgba(255,255,255,0.08)' }}>
-          <p className="text-xs font-mono font-semibold uppercase tracking-widest mb-4" style={{ color: '#00FF88' }}>
+        <section className="rounded-3xl glass p-5 sm:p-6 overflow-hidden" style={{ border: '1px solid rgba(0,0,0,0.06)' }}>
+          <p className="text-xs font-mono font-semibold uppercase tracking-widest mb-4" style={{ color: '#4A90E2' }}>
             Profile
           </p>
           <div className="flex flex-col gap-4">
             <div>
               <EditNameForm initialName={displayName} />
-              <p className="mt-1 text-sm font-mono truncate" style={{ color: 'rgba(255,255,255,0.4)' }}>
+              <p className="mt-1 text-sm font-mono truncate" style={{ color: '#888888' }}>
                 {user.email}
               </p>
               {memberSince && (
-                <p className="mt-0.5 text-xs font-mono" style={{ color: 'rgba(255,255,255,0.3)' }}>
+                <p className="mt-0.5 text-xs font-mono" style={{ color: '#999999' }}>
                   Member since {memberSince}
                 </p>
               )}
@@ -165,7 +165,7 @@ export default async function ProfilePage() {
 
         {/* ── BADGES ────────────────────────────────────────── */}
         <section>
-          <p className="text-xs font-mono font-semibold uppercase tracking-widest mb-4" style={{ color: '#00FF88' }}>
+          <p className="text-xs font-mono font-semibold uppercase tracking-widest mb-4" style={{ color: '#4A90E2' }}>
             Badges
           </p>
           <div className="grid grid-cols-3 gap-2 sm:gap-3">
@@ -176,9 +176,9 @@ export default async function ProfilePage() {
                   key={badge.id}
                   className="rounded-2xl p-3 flex flex-col gap-1.5"
                   style={{
-                    background: earned ? 'rgba(0,255,136,0.07)' : 'rgba(255,255,255,0.03)',
-                    border:     earned ? '1px solid rgba(0,255,136,0.25)' : '1px solid rgba(255,255,255,0.07)',
-                    boxShadow:  earned ? '0 0 14px rgba(0,255,136,0.08)' : 'none',
+                    background: earned ? 'rgba(74,144,226,0.07)' : 'rgba(0,0,0,0.03)',
+                    border:     earned ? '1px solid rgba(74,144,226,0.25)' : '1px solid rgba(255,255,255,0.07)',
+                    boxShadow:  earned ? '0 0 14px rgba(74,144,226,0.08)' : 'none',
                     opacity:    earned ? 1 : 0.4,
                   }}
                 >
@@ -189,7 +189,7 @@ export default async function ProfilePage() {
                     {earned && (
                       <span
                         className="text-[9px] font-bold font-mono rounded-full px-1.5 py-0.5 uppercase tracking-wider shrink-0"
-                        style={{ background: 'rgba(0,255,136,0.15)', color: '#00FF88' }}
+                        style={{ background: 'rgba(74,144,226,0.15)', color: '#4A90E2' }}
                       >
                         ✓
                       </span>
@@ -197,7 +197,7 @@ export default async function ProfilePage() {
                   </div>
                   <div>
                     <p className="text-xs font-bold text-white leading-tight">{badge.name}</p>
-                    <p className="text-[10px] mt-0.5 leading-snug" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                    <p className="text-[10px] mt-0.5 leading-snug" style={{ color: '#888888' }}>
                       {badge.description}
                     </p>
                   </div>
@@ -211,7 +211,7 @@ export default async function ProfilePage() {
         <form action={signOut}>
           <button
             type="submit"
-            className="w-full rounded-full py-4 font-bold text-sm tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00FF88] border border-red-400/30 text-red-400/60 hover:border-red-400 hover:text-red-400"
+            className="w-full rounded-full py-4 font-bold text-sm tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4A90E2] border border-red-400/30 text-red-400/60 hover:border-red-400 hover:text-red-400"
           >
             Sign Out
           </button>

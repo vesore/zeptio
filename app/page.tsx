@@ -13,14 +13,14 @@ export default async function LandingPage() {
   return (
     <main
       className="min-h-screen w-full max-w-full overflow-x-hidden flex items-center justify-center"
-      style={{ background: '#0F0F0F' }}
+      style={{ background: '#FFFFFF' }}
     >
       {/* Top-right Sign In text link */}
       <div className="fixed top-4 right-4 z-20">
         <a
           href="/auth/login"
           className="text-xs font-mono transition-opacity duration-200 hover:opacity-60"
-          style={{ color: '#00FF88' }}
+          style={{ color: '#4A90E2' }}
         >
           Sign in →
         </a>
@@ -30,7 +30,7 @@ export default async function LandingPage() {
       <div
         className="pointer-events-none fixed inset-0"
         style={{
-          background: 'radial-gradient(ellipse 70% 50% at 50% 60%, rgba(0,255,136,0.04) 0%, transparent 70%)',
+          background: 'radial-gradient(ellipse 70% 50% at 50% 60%, rgba(74,144,226,0.04) 0%, transparent 70%)',
         }}
         aria-hidden="true"
       />
@@ -44,15 +44,15 @@ export default async function LandingPage() {
             alt="Zeptio"
             width={120}
             height={120}
-            style={{ borderRadius: '24px', filter: 'drop-shadow(0 0 24px rgba(0,255,136,0.3))' }}
+            style={{ borderRadius: '24px', filter: 'drop-shadow(0 0 24px rgba(74,144,226,0.3))' }}
           />
           <p
             className="font-mono font-black tracking-widest text-7xl uppercase"
-            style={{ color: '#00FF88', textShadow: '0 0 32px rgba(0,255,136,0.5), 0 0 64px rgba(0,255,136,0.2)' }}
+            style={{ color: '#4A90E2', textShadow: '0 0 32px rgba(74,144,226,0.5), 0 0 64px rgba(74,144,226,0.2)' }}
           >
             ZEPTIO
           </p>
-          <p className="text-lg" style={{ color: '#8B8FA8' }}>
+          <p className="text-lg" style={{ color: '#666666' }}>
             Build your robot. Master AI prompting.
           </p>
         </div>

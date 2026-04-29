@@ -31,7 +31,7 @@ const BONUS_THRESHOLD = 8
 
 const CONFETTI = Array.from({ length: 32 }, (_, i) => ({
   x:        ((i * 47 + 11) % 90) + 5,
-  color:    ['#00FF88', '#B87333', '#C84B1F', '#E8E8E8', '#8B8FA8', '#00FF88'][i % 6],
+  color:    ['#4A90E2', '#E2A04A', '#4AE27A', '#E24A4A', '#9B4AE2', '#1A1A1A'][i % 6],
   delay:    parseFloat(((i * 0.09) % 0.7).toFixed(2)),
   duration: parseFloat((((i * 0.13) % 0.8) + 0.55).toFixed(2)),
   size:     ((i * 3) % 7) + 5,
@@ -155,7 +155,7 @@ export default function TheShrink({
   }
 
   const scoreColor =
-    displayScore >= 80 ? '#E8E8E8' : displayScore >= 60 ? '#00FF88' : displayScore >= 40 ? '#B87333' : '#C84B1F'
+    displayScore >= 80 ? '#1A1A1A' : displayScore >= 60 ? '#00FF88' : displayScore >= 40 ? '#B87333' : '#E24A4A'
 
   const robotExpression: RobotExpression =
     isLoading ? 'loading'
@@ -169,7 +169,7 @@ export default function TheShrink({
     : 'idle'
 
   return (
-    <div className="min-h-screen w-full max-w-full overflow-x-hidden flex items-center justify-center" style={{ background: '#0F0F0F' }}>
+    <div className="min-h-screen w-full max-w-full overflow-x-hidden flex items-center justify-center" style={{ background: '#FFFFFF' }}>
       <div className="sr-only" aria-live="polite">{scoreLanded && result ? `Score: ${result.score}. ${result.feedback}` : ''}</div>
 
       <div style={{ position: 'fixed', right: '1rem', bottom: '1.5rem', zIndex: 40 }} aria-hidden="true">
@@ -178,7 +178,7 @@ export default function TheShrink({
 
       {showCelebration && (
         <div style={{ position: 'fixed', top: '50%', left: '50%', zIndex: 60, pointerEvents: 'none', animation: 'levelComplete 3.2s ease-in-out forwards', whiteSpace: 'nowrap' }} aria-hidden="true">
-          <span style={{ fontSize: 'clamp(1.6rem,5vw,2.6rem)', fontWeight: 900, fontFamily: 'monospace', letterSpacing: '0.12em', color: '#00FF88', textShadow: '0 0 24px rgba(0,255,136,0.9)' }}>LEVEL COMPLETE!</span>
+          <span style={{ fontSize: 'clamp(1.6rem,5vw,2.6rem)', fontWeight: 900, fontFamily: 'monospace', letterSpacing: '0.12em', color: '#4A90E2', textShadow: '0 0 24px rgba(74,144,226,0.9)' }}>LEVEL COMPLETE!</span>
         </div>
       )}
       {showCelebration && (
@@ -190,56 +190,56 @@ export default function TheShrink({
       )}
 
       <div className="w-full max-w-2xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
-        <div className="w-full rounded-3xl p-5 sm:p-8 flex flex-col gap-5 sm:gap-6" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.09)', backdropFilter: 'blur(12px)' }}>
+        <div className="w-full rounded-3xl p-5 sm:p-8 flex flex-col gap-5 sm:gap-6" style={{ background: '#FAFAFA', border: '1.5px solid #E8E8E8',  }}>
 
           <div className="flex items-center gap-2">
-            <span className="text-xs font-mono font-semibold uppercase tracking-widest px-3 py-1 rounded-full" style={{ background: 'rgba(184,115,51,0.1)', color: '#B87333', border: '1px solid rgba(184,115,51,0.2)' }}>
+            <span className="text-xs font-mono font-semibold uppercase tracking-widest px-3 py-1 rounded-full" style={{ background: 'rgba(226,160,74,0.1)', color: '#E2A04A', border: '1px solid rgba(226,160,74,0.2)' }}>
               The Shrink
             </span>
-            <span className="text-xs font-mono px-3 py-1 rounded-full" style={{ background: 'rgba(0,255,136,0.06)', color: 'rgba(0,255,136,0.5)', border: '1px solid rgba(0,255,136,0.1)' }}>
+            <span className="text-xs font-mono px-3 py-1 rounded-full" style={{ background: 'rgba(74,144,226,0.06)', color: 'rgba(74,144,226,0.5)', border: '1px solid rgba(74,144,226,0.1)' }}>
               10 words max · Bonus under {BONUS_THRESHOLD}
             </span>
           </div>
 
           {/* Long prompt */}
-          <div className="rounded-2xl p-5" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)' }}>
-            <p className="text-xs font-mono font-semibold uppercase tracking-widest mb-3" style={{ color: 'rgba(255,255,255,0.4)' }}>
+          <div className="rounded-2xl p-5" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid #F0F0F0' }}>
+            <p className="text-xs font-mono font-semibold uppercase tracking-widest mb-3" style={{ color: '#888888' }}>
               Verbose Prompt ({countWords(longPrompt)} words)
             </p>
-            <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.6)' }}>{longPrompt}</p>
+            <p className="text-sm leading-relaxed" style={{ color: '#555555' }}>{longPrompt}</p>
           </div>
 
-          <div style={{ height: '1px', background: 'rgba(255,255,255,0.08)' }} />
+          <div style={{ height: '1px', background: '#F0F0F0' }} />
 
           {result === null && (
             <div className="flex flex-col gap-3">
-              <label htmlFor="shrink-input" className="text-xs font-mono font-semibold uppercase tracking-widest" style={{ color: '#00FF88' }}>
-                Shrink It <span style={{ color: 'rgba(0,255,136,0.4)' }}>— {WORD_LIMIT} words or less</span>
+              <label htmlFor="shrink-input" className="text-xs font-mono font-semibold uppercase tracking-widest" style={{ color: '#4A90E2' }}>
+                Shrink It <span style={{ color: 'rgba(74,144,226,0.4)' }}>— {WORD_LIMIT} words or less</span>
               </label>
               <textarea
                 id="shrink-input"
-                className="w-full rounded-2xl p-4 text-sm resize-none outline-none focus-visible:ring-2 placeholder:text-white/30"
+                className="w-full rounded-2xl p-4 text-sm resize-none outline-none focus-visible:ring-2 placeholder:text-black/25"
                 style={{
-                  background: 'rgba(255,255,255,0.04)',
+                  background: '#FAFAFA',
                   border: `1.5px solid ${isOverLimit ? '#f87171' : 'rgba(255,255,255,0.1)'}`,
                   minHeight: '80px',
-                  caretColor: '#00FF88',
-                  color: '#00FF88',
+                  caretColor: '#4A90E2',
+                  color: '#4A90E2',
                   fontWeight: 700,
-                  boxShadow: isBonus ? '0 0 0 1.5px rgba(0,255,136,0.3)' : undefined,
+                  boxShadow: isBonus ? '0 0 0 1.5px rgba(74,144,226,0.3)' : undefined,
                 }}
                 placeholder="Say the same thing in 10 words or less…"
                 value={shrunk}
                 onChange={(e) => setShrunk(e.target.value)}
                 disabled={isLoading}
-                onFocus={(e) => { e.target.style.borderColor = isOverLimit ? '#f87171' : '#00FF88' }}
+                onFocus={(e) => { e.target.style.borderColor = isOverLimit ? '#f87171' : '#4AE27A' }}
                 onBlur={(e) => { e.target.style.borderColor = isOverLimit ? '#f87171' : 'rgba(255,255,255,0.1)' }}
               />
 
               {/* Word counter */}
               <div className="flex items-center justify-between">
                 {isBonus && wordCount > 0 && (
-                  <span className="text-xs font-mono font-bold animate-in fade-in duration-300 px-3 py-1 rounded-full" style={{ background: 'rgba(0,255,136,0.1)', color: '#00FF88', border: '1px solid rgba(0,255,136,0.2)' }}>
+                  <span className="text-xs font-mono font-bold animate-in fade-in duration-300 px-3 py-1 rounded-full" style={{ background: 'rgba(74,144,226,0.1)', color: '#4A90E2', border: '1px solid rgba(74,144,226,0.2)' }}>
                     BONUS territory!
                   </span>
                 )}
@@ -260,54 +260,54 @@ export default function TheShrink({
 
           {result === null && (
             <button onClick={handleSubmit} disabled={isSubmitDisabled} className={`w-full py-4 font-bold text-sm tracking-wide transition-all duration-200 btn-primary${!isSubmitDisabled ? ' neon-pulse' : ''}`}>
-              {isLoading ? <span className="flex items-center justify-center gap-2"><span className="inline-block w-4 h-4 rounded-full border-2 animate-spin" style={{ borderColor: 'rgba(15,15,15,0.3)', borderTopColor: '#0F0F0F' }} />Scoring…</span> : isOverLimit ? 'Trim to 10 words' : 'Submit'}
+              {isLoading ? <span className="flex items-center justify-center gap-2"><span className="inline-block w-4 h-4 rounded-full border-2 animate-spin" style={{ borderColor: 'rgba(0,0,0,0.15)', borderTopColor: '#FFFFFF' }} />Scoring…</span> : isOverLimit ? 'Trim to 10 words' : 'Submit'}
             </button>
           )}
 
-          {error && <p role="alert" className="text-sm text-center rounded-2xl py-3 px-4" style={{ background: 'rgba(248,113,113,0.1)', color: '#f87171', border: '1px solid rgba(248,113,113,0.2)' }}>{error}</p>}
+          {error && <p role="alert" className="text-sm text-center rounded-2xl py-3 px-4" style={{ background: 'rgba(248,113,113,0.1)', color: '#E24A4A', border: '1px solid rgba(248,113,113,0.2)' }}>{error}</p>}
 
           {result !== null && (
             <div className="flex flex-col gap-5 animate-in fade-in duration-500">
               {/* Side-by-side */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div className="rounded-2xl p-4" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)' }}>
-                  <p className="text-xs font-mono mb-2" style={{ color: 'rgba(255,255,255,0.3)' }}>Original ({countWords(longPrompt)} words)</p>
-                  <p className="text-xs" style={{ color: 'rgba(255,255,255,0.5)' }}>{longPrompt}</p>
+                <div className="rounded-2xl p-4" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid #F0F0F0' }}>
+                  <p className="text-xs font-mono mb-2" style={{ color: '#999999' }}>Original ({countWords(longPrompt)} words)</p>
+                  <p className="text-xs" style={{ color: '#666666' }}>{longPrompt}</p>
                 </div>
-                <div className="rounded-2xl p-4" style={{ background: 'rgba(0,255,136,0.06)', border: '1px solid rgba(0,255,136,0.2)' }}>
+                <div className="rounded-2xl p-4" style={{ background: 'rgba(74,144,226,0.06)', border: '1px solid rgba(74,144,226,0.2)' }}>
                   <div className="flex items-center justify-between mb-2">
-                    <p className="text-xs font-mono" style={{ color: '#00FF88' }}>Shrunk ({submittedWordCount} words)</p>
+                    <p className="text-xs font-mono" style={{ color: '#4A90E2' }}>Shrunk ({submittedWordCount} words)</p>
                     {submittedWordCount <= BONUS_THRESHOLD && (
-                      <span className="text-xs font-mono px-2 py-0.5 rounded-full" style={{ background: 'rgba(0,255,136,0.15)', color: '#00FF88' }}>BONUS</span>
+                      <span className="text-xs font-mono px-2 py-0.5 rounded-full" style={{ background: 'rgba(74,144,226,0.15)', color: '#4A90E2' }}>BONUS</span>
                     )}
                   </div>
-                  <p className="text-xs font-bold" style={{ color: 'rgba(255,255,255,0.7)' }}>{shrunk}</p>
+                  <p className="text-xs font-bold" style={{ color: '#555555' }}>{shrunk}</p>
                 </div>
               </div>
 
               <div className="flex flex-col items-center gap-2 py-6" aria-hidden="true">
                 <span className={`text-7xl sm:text-8xl font-black tabular-nums leading-none transition-colors duration-300 ${scoreLanded ? 'score-glow' : ''}`} style={{ color: scoreColor }}>{displayScore}</span>
-                <span className="text-xs uppercase tracking-widest mt-1" style={{ color: 'rgba(255,255,255,0.4)' }}>out of 100</span>
+                <span className="text-xs uppercase tracking-widest mt-1" style={{ color: '#888888' }}>out of 100</span>
                 {scoreLanded && <span className="text-base font-bold mt-1 animate-in fade-in duration-300" style={{ color: scoreColor }}>{getCongratulatoryMessage(result.score)}</span>}
-                {scoreLanded && <span className="rounded-full px-4 py-1.5 text-xs font-bold mt-1 animate-in fade-in duration-300" style={{ background: 'rgba(0,255,136,0.12)', color: '#00FF88', border: '1px solid rgba(0,255,136,0.25)' }}>+{result.xp_earned} XP</span>}
+                {scoreLanded && <span className="rounded-full px-4 py-1.5 text-xs font-bold mt-1 animate-in fade-in duration-300" style={{ background: 'rgba(74,144,226,0.12)', color: '#4A90E2', border: '1px solid rgba(74,144,226,0.25)' }}>+{result.xp_earned} XP</span>}
                 {scoreLanded && submittedWordCount <= BONUS_THRESHOLD && (
-                  <span className="rounded-full px-4 py-1.5 text-xs font-bold mt-1 animate-in fade-in duration-300" style={{ background: 'rgba(184,115,51,0.15)', color: '#B87333', border: '1px solid rgba(184,115,51,0.3)' }}>
+                  <span className="rounded-full px-4 py-1.5 text-xs font-bold mt-1 animate-in fade-in duration-300" style={{ background: 'rgba(226,160,74,0.15)', color: '#E2A04A', border: '1px solid rgba(226,160,74,0.3)' }}>
                     Bonus — under {BONUS_THRESHOLD} words!
                   </span>
                 )}
               </div>
 
-              <div className="rounded-3xl p-6 transition-opacity duration-500" style={{ opacity: feedbackVisible ? 1 : 0, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
-                <p className="text-xs font-mono font-semibold uppercase tracking-widest mb-3" style={{ color: '#00FF88' }}>Feedback</p>
-                <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.75)' }}>{result.feedback}</p>
+              <div className="rounded-3xl p-6 transition-opacity duration-500" style={{ opacity: feedbackVisible ? 1 : 0, background: '#FAFAFA', border: '1px solid #F0F0F0' }}>
+                <p className="text-xs font-mono font-semibold uppercase tracking-widest mb-3" style={{ color: '#4A90E2' }}>Feedback</p>
+                <p className="text-sm leading-relaxed" style={{ color: '#444444' }}>{result.feedback}</p>
               </div>
 
-              <div className="rounded-3xl p-6 flex flex-col gap-3 transition-opacity duration-500" style={{ opacity: feedbackVisible ? 1 : 0, background: 'rgba(184,115,51,0.04)', border: '1px solid rgba(184,115,51,0.15)' }}>
-                <label className="text-xs font-mono font-semibold uppercase tracking-widest" style={{ color: '#B87333' }}>Reflection</label>
-                <p className="text-sm" style={{ color: 'rgba(255,255,255,0.5)' }}>Which words were filler and which were essential?</p>
+              <div className="rounded-3xl p-6 flex flex-col gap-3 transition-opacity duration-500" style={{ opacity: feedbackVisible ? 1 : 0, background: 'rgba(226,160,74,0.04)', border: '1px solid rgba(226,160,74,0.15)' }}>
+                <label className="text-xs font-mono font-semibold uppercase tracking-widest" style={{ color: '#E2A04A' }}>Reflection</label>
+                <p className="text-sm" style={{ color: '#666666' }}>Which words were filler and which were essential?</p>
                 <div className="flex gap-2 items-start">
-                  <textarea className="flex-1 rounded-xl p-3 text-sm resize-none outline-none focus-visible:ring-1 focus-visible:ring-[#B87333]" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(184,115,51,0.2)', color: 'rgba(255,255,255,0.8)', minHeight: '60px', caretColor: '#B87333' }} placeholder="Type your reflection…" value={reflection} onChange={(e) => setReflection(e.target.value.slice(0, 100))} disabled={reflectionSaved} />
-                  <button onClick={handleSaveReflection} disabled={!reflection.trim() || reflectionSaved} className="shrink-0 rounded-xl px-4 py-3 text-xs font-bold" style={{ background: reflectionSaved ? 'rgba(0,255,136,0.1)' : 'rgba(184,115,51,0.15)', border: `1px solid ${reflectionSaved ? 'rgba(0,255,136,0.3)' : 'rgba(184,115,51,0.3)'}`, color: reflectionSaved ? '#00FF88' : '#B87333', cursor: reflectionSaved ? 'default' : 'pointer' }}>
+                  <textarea className="flex-1 rounded-xl p-3 text-sm resize-none outline-none focus-visible:ring-1 focus-visible:ring-[#B87333]" style={{ background: '#FAFAFA', border: '1px solid rgba(226,160,74,0.2)', color: 'rgba(255,255,255,0.8)', minHeight: '60px', caretColor: '#E2A04A' }} placeholder="Type your reflection…" value={reflection} onChange={(e) => setReflection(e.target.value.slice(0, 100))} disabled={reflectionSaved} />
+                  <button onClick={handleSaveReflection} disabled={!reflection.trim() || reflectionSaved} className="shrink-0 rounded-xl px-4 py-3 text-xs font-bold" style={{ background: reflectionSaved ? 'rgba(74,144,226,0.1)' : 'rgba(226,160,74,0.15)', border: `1px solid ${reflectionSaved ? 'rgba(74,144,226,0.3)' : 'rgba(226,160,74,0.3)'}`, color: reflectionSaved ? '#00FF88' : '#E2A04A', cursor: reflectionSaved ? 'default' : 'pointer' }}>
                     {reflectionSaved ? '✓ Saved' : 'Save'}
                   </button>
                 </div>
@@ -316,12 +316,12 @@ export default function TheShrink({
               <div className="flex flex-col gap-3 transition-opacity duration-500" style={{ opacity: feedbackVisible ? 1 : 0 }}>
                 {result.score >= 60 && nextLevelUrl ? (
                   <>
-                    <Link href={nextLevelUrl} className="w-full py-4 font-bold text-sm tracking-wide text-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00FF88] btn-primary">Next Level →</Link>
-                    <button onClick={handleReset} className="w-full rounded-full py-4 font-bold text-sm" style={{ border: '1.5px solid rgba(0,255,136,0.3)', color: 'rgba(0,255,136,0.5)', cursor: 'pointer' }}>Try Again</button>
+                    <Link href={nextLevelUrl} className="w-full py-4 font-bold text-sm tracking-wide text-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4A90E2] btn-primary">Next Level →</Link>
+                    <button onClick={handleReset} className="w-full rounded-full py-4 font-bold text-sm" style={{ border: '1.5px solid rgba(74,144,226,0.3)', color: 'rgba(74,144,226,0.5)', cursor: 'pointer' }}>Try Again</button>
                   </>
                 ) : (
                   <>
-                    {result.score < 60 && <p className="text-xs text-center font-mono" style={{ color: 'rgba(255,255,255,0.35)' }}>Score 60 or higher to advance.</p>}
+                    {result.score < 60 && <p className="text-xs text-center font-mono" style={{ color: '#999999' }}>Score 60 or higher to advance.</p>}
                     <button onClick={handleReset} className="w-full py-4 font-bold text-sm tracking-wide btn-primary">Try Again</button>
                   </>
                 )}

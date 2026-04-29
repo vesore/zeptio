@@ -111,7 +111,7 @@ export default function GalaxyMap({ bestScores, robotConfig = DEFAULT_ROBOT_CONF
               key={level.id}
               x1={from.x} y1={from.y}
               x2={to.x}   y2={to.y}
-              stroke={done ? 'rgba(0,255,136,0.45)' : open ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,0.05)'}
+              stroke={done ? 'rgba(74,144,226,0.45)' : open ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.04)'}
               strokeWidth="0.6"
               strokeDasharray="3,5"
               vectorEffect="non-scaling-stroke"
@@ -168,8 +168,8 @@ export default function GalaxyMap({ bestScores, robotConfig = DEFAULT_ROBOT_CONF
                 ? '#00FF88'
                 : isCurrent
                   ? 'rgba(255,255,255,0.07)'
-                  : 'rgba(255,255,255,0.03)',
-              border: `2px solid ${completed ? '#00FF88' : isCurrent ? 'rgba(255,255,255,0.45)' : 'rgba(255,255,255,0.08)'}`,
+                  : 'rgba(0,0,0,0.03)',
+              border: `2px solid ${completed ? '#00FF88' : isCurrent ? 'rgba(255,255,255,0.45)' : 'rgba(0,0,0,0.06)'}`,
               fontSize:   '15px',
               fontWeight: 900,
               fontFamily: 'monospace',

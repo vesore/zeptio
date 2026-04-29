@@ -83,20 +83,20 @@ export default async function ClarityLevelPage({ params }: Props) {
   const nextLevelUrl = isLastLevel ? undefined : `/dashboard/clarity/${levelId + 1}`
 
   return (
-    <div className="scanlines min-h-screen w-full max-w-full overflow-x-hidden" style={{ background: '#0F0F0F' }}>
+    <div className="scanlines min-h-screen w-full max-w-full overflow-x-hidden" style={{ background: '#FFFFFF' }}>
       <div className="w-full max-w-2xl mx-auto px-3 sm:px-6 lg:px-8 pt-3 sm:pt-6 mt-0 sm:mt-6 flex items-center justify-between">
         <Link
           href="/dashboard/clarity"
           className="inline-flex items-center gap-2 text-sm font-mono transition-colors duration-200 hover:text-[#00FF88]"
-          style={{ color: 'rgba(255,255,255,0.4)' }}
+          style={{ color: '#888888' }}
         >
           ← Clarity
         </Link>
         <div className="flex items-center gap-2">
-          <span className="hidden sm:inline text-xs font-mono" style={{ color: 'rgba(255,255,255,0.3)' }}>
+          <span className="hidden sm:inline text-xs font-mono" style={{ color: '#999999' }}>
             {level.concept}
           </span>
-          <span className="text-xs font-mono rounded-full px-3 py-1" style={{ background: 'rgba(0,255,136,0.1)', color: 'rgba(0,255,136,0.7)' }}>
+          <span className="text-xs font-mono rounded-full px-3 py-1" style={{ background: 'rgba(74,144,226,0.1)', color: 'rgba(74,144,226,0.7)' }}>
             Level {String(levelId).padStart(2, '0')}
           </span>
         </div>

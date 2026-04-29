@@ -40,7 +40,7 @@ const STEP_DESCRIPTIONS = [
 
 const CONFETTI = Array.from({ length: 32 }, (_, i) => ({
   x:        ((i * 47 + 11) % 90) + 5,
-  color:    ['#00FF88', '#B87333', '#C84B1F', '#E8E8E8', '#8B8FA8', '#00FF88'][i % 6],
+  color:    ['#4A90E2', '#E2A04A', '#4AE27A', '#E24A4A', '#9B4AE2', '#1A1A1A'][i % 6],
   delay:    parseFloat(((i * 0.09) % 0.7).toFixed(2)),
   duration: parseFloat((((i * 0.13) % 0.8) + 0.55).toFixed(2)),
   size:     ((i * 3) % 7) + 5,
@@ -174,7 +174,7 @@ export default function ChainPrompting({
   }
 
   const scoreColor =
-    displayScore >= 80 ? '#E8E8E8' : displayScore >= 60 ? '#00FF88' : displayScore >= 40 ? '#B87333' : '#C84B1F'
+    displayScore >= 80 ? '#1A1A1A' : displayScore >= 60 ? '#00FF88' : displayScore >= 40 ? '#B87333' : '#E24A4A'
 
   const robotExpression: RobotExpression =
     currentStepLoading ? 'loading'
@@ -186,7 +186,7 @@ export default function ChainPrompting({
     : 'idle'
 
   return (
-    <div className="min-h-screen w-full max-w-full overflow-x-hidden flex items-center justify-center" style={{ background: '#0F0F0F' }}>
+    <div className="min-h-screen w-full max-w-full overflow-x-hidden flex items-center justify-center" style={{ background: '#FFFFFF' }}>
       <div className="sr-only" aria-live="polite">{scoreLanded && finalScore !== null ? `Average score: ${finalScore}.` : ''}</div>
 
       <div style={{ position: 'fixed', right: '1rem', bottom: '1.5rem', zIndex: 40 }} aria-hidden="true">
@@ -195,7 +195,7 @@ export default function ChainPrompting({
 
       {showCelebration && (
         <div style={{ position: 'fixed', top: '50%', left: '50%', zIndex: 60, pointerEvents: 'none', animation: 'levelComplete 3.2s ease-in-out forwards', whiteSpace: 'nowrap' }} aria-hidden="true">
-          <span style={{ fontSize: 'clamp(1.6rem,5vw,2.6rem)', fontWeight: 900, fontFamily: 'monospace', letterSpacing: '0.12em', color: '#00FF88', textShadow: '0 0 24px rgba(0,255,136,0.9)' }}>LEVEL COMPLETE!</span>
+          <span style={{ fontSize: 'clamp(1.6rem,5vw,2.6rem)', fontWeight: 900, fontFamily: 'monospace', letterSpacing: '0.12em', color: '#4A90E2', textShadow: '0 0 24px rgba(74,144,226,0.9)' }}>LEVEL COMPLETE!</span>
         </div>
       )}
       {showCelebration && (
@@ -207,17 +207,17 @@ export default function ChainPrompting({
       )}
 
       <div className="w-full max-w-2xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
-        <div className="w-full rounded-3xl p-5 sm:p-8 flex flex-col gap-5 sm:gap-6" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.09)', backdropFilter: 'blur(12px)' }}>
+        <div className="w-full rounded-3xl p-5 sm:p-8 flex flex-col gap-5 sm:gap-6" style={{ background: '#FAFAFA', border: '1.5px solid #E8E8E8',  }}>
 
           <div className="flex items-center gap-2">
-            <span className="text-xs font-mono font-semibold uppercase tracking-widest px-3 py-1 rounded-full" style={{ background: 'rgba(184,115,51,0.1)', color: '#B87333', border: '1px solid rgba(184,115,51,0.2)' }}>
+            <span className="text-xs font-mono font-semibold uppercase tracking-widest px-3 py-1 rounded-full" style={{ background: 'rgba(226,160,74,0.1)', color: '#E2A04A', border: '1px solid rgba(226,160,74,0.2)' }}>
               Chain Prompting
             </span>
           </div>
 
           <div>
-            <p className="text-xs font-mono font-semibold uppercase tracking-widest mb-2" style={{ color: '#00FF88' }}>Goal</p>
-            <p className="text-base font-bold leading-relaxed" style={{ color: '#E8E8E8' }}>{levelConfig.challenge}</p>
+            <p className="text-xs font-mono font-semibold uppercase tracking-widest mb-2" style={{ color: '#4A90E2' }}>Goal</p>
+            <p className="text-base font-bold leading-relaxed" style={{ color: '#1A1A1A' }}>{levelConfig.challenge}</p>
           </div>
 
           {/* Chain progress */}
@@ -227,15 +227,15 @@ export default function ChainPrompting({
                 <div
                   className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0"
                   style={{
-                    background: i < step ? 'rgba(0,255,136,0.2)' : i === step ? 'rgba(0,255,136,0.1)' : 'rgba(255,255,255,0.05)',
-                    border: `1.5px solid ${i < step ? '#00FF88' : i === step ? 'rgba(0,255,136,0.5)' : 'rgba(255,255,255,0.1)'}`,
-                    color: i < step ? '#00FF88' : i === step ? 'rgba(0,255,136,0.7)' : 'rgba(255,255,255,0.3)',
+                    background: i < step ? 'rgba(74,144,226,0.2)' : i === step ? 'rgba(74,144,226,0.1)' : 'rgba(255,255,255,0.05)',
+                    border: `1.5px solid ${i < step ? '#00FF88' : i === step ? 'rgba(74,144,226,0.5)' : 'rgba(255,255,255,0.1)'}`,
+                    color: i < step ? '#00FF88' : i === step ? 'rgba(74,144,226,0.7)' : 'rgba(255,255,255,0.3)',
                   }}
                 >
                   {i < step ? '✓' : i + 1}
                 </div>
                 <span className="text-xs font-mono hidden sm:block" style={{ color: i === step ? 'rgba(255,255,255,0.6)' : 'rgba(255,255,255,0.25)' }}>{STEP_LABELS[i]}</span>
-                {i < 2 && <div className="flex-1 h-px mx-1" style={{ background: i < step ? 'rgba(0,255,136,0.3)' : 'rgba(255,255,255,0.08)' }} />}
+                {i < 2 && <div className="flex-1 h-px mx-1" style={{ background: i < step ? 'rgba(74,144,226,0.3)' : 'rgba(255,255,255,0.08)' }} />}
               </div>
             ))}
           </div>
@@ -243,9 +243,9 @@ export default function ChainPrompting({
           {/* Active step */}
           {step < 3 && (
             <div className="flex flex-col gap-3">
-              <div className="rounded-2xl p-4" style={{ background: 'rgba(0,255,136,0.04)', border: '1px solid rgba(0,255,136,0.1)' }}>
-                <p className="text-xs font-mono font-bold uppercase tracking-widest" style={{ color: '#00FF88' }}>Step {step + 1}: {STEP_LABELS[step]}</p>
-                <p className="text-xs mt-1" style={{ color: 'rgba(255,255,255,0.5)' }}>{STEP_DESCRIPTIONS[step]}</p>
+              <div className="rounded-2xl p-4" style={{ background: 'rgba(74,144,226,0.04)', border: '1px solid rgba(74,144,226,0.1)' }}>
+                <p className="text-xs font-mono font-bold uppercase tracking-widest" style={{ color: '#4A90E2' }}>Step {step + 1}: {STEP_LABELS[step]}</p>
+                <p className="text-xs mt-1" style={{ color: '#666666' }}>{STEP_DESCRIPTIONS[step]}</p>
               </div>
 
               {/* Show previous steps as context */}
@@ -253,16 +253,16 @@ export default function ChainPrompting({
                 <div className="flex flex-col gap-2">
                   {prompts.slice(0, step).map((p, i) => (
                     <div key={i} className="rounded-xl px-3 py-2 flex gap-2" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
-                      <span className="text-xs font-mono shrink-0 mt-0.5" style={{ color: '#00FF88' }}>↳ Step {i + 1}</span>
-                      <span className="text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>{p}</span>
+                      <span className="text-xs font-mono shrink-0 mt-0.5" style={{ color: '#4A90E2' }}>↳ Step {i + 1}</span>
+                      <span className="text-xs" style={{ color: '#888888' }}>{p}</span>
                     </div>
                   ))}
                 </div>
               )}
 
               <textarea
-                className="w-full rounded-2xl p-4 text-sm resize-none outline-none focus-visible:ring-2 focus-visible:ring-[#00FF88] placeholder:text-white/30"
-                style={{ background: 'rgba(255,255,255,0.04)', border: '1.5px solid rgba(255,255,255,0.1)', minHeight: '120px', caretColor: '#00FF88', color: '#00FF88', fontWeight: 700 }}
+                className="w-full rounded-2xl p-4 text-sm resize-none outline-none focus-visible:ring-2 focus-visible:ring-[#4A90E2] placeholder:text-black/25"
+                style={{ background: '#FAFAFA', border: '1.5px solid #E8E8E8', minHeight: '120px', caretColor: '#4A90E2', color: '#4A90E2', fontWeight: 700 }}
                 placeholder={`Step ${step + 1}: ${STEP_DESCRIPTIONS[step]}`}
                 value={prompts[step]}
                 onChange={(e) => {
@@ -278,7 +278,7 @@ export default function ChainPrompting({
               <button onClick={handleStepSubmit} disabled={!prompts[step].trim() || currentStepLoading} className={`w-full py-4 font-bold text-sm tracking-wide transition-all duration-200 btn-primary${prompts[step].trim() && !currentStepLoading ? ' neon-pulse' : ''}`}>
                 {currentStepLoading ? (
                   <span className="flex items-center justify-center gap-2">
-                    <span className="inline-block w-4 h-4 rounded-full border-2 animate-spin" style={{ borderColor: 'rgba(15,15,15,0.3)', borderTopColor: '#0F0F0F' }} />
+                    <span className="inline-block w-4 h-4 rounded-full border-2 animate-spin" style={{ borderColor: 'rgba(0,0,0,0.15)', borderTopColor: '#FFFFFF' }} />
                     Scoring step {step + 1}…
                   </span>
                 ) : step < 2 ? `Score Step ${step + 1} → Next` : 'Score Step 3 — Finish'}
@@ -288,7 +288,7 @@ export default function ChainPrompting({
               {stepResults.some(Boolean) && (
                 <div className="flex gap-2">
                   {stepResults.map((r, i) => r && (
-                    <span key={i} className="text-xs font-mono px-3 py-1 rounded-full animate-in fade-in duration-300" style={{ background: 'rgba(0,255,136,0.08)', color: '#00FF88', border: '1px solid rgba(0,255,136,0.15)' }}>
+                    <span key={i} className="text-xs font-mono px-3 py-1 rounded-full animate-in fade-in duration-300" style={{ background: 'rgba(74,144,226,0.08)', color: '#4A90E2', border: '1px solid rgba(74,144,226,0.15)' }}>
                       Step {i + 1}: {r.score}
                     </span>
                   ))}
@@ -297,44 +297,44 @@ export default function ChainPrompting({
             </div>
           )}
 
-          {error && <p role="alert" className="text-sm text-center rounded-2xl py-3 px-4" style={{ background: 'rgba(248,113,113,0.1)', color: '#f87171', border: '1px solid rgba(248,113,113,0.2)' }}>{error}</p>}
+          {error && <p role="alert" className="text-sm text-center rounded-2xl py-3 px-4" style={{ background: 'rgba(248,113,113,0.1)', color: '#E24A4A', border: '1px solid rgba(248,113,113,0.2)' }}>{error}</p>}
 
           {/* Final results */}
           {step === 3 && finalScore !== null && (
             <div className="flex flex-col gap-5 animate-in fade-in duration-500">
               {/* Per-step breakdown */}
               <div className="flex flex-col gap-2">
-                <p className="text-xs font-mono font-semibold uppercase tracking-widest" style={{ color: '#00FF88' }}>Chain Scores</p>
+                <p className="text-xs font-mono font-semibold uppercase tracking-widest" style={{ color: '#4A90E2' }}>Chain Scores</p>
                 {stepResults.map((r, i) => r && (
                   <div key={i} className="flex items-center gap-3 rounded-xl px-4 py-2" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
-                    <span className="text-xs font-mono" style={{ color: 'rgba(255,255,255,0.3)' }}>Step {i + 1}</span>
-                    <span className="flex-1 text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>{STEP_LABELS[i]}</span>
-                    <span className="text-xs font-mono font-bold" style={{ color: r.score >= 60 ? '#00FF88' : '#B87333' }}>{r.score}</span>
+                    <span className="text-xs font-mono" style={{ color: '#999999' }}>Step {i + 1}</span>
+                    <span className="flex-1 text-xs" style={{ color: '#888888' }}>{STEP_LABELS[i]}</span>
+                    <span className="text-xs font-mono font-bold" style={{ color: r.score >= 60 ? '#00FF88' : '#E2A04A' }}>{r.score}</span>
                   </div>
                 ))}
               </div>
 
               <div className="flex flex-col items-center gap-2 py-4" aria-hidden="true">
-                <p className="text-xs font-mono uppercase tracking-widest mb-1" style={{ color: 'rgba(0,255,136,0.5)' }}>Average Score</p>
+                <p className="text-xs font-mono uppercase tracking-widest mb-1" style={{ color: 'rgba(74,144,226,0.5)' }}>Average Score</p>
                 <span className={`text-7xl sm:text-8xl font-black tabular-nums leading-none transition-colors duration-300 ${scoreLanded ? 'score-glow' : ''}`} style={{ color: scoreColor }}>{displayScore}</span>
-                <span className="text-xs uppercase tracking-widest mt-1" style={{ color: 'rgba(255,255,255,0.4)' }}>out of 100</span>
+                <span className="text-xs uppercase tracking-widest mt-1" style={{ color: '#888888' }}>out of 100</span>
                 {scoreLanded && <span className="text-base font-bold mt-1 animate-in fade-in duration-300" style={{ color: scoreColor }}>{getCongratulatoryMessage(finalScore)}</span>}
-                {scoreLanded && <span className="rounded-full px-4 py-1.5 text-xs font-bold mt-1 animate-in fade-in duration-300" style={{ background: 'rgba(0,255,136,0.12)', color: '#00FF88', border: '1px solid rgba(0,255,136,0.25)' }}>+{Math.round(stepResults.filter(Boolean).reduce((s, r) => s + (r?.xp_earned ?? 0), 0) / 3)} XP</span>}
+                {scoreLanded && <span className="rounded-full px-4 py-1.5 text-xs font-bold mt-1 animate-in fade-in duration-300" style={{ background: 'rgba(74,144,226,0.12)', color: '#4A90E2', border: '1px solid rgba(74,144,226,0.25)' }}>+{Math.round(stepResults.filter(Boolean).reduce((s, r) => s + (r?.xp_earned ?? 0), 0) / 3)} XP</span>}
               </div>
 
               {stepResults[2] && (
-                <div className="rounded-3xl p-6 transition-opacity duration-500" style={{ opacity: feedbackVisible ? 1 : 0, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
-                  <p className="text-xs font-mono font-semibold uppercase tracking-widest mb-3" style={{ color: '#00FF88' }}>Feedback — Step 3</p>
-                  <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.75)' }}>{stepResults[2]?.feedback}</p>
+                <div className="rounded-3xl p-6 transition-opacity duration-500" style={{ opacity: feedbackVisible ? 1 : 0, background: '#FAFAFA', border: '1px solid #F0F0F0' }}>
+                  <p className="text-xs font-mono font-semibold uppercase tracking-widest mb-3" style={{ color: '#4A90E2' }}>Feedback — Step 3</p>
+                  <p className="text-sm leading-relaxed" style={{ color: '#444444' }}>{stepResults[2]?.feedback}</p>
                 </div>
               )}
 
-              <div className="rounded-3xl p-6 flex flex-col gap-3 transition-opacity duration-500" style={{ opacity: feedbackVisible ? 1 : 0, background: 'rgba(184,115,51,0.04)', border: '1px solid rgba(184,115,51,0.15)' }}>
-                <label className="text-xs font-mono font-semibold uppercase tracking-widest" style={{ color: '#B87333' }}>Reflection</label>
-                <p className="text-sm" style={{ color: 'rgba(255,255,255,0.5)' }}>How did each step build on the previous one?</p>
+              <div className="rounded-3xl p-6 flex flex-col gap-3 transition-opacity duration-500" style={{ opacity: feedbackVisible ? 1 : 0, background: 'rgba(226,160,74,0.04)', border: '1px solid rgba(226,160,74,0.15)' }}>
+                <label className="text-xs font-mono font-semibold uppercase tracking-widest" style={{ color: '#E2A04A' }}>Reflection</label>
+                <p className="text-sm" style={{ color: '#666666' }}>How did each step build on the previous one?</p>
                 <div className="flex gap-2 items-start">
-                  <textarea className="flex-1 rounded-xl p-3 text-sm resize-none outline-none focus-visible:ring-1 focus-visible:ring-[#B87333]" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(184,115,51,0.2)', color: 'rgba(255,255,255,0.8)', minHeight: '60px', caretColor: '#B87333' }} placeholder="Type your reflection…" value={reflection} onChange={(e) => setReflection(e.target.value.slice(0, 100))} disabled={reflectionSaved} />
-                  <button onClick={handleSaveReflection} disabled={!reflection.trim() || reflectionSaved} className="shrink-0 rounded-xl px-4 py-3 text-xs font-bold" style={{ background: reflectionSaved ? 'rgba(0,255,136,0.1)' : 'rgba(184,115,51,0.15)', border: `1px solid ${reflectionSaved ? 'rgba(0,255,136,0.3)' : 'rgba(184,115,51,0.3)'}`, color: reflectionSaved ? '#00FF88' : '#B87333', cursor: reflectionSaved ? 'default' : 'pointer' }}>
+                  <textarea className="flex-1 rounded-xl p-3 text-sm resize-none outline-none focus-visible:ring-1 focus-visible:ring-[#B87333]" style={{ background: '#FAFAFA', border: '1px solid rgba(226,160,74,0.2)', color: 'rgba(255,255,255,0.8)', minHeight: '60px', caretColor: '#E2A04A' }} placeholder="Type your reflection…" value={reflection} onChange={(e) => setReflection(e.target.value.slice(0, 100))} disabled={reflectionSaved} />
+                  <button onClick={handleSaveReflection} disabled={!reflection.trim() || reflectionSaved} className="shrink-0 rounded-xl px-4 py-3 text-xs font-bold" style={{ background: reflectionSaved ? 'rgba(74,144,226,0.1)' : 'rgba(226,160,74,0.15)', border: `1px solid ${reflectionSaved ? 'rgba(74,144,226,0.3)' : 'rgba(226,160,74,0.3)'}`, color: reflectionSaved ? '#00FF88' : '#E2A04A', cursor: reflectionSaved ? 'default' : 'pointer' }}>
                     {reflectionSaved ? '✓ Saved' : 'Save'}
                   </button>
                 </div>
@@ -343,12 +343,12 @@ export default function ChainPrompting({
               <div className="flex flex-col gap-3 transition-opacity duration-500" style={{ opacity: feedbackVisible ? 1 : 0 }}>
                 {finalScore >= 60 && nextLevelUrl ? (
                   <>
-                    <Link href={nextLevelUrl} className="w-full py-4 font-bold text-sm tracking-wide text-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00FF88] btn-primary">Next Level →</Link>
-                    <button onClick={handleReset} className="w-full rounded-full py-4 font-bold text-sm" style={{ border: '1.5px solid rgba(0,255,136,0.3)', color: 'rgba(0,255,136,0.5)', cursor: 'pointer' }}>Try Again</button>
+                    <Link href={nextLevelUrl} className="w-full py-4 font-bold text-sm tracking-wide text-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4A90E2] btn-primary">Next Level →</Link>
+                    <button onClick={handleReset} className="w-full rounded-full py-4 font-bold text-sm" style={{ border: '1.5px solid rgba(74,144,226,0.3)', color: 'rgba(74,144,226,0.5)', cursor: 'pointer' }}>Try Again</button>
                   </>
                 ) : (
                   <>
-                    {finalScore < 60 && <p className="text-xs text-center font-mono" style={{ color: 'rgba(255,255,255,0.35)' }}>Average 60 or higher to advance.</p>}
+                    {finalScore < 60 && <p className="text-xs text-center font-mono" style={{ color: '#999999' }}>Average 60 or higher to advance.</p>}
                     <button onClick={handleReset} className="w-full py-4 font-bold text-sm tracking-wide btn-primary">Try Again</button>
                   </>
                 )}

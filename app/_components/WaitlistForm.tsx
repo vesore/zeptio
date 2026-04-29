@@ -11,9 +11,9 @@ const inputBase =
 
 function inputStyle(focused: boolean): React.CSSProperties {
   return {
-    background: 'rgba(255,255,255,0.04)',
+    background: '#FAFAFA',
     border: `1.5px solid ${focused ? '#00FF88' : 'rgba(232,232,232,0.12)'}`,
-    color: '#E8E8E8',
+    color: '#1A1A1A',
   }
 }
 
@@ -160,7 +160,7 @@ export default function WaitlistForm() {
         <p
           role="alert"
           className="text-xs rounded-xl px-4 py-3 font-mono"
-          style={{ backgroundColor: 'rgba(248,113,113,0.08)', color: '#f87171', border: '1px solid rgba(248,113,113,0.2)' }}
+          style={{ backgroundColor: 'rgba(226,74,74,0.08)', color: '#E24A4A', border: '1px solid rgba(226,74,74,0.2)' }}
         >
           {errMsg}
         </p>
@@ -170,11 +170,11 @@ export default function WaitlistForm() {
       <button
         type="submit"
         disabled={!formReady || state === 'loading'}
-        className="w-full py-4 rounded-xl text-sm font-black tracking-widest uppercase transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00FF88]"
+        className="w-full py-4 rounded-xl text-sm font-black tracking-widest uppercase transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4A90E2]"
         style={{
-          background: formReady ? '#00FF88' : 'rgba(0,255,136,0.08)',
-          color: formReady ? '#0F0F0F' : 'rgba(0,255,136,0.3)',
-          border: '1.5px solid rgba(0,255,136,0.3)',
+          background: formReady ? '#00FF88' : 'rgba(74,144,226,0.08)',
+          color: formReady ? '#0F0F0F' : 'rgba(74,144,226,0.3)',
+          border: '1.5px solid rgba(74,144,226,0.3)',
           cursor: formReady ? 'pointer' : 'not-allowed',
         }}
       >
@@ -183,7 +183,7 @@ export default function WaitlistForm() {
             <span
               aria-hidden="true"
               className="inline-block w-4 h-4 rounded-full border-2 animate-spin"
-              style={{ borderColor: 'rgba(0,255,136,0.15)', borderTopColor: 'rgba(0,255,136,0.65)' }}
+              style={{ borderColor: 'rgba(74,144,226,0.15)', borderTopColor: 'rgba(74,144,226,0.65)' }}
             />
             Joining…
           </span>
