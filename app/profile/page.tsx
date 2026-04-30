@@ -108,12 +108,12 @@ export default async function ProfilePage() {
   const initialFavoriteWorld = (profile as { favorite_world?: string })?.favorite_world ?? ''
 
   return (
-    <main className="min-h-screen w-full max-w-full overflow-hidden">
+    <main className="min-h-screen w-full max-w-full overflow-hidden" style={{ background: '#EFEFEF' }}>
 
       {/* Header */}
       <header
-        className="border-b border-white/10 px-3 sm:px-6 py-3 sm:py-4 flex items-center justify-between backdrop-blur-sm"
-        style={{ background: 'rgba(15,15,15,0.6)' }}
+        className="border-b px-3 sm:px-6 py-3 sm:py-4 flex items-center justify-between"
+        style={{ background: '#FFFFFF', borderColor: '#E0E0E0' }}
       >
         <Link
           href="/dashboard"
@@ -138,7 +138,7 @@ export default async function ProfilePage() {
         </section>
 
         {/* ── PROFILE ───────────────────────────────────────── */}
-        <section className="rounded-3xl glass p-5 sm:p-6 overflow-hidden" style={{ border: '1px solid rgba(0,0,0,0.06)' }}>
+        <section className="rounded-3xl p-5 sm:p-6 overflow-hidden" style={{ background: '#FFFFFF', border: '1px solid #E8E8E8', boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
           <p className="text-sm font-semibold uppercase tracking-widest mb-4" style={{ color: '#4A90E2' }}>
             Profile
           </p>
@@ -154,7 +154,7 @@ export default async function ProfilePage() {
                 </p>
               )}
             </div>
-            <div style={{ borderTop: '1px solid rgba(255,255,255,0.07)', paddingTop: '1rem' }}>
+            <div style={{ borderTop: '1px solid #E8E8E8', paddingTop: '1rem' }}>
               <ProfileExtrasForm
                 initialBio={initialBio}
                 initialFavoriteWorld={initialFavoriteWorld}
@@ -176,10 +176,10 @@ export default async function ProfilePage() {
                   key={badge.id}
                   className="rounded-2xl p-3 flex flex-col gap-1.5"
                   style={{
-                    background: earned ? 'rgba(74,144,226,0.07)' : 'rgba(0,0,0,0.03)',
-                    border:     earned ? '1px solid rgba(74,144,226,0.25)' : '1px solid rgba(255,255,255,0.07)',
-                    boxShadow:  earned ? '0 0 14px rgba(74,144,226,0.08)' : 'none',
-                    opacity:    earned ? 1 : 0.4,
+                    background: earned ? 'rgba(74,144,226,0.07)' : '#F5F5F5',
+                    border:     earned ? '1px solid rgba(74,144,226,0.25)' : '1px solid #E8E8E8',
+                    boxShadow:  earned ? '0 2px 12px rgba(74,144,226,0.1)' : 'none',
+                    opacity:    earned ? 1 : 0.5,
                   }}
                 >
                   <div className="flex items-center justify-between gap-1">

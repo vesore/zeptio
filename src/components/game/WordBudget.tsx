@@ -242,7 +242,7 @@ export default function WordBudget({
   // ── KEY RULE GATE ──────────────────────────────────────────────────────────
   if (!ruleDismissed && keyRule) {
     return (
-      <div className="min-h-screen w-full flex items-center justify-center px-4" style={{ background: '#FFFFFF' }}>
+      <div className="min-h-screen w-full flex items-center justify-center px-4" style={{ background: '#EFEFEF' }}>
         <div
           className="w-full max-w-2xl mx-auto"
           style={{
@@ -271,8 +271,12 @@ export default function WordBudget({
           </p>
           <button
             onClick={() => setRuleDismissed(true)}
-            className="w-full py-4 font-bold text-lg tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 btn-primary"
-            style={{ '--tw-ring-color': accent } as React.CSSProperties}
+            className="w-full rounded-full py-4 font-bold text-lg tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+            style={{
+              background: accent,
+              color: '#FFFFFF',
+              boxShadow: `0 4px 16px ${accent}40`,
+            }}
             autoFocus
           >
             Got it, let&apos;s play
@@ -284,7 +288,7 @@ export default function WordBudget({
 
   // ── MAIN GAME UI ───────────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen w-full max-w-full overflow-x-hidden flex items-center justify-center" style={{ background: '#FFFFFF' }}>
+    <div className="min-h-screen w-full max-w-full overflow-x-hidden flex items-center justify-center" style={{ background: '#EFEFEF' }}>
       <div className="sr-only" aria-live="polite" aria-atomic="true">{announcement}</div>
 
       {/* Robot companion */}
@@ -451,7 +455,11 @@ export default function WordBudget({
                 : isOverLimit ? 'Cannot submit: prompt exceeds word limit'
                 : 'Submit your prompt for scoring'
               }
-              className={`w-full py-4 font-bold text-lg tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 btn-primary${!isSubmitDisabled ? ' neon-pulse' : ''}`}
+              className="w-full rounded-full py-4 font-bold text-lg tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+              style={isSubmitDisabled
+                ? { background: '#CCCCCC', color: '#999999', cursor: 'not-allowed' }
+                : { background: accent, color: '#FFFFFF', boxShadow: `0 4px 16px ${accent}40` }
+              }
             >
               {isLoading ? (
                 <span className="flex items-center justify-center gap-2">
@@ -591,7 +599,8 @@ export default function WordBudget({
                   <>
                     <Link
                       href={nextLevelUrl}
-                      className="w-full py-4 font-bold text-lg tracking-wide text-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 btn-primary"
+                      className="w-full rounded-full py-4 font-bold text-lg tracking-wide text-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+                      style={{ background: accent, color: '#FFFFFF', boxShadow: `0 4px 16px ${accent}40`, display: 'block' }}
                     >
                       Next Level →
                     </Link>
@@ -621,7 +630,8 @@ export default function WordBudget({
                     <button
                       onClick={handleReset}
                       aria-label="Try again — clear your prompt and start over"
-                      className="w-full py-4 font-bold text-lg tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 btn-primary"
+                      className="w-full rounded-full py-4 font-bold text-lg tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+                      style={{ background: accent, color: '#FFFFFF', boxShadow: `0 4px 16px ${accent}40` }}
                     >
                       Try Again
                     </button>

@@ -18,7 +18,7 @@ export default async function AdminPage() {
     .order('created_at', { ascending: false })
 
   return (
-    <main className="min-h-screen py-12 px-6">
+    <main className="min-h-screen py-12 px-6" style={{ background: '#EFEFEF' }}>
       <div className="max-w-5xl mx-auto">
         <p className="font-mono font-bold tracking-widest text-sm uppercase mb-8" style={{ color: '#4A90E2' }}>
           Zeptio Admin

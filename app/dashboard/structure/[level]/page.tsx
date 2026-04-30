@@ -85,11 +85,11 @@ export default async function StructureLevelPage({ params }: Props) {
   const nextLevelUrl = isLastLevel ? undefined : `/dashboard/structure/${levelIndex + 1}`
 
   return (
-    <div className="min-h-screen w-full max-w-full overflow-x-hidden" style={{ background: '#FFFFFF' }}>
+    <div className="min-h-screen w-full max-w-full overflow-x-hidden" style={{ background: '#EFEFEF' }}>
       <div className="w-full max-w-2xl mx-auto px-3 sm:px-6 pt-3 sm:pt-6 mt-0 sm:mt-6 flex items-center justify-between">
         <Link
           href="/dashboard/structure"
-          className="inline-flex items-center gap-2 text-sm transition-colors duration-200 hover:text-[#8B8FA8]"
+          className="inline-flex items-center gap-2 text-sm transition-colors duration-200 hover:text-[#4AE27A]"
           style={{ color: '#888888' }}
         >
           ← Structure
@@ -98,7 +98,7 @@ export default async function StructureLevelPage({ params }: Props) {
           <span className="hidden sm:inline text-xs font-mono" style={{ color: '#999999' }}>
             {level.concept}
           </span>
-          <span className="text-xs font-mono rounded-full px-3 py-1" style={{ background: 'rgba(102,102,102,0.1)', color: 'rgba(102,102,102,0.7)' }}>
+          <span className="text-xs font-mono rounded-full px-3 py-1" style={{ background: 'rgba(74,226,122,0.12)', color: '#4AE27A' }}>
             Level {String(levelIndex).padStart(2, '0')}
           </span>
         </div>

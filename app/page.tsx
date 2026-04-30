@@ -13,7 +13,7 @@ export default async function LandingPage() {
   return (
     <main
       className="min-h-screen w-full max-w-full overflow-x-hidden flex items-center justify-center"
-      style={{ background: '#FFFFFF' }}
+      style={{ background: '#EFEFEF' }}
     >
       {/* Top-right Sign In text link */}
       <div className="fixed top-4 right-4 z-20">
@@ -48,7 +48,7 @@ export default async function LandingPage() {
           />
           <p
             className="fredoka font-black text-8xl"
-            style={{ color: '#4A90E2', textShadow: '0 0 32px rgba(74,144,226,0.5), 0 0 64px rgba(74,144,226,0.2)' }}
+            style={{ color: '#4A90E2' }}
           >
             ZEPTIO
           </p>
@@ -60,10 +60,10 @@ export default async function LandingPage() {
         <WaitlistForm />
 
         {/* Footer links */}
-        <div className="flex gap-5 text-xs" style={{ color: 'rgba(232,232,232,0.2)' }}>
-          <a href="/privacy" className="hover:text-[#00FF88] transition-colors duration-200">Privacy</a>
-          <a href="/terms"   className="hover:text-[#00FF88] transition-colors duration-200">Terms</a>
-          <a href="/support" className="hover:text-[#00FF88] transition-colors duration-200">Support</a>
+        <div className="flex gap-5 text-xs" style={{ color: '#CCCCCC' }}>
+          <a href="/privacy" className="hover:text-[#4A90E2] transition-colors duration-200">Privacy</a>
+          <a href="/terms"   className="hover:text-[#4A90E2] transition-colors duration-200">Terms</a>
+          <a href="/support" className="hover:text-[#4A90E2] transition-colors duration-200">Support</a>
         </div>
 
       </div>

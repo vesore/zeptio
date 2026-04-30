@@ -73,10 +73,10 @@ const KEY_RULES: Record<string, string[]> = {
 
 // World config
 const WORLDS = [
-  { id: 'clarity',     name: 'Clarity',     accent: '#4AE27A', accentRgb: '0,255,136',   levels: CLARITY_LEVELS     },
-  { id: 'constraints', name: 'Constraints', accent: '#B87333', accentRgb: '184,115,51',  levels: CONSTRAINTS_LEVELS },
-  { id: 'structure',   name: 'Structure',   accent: '#8B8FA8', accentRgb: '139,143,168', levels: STRUCTURE_LEVELS   },
-  { id: 'debug',       name: 'Debug',       accent: '#C84B1F', accentRgb: '200,75,31',   levels: DEBUG_LEVELS       },
+  { id: 'clarity',     name: 'Clarity',     accent: '#4A90E2', accentRgb: '74,144,226',  levels: CLARITY_LEVELS     },
+  { id: 'constraints', name: 'Constraints', accent: '#F5A623', accentRgb: '245,166,35',  levels: CONSTRAINTS_LEVELS },
+  { id: 'structure',   name: 'Structure',   accent: '#4AE27A', accentRgb: '74,226,122',  levels: STRUCTURE_LEVELS   },
+  { id: 'debug',       name: 'Debug',       accent: '#E24A4A', accentRgb: '226,74,74',   levels: DEBUG_LEVELS       },
 ]
 
 // SVG score graph dimensions
@@ -110,13 +110,13 @@ function buildScoreGraph(
   return `
     <svg viewBox="0 0 ${GRAPH_W} ${GRAPH_H}" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:${GRAPH_H}px">
       <!-- Horizontal guide lines -->
-      <line x1="${PAD.l}" y1="${PAD.t}" x2="${GRAPH_W - PAD.r}" y2="${PAD.t}" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
-      <line x1="${PAD.l}" y1="${PAD.t + innerH * 0.5}" x2="${GRAPH_W - PAD.r}" y2="${PAD.t + innerH * 0.5}" stroke="rgba(255,255,255,0.04)" stroke-width="1" stroke-dasharray="3,4"/>
-      <line x1="${PAD.l}" y1="${PAD.t + innerH}" x2="${GRAPH_W - PAD.r}" y2="${PAD.t + innerH}" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+      <line x1="${PAD.l}" y1="${PAD.t}" x2="${GRAPH_W - PAD.r}" y2="${PAD.t}" stroke="rgba(0,0,0,0.08)" stroke-width="1"/>
+      <line x1="${PAD.l}" y1="${PAD.t + innerH * 0.5}" x2="${GRAPH_W - PAD.r}" y2="${PAD.t + innerH * 0.5}" stroke="rgba(0,0,0,0.05)" stroke-width="1" stroke-dasharray="3,4"/>
+      <line x1="${PAD.l}" y1="${PAD.t + innerH}" x2="${GRAPH_W - PAD.r}" y2="${PAD.t + innerH}" stroke="rgba(0,0,0,0.08)" stroke-width="1"/>
       <!-- Y labels -->
-      <text x="${PAD.l - 4}" y="${PAD.t + 3}" text-anchor="end" font-size="7" font-family="monospace" fill="rgba(255,255,255,0.25)">100</text>
-      <text x="${PAD.l - 4}" y="${PAD.t + innerH * 0.5 + 3}" text-anchor="end" font-size="7" font-family="monospace" fill="rgba(255,255,255,0.25)">50</text>
-      <text x="${PAD.l - 4}" y="${PAD.t + innerH + 3}" text-anchor="end" font-size="7" font-family="monospace" fill="rgba(255,255,255,0.25)">0</text>
+      <text x="${PAD.l - 4}" y="${PAD.t + 3}" text-anchor="end" font-size="7" font-family="monospace" fill="rgba(0,0,0,0.3)">100</text>
+      <text x="${PAD.l - 4}" y="${PAD.t + innerH * 0.5 + 3}" text-anchor="end" font-size="7" font-family="monospace" fill="rgba(0,0,0,0.3)">50</text>
+      <text x="${PAD.l - 4}" y="${PAD.t + innerH + 3}" text-anchor="end" font-size="7" font-family="monospace" fill="rgba(0,0,0,0.3)">0</text>
       <!-- Area fill -->
       <polygon points="${fillPoints}" fill="rgba(${accentRgb},0.08)"/>
       <!-- Line -->
@@ -125,7 +125,7 @@ function buildScoreGraph(
       ${points.map((pt, i) => {
         const [x, y] = pt.split(',').map(Number)
         const s = scores[i]
-        const dotColor = s >= 80 ? '#00FF88' : s >= 60 ? accent : '#C84B1F'
+        const dotColor = s >= 80 ? '#4AE27A' : s >= 60 ? accent : '#E24A4A'
         return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="2.5" fill="${dotColor}" opacity="${s > 0 ? 1 : 0.2}"/>`
       }).join('')}
     </svg>
@@ -174,56 +174,29 @@ export default async function JournalPage() {
   return (
     <main
       className="min-h-screen w-full max-w-full overflow-x-hidden pb-16"
-      style={{ background: '#FFFFFF', color: '#1A1A1A' }}
+      style={{ background: '#EFEFEF', color: '#1A1A1A' }}
     >
-      <style>{`
-        @keyframes glowPulse {
-          0%,100% { opacity: 0.6; }
-          50% { opacity: 1; }
-        }
-      `}</style>
-
-      {/* Holographic grid bg */}
-      <div
-        className="pointer-events-none fixed inset-0 z-0"
-        style={{
-          backgroundImage: 'linear-gradient(rgba(0,200,255,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(0,200,255,0.02) 1px,transparent 1px)',
-          backgroundSize: '60px 60px',
-        }}
-        aria-hidden="true"
-      />
-
-      {/* Scanlines */}
-      <div
-        className="pointer-events-none fixed inset-0 z-50"
-        style={{ background: 'repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.06) 2px,rgba(0,0,0,0.06) 4px)' }}
-        aria-hidden="true"
-      />
-
-      <div className="relative z-10 w-full max-w-2xl mx-auto px-4 sm:px-6">
+      <div className="w-full max-w-2xl mx-auto px-4 sm:px-6">
 
         {/* ── Header ── */}
         <div className="pt-6 pb-4 flex items-center justify-between">
           <Link
             href="/dashboard"
-            className="text-sm transition-colors duration-200 hover:text-[#00FF88]"
+            className="text-sm transition-colors duration-200 hover:text-[#4A90E2]"
             style={{ color: '#999999' }}
           >
             ← Home
           </Link>
           <h1
-            className="fredoka text-2xl font-black tracking-widest uppercase font-mono"
-            style={{
-              color: '#E2A04A',
-              textShadow: '0 0 16px rgba(226,160,74,0.5)',
-            }}
+            className="fredoka text-2xl font-black tracking-widest uppercase"
+            style={{ color: '#1A1A1A' }}
           >
             Journal
           </h1>
           <div style={{ width: '48px' }} />
         </div>
 
-        <div className="w-full h-px mb-8" style={{ background: '#F5F5F5' }} />
+        <div className="w-full h-px mb-8" style={{ background: '#E0E0E0' }} />
 
         {/* ── Score Graphs ── */}
         <section aria-label="Score graphs by world">
@@ -282,7 +255,7 @@ export default async function JournalPage() {
           </div>
         </section>
 
-        <div className="w-full h-px my-8" style={{ background: '#F5F5F5' }} />
+        <div className="w-full h-px my-8" style={{ background: '#E0E0E0' }} />
 
         {/* ── First vs Best Attempts ── */}
         <section aria-label="First vs best attempts">
@@ -309,7 +282,7 @@ export default async function JournalPage() {
                       {world.name}
                     </p>
                   </div>
-                  <div className="divide-y" style={{ borderColor: 'rgba(255,255,255,0.04)' }}>
+                  <div className="divide-y" style={{ borderColor: '#E8E8E8' }}>
                     {completedLevels.map((level) => {
                       const attempt = levelMap.get(level.id)!
                       const improved = attempt.best > attempt.first
@@ -331,7 +304,7 @@ export default async function JournalPage() {
                             <div className="text-center">
                               <p className="text-[8px] font-mono" style={{ color: '#999999' }}>First</p>
                               <p className="text-sm font-black tabular-nums" style={{
-                                color: attempt.first >= 80 ? '#00FF88' : attempt.first >= 60 ? world.accent : '#C84B1F',
+                                color: attempt.first >= 80 ? '#4AE27A' : attempt.first >= 60 ? world.accent : '#E24A4A',
                               }}>
                                 {attempt.first}
                               </p>
@@ -343,7 +316,7 @@ export default async function JournalPage() {
                               <div className="text-center">
                                 <p className="text-[8px] font-mono" style={{ color: '#999999' }}>Best</p>
                                 <p className="text-sm font-black tabular-nums" style={{
-                                  color: attempt.best >= 80 ? '#00FF88' : attempt.best >= 60 ? world.accent : '#C84B1F',
+                                  color: attempt.best >= 80 ? '#4AE27A' : attempt.best >= 60 ? world.accent : '#E24A4A',
                                 }}>
                                   {attempt.best}
                                 </p>
@@ -365,7 +338,7 @@ export default async function JournalPage() {
           </div>
         </section>
 
-        <div className="w-full h-px my-8" style={{ background: '#F5F5F5' }} />
+        <div className="w-full h-px my-8" style={{ background: '#E0E0E0' }} />
 
         {/* ── Key Rules Collection ── */}
         <section aria-label="Unlocked key rules">
@@ -405,7 +378,7 @@ export default async function JournalPage() {
           )}
         </section>
 
-        <div className="w-full h-px my-8" style={{ background: '#F5F5F5' }} />
+        <div className="w-full h-px my-8" style={{ background: '#E0E0E0' }} />
 
         {/* ── Reflections ── */}
         <section aria-label="Your reflections">
@@ -426,18 +399,19 @@ export default async function JournalPage() {
                     key={i}
                     className="rounded-xl px-4 py-3"
                     style={{
-                      background: 'rgba(0,0,0,0.03)',
-                      border: '1px solid rgba(255,255,255,0.07)',
+                      background: '#FFFFFF',
+                      border: '1px solid #E8E8E8',
+                      boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
                     }}
                   >
                     <div className="flex items-center justify-between mb-2">
                       <p className="text-[8px] font-mono uppercase tracking-wider"
-                        style={{ color: world ? world.accent : 'rgba(255,255,255,0.3)', opacity: 0.7 }}>
+                        style={{ color: world ? world.accent : '#CCCCCC', opacity: 0.8 }}>
                         {world?.name ?? r.world}{levelNum ? ` · Level ${levelNum}` : ''}
                       </p>
                       <p className="text-[8px] font-mono" style={{ color: '#BBBBBB' }}>{date}</p>
                     </div>
-                    <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.65)' }}>
+                    <p className="text-sm leading-relaxed" style={{ color: '#444444' }}>
                       {r.reflection}
                     </p>
                   </div>

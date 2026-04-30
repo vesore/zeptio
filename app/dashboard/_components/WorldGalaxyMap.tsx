@@ -21,15 +21,6 @@ const CONTAINER_HEIGHT = 880
 const PLANET_R         = 28
 const ROBOT_SIZE       = 44
 
-// Deterministic stars — no hydration mismatch
-const STARS = Array.from({ length: 90 }, (_, i) => ({
-  x:        ((i * 127 + 43) % 97) + 1.5,
-  y:        ((i * 73  + 19) % 97) + 1.5,
-  delay:    parseFloat(((i * 0.37) % 4).toFixed(2)),
-  size:     ((i * 7) % 3) + 1,
-  duration: parseFloat((((i * 0.23) % 2) + 1.8).toFixed(2)),
-}))
-
 export interface WorldLevel {
   id: number
   title: string
@@ -95,18 +86,6 @@ export default function WorldGalaxyMap({
   return (
     <div style={{ position: 'relative', width: '100%', height: CONTAINER_HEIGHT + 'px' }}>
 
-      {/* Twinkling stars */}
-      {STARS.map((s, i) => (
-        <div key={i} style={{
-          position: 'absolute', left: s.x + '%', top: s.y + '%',
-          width: s.size + 'px', height: s.size + 'px',
-          borderRadius: '50%', background: 'white',
-          animationName: 'twinkle', animationDuration: s.duration + 's',
-          animationDelay: s.delay + 's', animationIterationCount: 'infinite',
-          animationTimingFunction: 'ease-in-out',
-        }} aria-hidden="true" />
-      ))}
-
       {/* Dotted trail connecting planets */}
       <svg
         style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' }}
@@ -125,10 +104,9 @@ export default function WorldGalaxyMap({
               key={level.id}
               x1={from.x} y1={from.y}
               x2={to.x}   y2={to.y}
-              stroke={done ? accent : open ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.04)'}
-              strokeOpacity={done ? 0.55 : 1}
-              strokeWidth="0.6"
-              strokeDasharray="3,5"
+              stroke={done ? `${accent}60` : open ? 'rgba(0,0,0,0.12)' : 'rgba(0,0,0,0.06)'}
+              strokeWidth="0.7"
+              strokeDasharray="3,4"
               vectorEffect="non-scaling-stroke"
             />
           )
@@ -145,6 +123,7 @@ export default function WorldGalaxyMap({
           transform: 'translateX(-50%)',
           zIndex:    20,
           pointerEvents: 'none',
+          filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.12))',
         }}
         aria-hidden="true"
       >
@@ -164,41 +143,66 @@ export default function WorldGalaxyMap({
         if (!unlocked && i >= 8) lockHint = '80+ avg req'
         else if (!unlocked && i >= 5) lockHint = '70+ avg req'
 
+        const nodeStyle: React.CSSProperties = {
+          width:          PLANET_R * 2 + 'px',
+          height:         PLANET_R * 2 + 'px',
+          borderRadius:   '50%',
+          display:        'flex',
+          alignItems:     'center',
+          justifyContent: 'center',
+          fontSize:       '15px',
+          fontWeight:     900,
+          fontFamily:     'var(--font-fredoka)',
+          flexShrink:     0,
+          transition:     'transform 0.15s ease, box-shadow 0.15s ease',
+          ...(completed ? {
+            background: accent,
+            border:     `2px solid ${accent}`,
+            color:      '#FFFFFF',
+            boxShadow:  `0 4px 16px ${accent}50`,
+          } : isCurrent ? {
+            background: '#FFFFFF',
+            border:     `2.5px solid ${accent}`,
+            color:      accent,
+            boxShadow:  `0 4px 16px ${accent}30, 0 0 0 4px ${accent}15`,
+          } : {
+            background: '#F0F0F0',
+            border:     '2px solid #DDDDDD',
+            color:      '#BBBBBB',
+            boxShadow:  '0 2px 6px rgba(0,0,0,0.06)',
+          }),
+        }
+
         const planet = (
-          <div
-            className={completed ? 'planet-completed' : isCurrent ? 'planet-current' : ''}
-            style={{
-              width:  PLANET_R * 2 + 'px',
-              height: PLANET_R * 2 + 'px',
-              borderRadius: '50%',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              background: completed ? accent : isCurrent ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.03)',
-              border: `2px solid ${completed ? accent : isCurrent ? 'rgba(255,255,255,0.45)' : 'rgba(0,0,0,0.06)'}`,
-              fontSize: '15px', fontWeight: 900, fontFamily: 'var(--font-fredoka)',
-              color: completed ? '#0F0F0F' : isCurrent ? 'white' : 'rgba(255,255,255,0.2)',
-              flexShrink: 0,
-            }}
-          >
+          <div style={nodeStyle} className="group-hover:scale-110 group-hover:shadow-lg">
             {completed ? '✓' : i + 1}
           </div>
         )
 
         const label = (
-          <div style={{ textAlign: 'center', marginTop: '5px', width: '84px' }}>
+          <div style={{ textAlign: 'center', marginTop: '6px', width: '88px' }}>
             <p style={{
-              fontSize: '8.5px', fontFamily: 'var(--font-fredoka)', fontWeight: 600, lineHeight: 1.3,
-              color: completed ? accent : isCurrent ? 'rgba(255,255,255,0.8)' : 'rgba(255,255,255,0.2)',
+              fontSize:   '9px',
+              fontFamily: 'var(--font-fredoka)',
+              fontWeight: 700,
+              lineHeight: 1.3,
+              color: completed ? accent : isCurrent ? '#1A1A1A' : '#BBBBBB',
             }}>
               {level.title}
             </p>
             {best !== undefined && (
-              <p style={{ fontSize: '8px', fontFamily: 'var(--font-fredoka)', marginTop: '2px',
-                color: best >= 80 ? '#00FF88' : best >= 60 ? '#B87333' : '#C84B1F' }}>
+              <p style={{
+                fontSize:   '8.5px',
+                fontFamily: 'var(--font-fredoka)',
+                marginTop:  '2px',
+                fontWeight: 700,
+                color: best >= 80 ? '#4AE27A' : best >= 60 ? accent : '#E24A4A',
+              }}>
                 {best}/100
               </p>
             )}
             {!unlocked && (
-              <p style={{ fontSize: '9px', marginTop: '1px', opacity: 0.5 }}>
+              <p style={{ fontSize: '8px', marginTop: '2px', color: '#CCCCCC' }}>
                 {lockHint || '🔒'}
               </p>
             )}
@@ -206,12 +210,14 @@ export default function WorldGalaxyMap({
         )
 
         const wrapperStyle: React.CSSProperties = {
-          position:  'absolute',
-          left:      pos.x + '%',
-          top:       pos.y + 'px',
-          transform: 'translate(-50%, -50%)',
-          display:   'flex', flexDirection: 'column', alignItems: 'center',
-          opacity:   unlocked ? 1 : 0.38,
+          position:       'absolute',
+          left:           pos.x + '%',
+          top:            pos.y + 'px',
+          transform:      'translate(-50%, -50%)',
+          display:        'flex',
+          flexDirection:  'column',
+          alignItems:     'center',
+          opacity:        unlocked ? 1 : 0.45,
           textDecoration: 'none',
         }
 
@@ -220,7 +226,8 @@ export default function WorldGalaxyMap({
             <Link
               key={level.id}
               href={`${baseLevelHref}/${i + 1}`}
-              style={{ ...wrapperStyle, cursor: 'pointer' }}
+              style={wrapperStyle}
+              className="group"
               aria-label={`Level ${i + 1}: ${level.title}${best !== undefined ? `, best score ${best}/100` : ''}`}
             >
               {planet}
@@ -229,7 +236,7 @@ export default function WorldGalaxyMap({
           )
         }
         return (
-          <div key={level.id} style={{ ...wrapperStyle, cursor: 'default' }} aria-hidden="true">
+          <div key={level.id} style={wrapperStyle}>
             {planet}
             {label}
           </div>

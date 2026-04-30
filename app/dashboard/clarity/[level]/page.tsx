@@ -83,11 +83,11 @@ export default async function ClarityLevelPage({ params }: Props) {
   const nextLevelUrl = isLastLevel ? undefined : `/dashboard/clarity/${levelId + 1}`
 
   return (
-    <div className="scanlines min-h-screen w-full max-w-full overflow-x-hidden" style={{ background: '#FFFFFF' }}>
+    <div className="min-h-screen w-full max-w-full overflow-x-hidden" style={{ background: '#EFEFEF' }}>
       <div className="w-full max-w-2xl mx-auto px-3 sm:px-6 lg:px-8 pt-3 sm:pt-6 mt-0 sm:mt-6 flex items-center justify-between">
         <Link
           href="/dashboard/clarity"
-          className="inline-flex items-center gap-2 text-sm transition-colors duration-200 hover:text-[#00FF88]"
+          className="inline-flex items-center gap-2 text-sm transition-colors duration-200 hover:text-[#4A90E2]"
           style={{ color: '#888888' }}
         >
           ← Clarity

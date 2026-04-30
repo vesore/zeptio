@@ -85,11 +85,11 @@ export default async function DebugLevelPage({ params }: Props) {
   const nextLevelUrl = isLastLevel ? undefined : `/dashboard/debug/${levelIndex + 1}`
 
   return (
-    <div className="min-h-screen w-full max-w-full overflow-x-hidden" style={{ background: '#FFFFFF' }}>
+    <div className="min-h-screen w-full max-w-full overflow-x-hidden" style={{ background: '#EFEFEF' }}>
       <div className="w-full max-w-2xl mx-auto px-3 sm:px-6 pt-3 sm:pt-6 mt-0 sm:mt-6 flex items-center justify-between">
         <Link
           href="/dashboard/debug"
-          className="inline-flex items-center gap-2 text-sm transition-colors duration-200 hover:text-[#C84B1F]"
+          className="inline-flex items-center gap-2 text-sm transition-colors duration-200 hover:text-[#E24A4A]"
           style={{ color: '#888888' }}
         >
           ← Debug
@@ -98,7 +98,7 @@ export default async function DebugLevelPage({ params }: Props) {
           <span className="hidden sm:inline text-xs font-mono" style={{ color: '#999999' }}>
             {level.concept}
           </span>
-          <span className="text-xs font-mono rounded-full px-3 py-1" style={{ background: 'rgba(226,74,74,0.1)', color: 'rgba(226,74,74,0.7)' }}>
+          <span className="text-xs font-mono rounded-full px-3 py-1" style={{ background: 'rgba(226,74,74,0.1)', color: '#E24A4A' }}>
             Level {String(levelIndex).padStart(2, '0')}
           </span>
         </div>

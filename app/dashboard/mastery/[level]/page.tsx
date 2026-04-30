@@ -108,7 +108,7 @@ export default async function MasteryLevelPage({ params }: Props) {
   const nextLevelUrl = isLastLevel ? undefined : `/dashboard/mastery/${levelIndex + 1}`
 
   return (
-    <div className="min-h-screen w-full max-w-full overflow-x-hidden" style={{ background: '#FFFFFF' }}>
+    <div className="min-h-screen w-full max-w-full overflow-x-hidden" style={{ background: '#EFEFEF' }}>
       <div className="w-full max-w-2xl mx-auto px-3 sm:px-6 lg:px-8 pt-3 sm:pt-6 mt-0 sm:mt-6 flex items-center justify-between">
         <Link
           href="/dashboard/mastery"
@@ -121,10 +121,10 @@ export default async function MasteryLevelPage({ params }: Props) {
           <span className="hidden sm:inline text-xs font-mono" style={{ color: '#999999' }}>
             {level.concept}
           </span>
-          <span className="text-xs font-mono rounded-full px-3 py-1" style={{ background: 'rgba(155,74,226,0.1)', color: 'rgba(155,74,226,0.7)' }}>
+          <span className="text-xs font-mono rounded-full px-3 py-1" style={{ background: 'rgba(155,74,226,0.1)', color: '#9B4AE2' }}>
             Mastery {String(levelIndex).padStart(2, '0')}
           </span>
-          <span className="text-xs font-mono rounded-full px-3 py-1" style={{ background: 'rgba(74,144,226,0.08)', color: 'rgba(74,144,226,0.5)' }}>
+          <span className="text-xs font-mono rounded-full px-3 py-1" style={{ background: 'rgba(74,144,226,0.1)', color: '#4A90E2' }}>
             2× XP
           </span>
         </div>

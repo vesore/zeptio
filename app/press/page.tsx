@@ -85,7 +85,7 @@ export default function PressPage() {
   return (
     <main
       className="min-h-screen w-full overflow-x-hidden"
-      style={{ background: '#FFFFFF', color: '#1A1A1A' }}
+      style={{ background: '#EFEFEF', color: '#1A1A1A' }}
     >
       {/* Copper radial glow */}
       <div

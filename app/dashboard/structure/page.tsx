@@ -5,7 +5,7 @@ import { STRUCTURE_LEVELS } from '@/src/lib/game/structure-levels'
 import WorldGalaxyMap from '@/app/dashboard/_components/WorldGalaxyMap'
 import { DEFAULT_ROBOT_CONFIG, type RobotConfig } from '@/app/profile/_components/RobotSVG'
 
-const ACCENT = '#8B8FA8'
+const ACCENT = '#4AE27A'
 
 export default async function StructurePage() {
   const supabase = await createClient()
@@ -34,55 +34,50 @@ export default async function StructurePage() {
     : DEFAULT_ROBOT_CONFIG
 
   return (
-    <main className="min-h-screen w-full max-w-full overflow-x-hidden pb-24" style={{ background: '#FFFFFF' }}>
+    <main className="min-h-screen w-full max-w-full overflow-x-hidden pb-24" style={{ background: '#EFEFEF' }}>
       <div className="w-full max-w-lg mx-auto px-4 sm:px-6">
 
         {/* Top nav */}
         <div className="pt-5 pb-2 flex items-center justify-between">
           <Link
             href="/dashboard"
-            className="text-sm transition-colors duration-200 hover:text-[#8B8FA8]"
+            className="text-sm transition-colors duration-200 hover:text-[#4AE27A]"
             style={{ color: '#999999' }}
           >
             ← Home
           </Link>
           <span
             className="text-xs font-mono rounded-full px-3 py-1"
-            style={{ background: 'rgba(102,102,102,0.1)', color: 'rgba(102,102,102,0.7)' }}
+            style={{ background: 'rgba(74,226,122,0.12)', color: ACCENT }}
           >
             {completedCount}/{STRUCTURE_LEVELS.length} complete
           </span>
         </div>
 
-        {/* Neon title */}
+        {/* Title */}
         <div className="pt-6 pb-2 text-center">
-          <p className="text-xs tracking-widest uppercase mb-2" style={{ color: 'rgba(102,102,102,0.5)' }}>
+          <p className="text-xs tracking-widest uppercase mb-2" style={{ color: `${ACCENT}99` }}>
             ◎ World Three
           </p>
           <h1
-            className="fredoka text-4xl sm:text-5xl font-black tracking-wider uppercase"
-            style={{
-              color: ACCENT,
-              textShadow: '0 0 20px rgba(102,102,102,0.5), 0 0 60px rgba(102,102,102,0.2)',
-              letterSpacing: '0.12em',
-            }}
+            className="fredoka text-4xl sm:text-5xl font-black uppercase"
+            style={{ color: ACCENT, letterSpacing: '0.06em' }}
           >
             Structure
           </h1>
-          <p className="mt-2 text-xs font-mono" style={{ color: '#999999' }}>
+          <p className="mt-2 text-xs" style={{ color: '#999999' }}>
             Score 60+ on each level to unlock the next
           </p>
         </div>
 
         {/* Progress bar */}
         <div className="my-5">
-          <div className="h-1 rounded-full overflow-hidden" style={{ background: 'rgba(0,0,0,0.04)' }}>
+          <div className="h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(0,0,0,0.08)' }}>
             <div
-              className="h-1 rounded-full transition-all duration-700"
+              className="h-1.5 rounded-full transition-all duration-700"
               style={{
                 width: `${Math.round((completedCount / STRUCTURE_LEVELS.length) * 100)}%`,
-                background: `linear-gradient(90deg, ${ACCENT}, #aeb2c8)`,
-                boxShadow: `0 0 8px rgba(102,102,102,0.6)`,
+                background: ACCENT,
               }}
             />
           </div>

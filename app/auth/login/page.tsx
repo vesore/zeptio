@@ -106,7 +106,7 @@ function LoginForm() {
   const ready = !!email.trim() && !!password && state !== 'loading'
 
   return (
-    <main className="min-h-screen w-full max-w-full overflow-x-hidden flex items-center justify-center lime-radial-glow">
+    <main className="min-h-screen w-full max-w-full overflow-x-hidden flex items-center justify-center" style={{ background: '#EFEFEF' }}>
       <div className="w-full max-w-md mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <p
           className="text-center font-mono font-bold tracking-widest text-base uppercase mb-8"
@@ -115,8 +115,8 @@ function LoginForm() {
           Zeptio
         </p>
 
-        <div className="rounded-3xl p-6 sm:p-8 glass">
-          <h1 className="fredoka text-4xl sm:text-5xl font-black tracking-tight text-white mb-1">Let&apos;s play.</h1>
+        <div className="rounded-3xl p-6 sm:p-8" style={{ background: '#FFFFFF', boxShadow: '0 4px 24px rgba(0,0,0,0.08)' }}>
+          <h1 className="fredoka text-4xl sm:text-5xl font-black tracking-tight mb-1" style={{ color: '#1A1A1A' }}>Let&apos;s play.</h1>
           {isWelcomeBack ? (
             <p className="text-base mb-6" style={{ color: '#4A90E2' }}>
               Welcome back! Sign in to continue.
@@ -169,14 +169,15 @@ function LoginForm() {
                 value={email}
                 onChange={(e) => { setEmail(e.target.value); if (state === 'error') setState('idle') }}
                 disabled={state === 'loading'}
-                className="w-full rounded-2xl px-4 py-3.5 text-base placeholder:text-black/25 outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#4A90E2] glass"
+                className="w-full rounded-2xl px-4 py-3.5 text-base placeholder:text-black/25 outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#4A90E2]"
                 style={{
-                  border: `1.5px solid ${state === 'error' ? '#f87171' : 'rgba(0,0,0,0.08)'}`,
-                  color: '#4A90E2',
+                  background: '#F5F5F5',
+                  border: `1.5px solid ${state === 'error' ? '#f87171' : '#E0E0E0'}`,
+                  color: '#1A1A1A',
                   fontWeight: 700,
                 }}
-                onFocus={(e) => { if (state !== 'error') e.target.style.borderColor = '#00FF88' }}
-                onBlur={(e)  => { if (state !== 'error') e.target.style.borderColor = 'rgba(0,0,0,0.08)' }}
+                onFocus={(e) => { if (state !== 'error') e.target.style.borderColor = '#4A90E2' }}
+                onBlur={(e)  => { if (state !== 'error') e.target.style.borderColor = '#E0E0E0' }}
               />
             </div>
 
@@ -196,14 +197,15 @@ function LoginForm() {
                 value={password}
                 onChange={(e) => { setPassword(e.target.value); if (state === 'error') setState('idle') }}
                 disabled={state === 'loading'}
-                className="w-full rounded-2xl px-4 py-3.5 text-base placeholder:text-black/25 outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#4A90E2] glass"
+                className="w-full rounded-2xl px-4 py-3.5 text-base placeholder:text-black/25 outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#4A90E2]"
                 style={{
-                  border: `1.5px solid ${state === 'error' ? '#f87171' : 'rgba(0,0,0,0.08)'}`,
-                  color: '#4A90E2',
+                  background: '#F5F5F5',
+                  border: `1.5px solid ${state === 'error' ? '#f87171' : '#E0E0E0'}`,
+                  color: '#1A1A1A',
                   fontWeight: 700,
                 }}
-                onFocus={(e) => { if (state !== 'error') e.target.style.borderColor = '#00FF88' }}
-                onBlur={(e)  => { if (state !== 'error') e.target.style.borderColor = 'rgba(0,0,0,0.08)' }}
+                onFocus={(e) => { if (state !== 'error') e.target.style.borderColor = '#4A90E2' }}
+                onBlur={(e)  => { if (state !== 'error') e.target.style.borderColor = '#E0E0E0' }}
               />
             </div>
 

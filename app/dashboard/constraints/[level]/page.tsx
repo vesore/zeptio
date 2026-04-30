@@ -85,11 +85,11 @@ export default async function ConstraintsLevelPage({ params }: Props) {
   const nextLevelUrl = isLastLevel ? undefined : `/dashboard/constraints/${levelIndex + 1}`
 
   return (
-    <div className="min-h-screen w-full max-w-full overflow-x-hidden" style={{ background: '#FFFFFF' }}>
+    <div className="min-h-screen w-full max-w-full overflow-x-hidden" style={{ background: '#EFEFEF' }}>
       <div className="w-full max-w-2xl mx-auto px-3 sm:px-6 lg:px-8 pt-3 sm:pt-6 mt-0 sm:mt-6 flex items-center justify-between">
         <Link
           href="/dashboard/constraints"
-          className="inline-flex items-center gap-2 text-sm transition-colors duration-200 hover:text-[#00FF88]"
+          className="inline-flex items-center gap-2 text-sm transition-colors duration-200 hover:text-[#F5A623]"
           style={{ color: '#888888' }}
         >
           ← Constraints
@@ -98,7 +98,7 @@ export default async function ConstraintsLevelPage({ params }: Props) {
           <span className="hidden sm:inline text-xs font-mono" style={{ color: '#999999' }}>
             {level.concept}
           </span>
-          <span className="text-xs font-mono rounded-full px-3 py-1" style={{ background: 'rgba(226,160,74,0.1)', color: 'rgba(226,160,74,0.7)' }}>
+          <span className="text-xs font-mono rounded-full px-3 py-1" style={{ background: 'rgba(245,166,35,0.12)', color: '#F5A623' }}>
             Level {String(levelIndex).padStart(2, '0')}
           </span>
         </div>

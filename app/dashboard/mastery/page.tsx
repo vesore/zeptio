@@ -111,15 +111,7 @@ export default async function MasteryPage() {
   )
 
   return (
-    <main className="min-h-screen w-full max-w-full overflow-x-hidden pb-24" style={{ background: '#FFFFFF' }}>
-      <style>{`
-        @keyframes masteryGlow {
-          0%,100% { text-shadow: 0 0 20px rgba(155,74,226,0.6), 0 0 60px rgba(155,74,226,0.25); }
-          50%      { text-shadow: 0 0 30px rgba(155,74,226,0.9), 0 0 80px rgba(155,74,226,0.4); }
-        }
-        .mastery-title-glow { animation: masteryGlow 3s ease-in-out infinite; }
-      `}</style>
-
+    <main className="min-h-screen w-full max-w-full overflow-x-hidden pb-24" style={{ background: '#EFEFEF' }}>
       <div className="w-full max-w-lg mx-auto px-4 sm:px-6">
 
         {/* Top nav */}
@@ -133,40 +125,36 @@ export default async function MasteryPage() {
           </Link>
           <span
             className="text-xs font-mono rounded-full px-3 py-1"
-            style={{ background: 'rgba(155,74,226,0.1)', color: 'rgba(155,74,226,0.7)' }}
+            style={{ background: 'rgba(155,74,226,0.1)', color: ACCENT }}
           >
             {completedCount}/{MASTERY_LEVELS.length} complete
           </span>
         </div>
 
-        {/* Neon title */}
+        {/* Title */}
         <div className="pt-6 pb-2 text-center">
-          <p className="text-xs tracking-widest uppercase mb-2" style={{ color: 'rgba(155,74,226,0.5)' }}>
+          <p className="text-xs tracking-widest uppercase mb-2" style={{ color: `${ACCENT}99` }}>
             ◎ The Core
           </p>
           <h1
-            className="mastery-title-glow fredoka text-4xl sm:text-5xl font-black tracking-wider uppercase"
-            style={{
-              color: ACCENT,
-              letterSpacing: '0.12em',
-            }}
+            className="fredoka text-4xl sm:text-5xl font-black uppercase"
+            style={{ color: ACCENT, letterSpacing: '0.06em' }}
           >
             Mastery
           </h1>
-          <p className="mt-2 text-xs font-mono" style={{ color: '#999999' }}>
+          <p className="mt-2 text-xs" style={{ color: '#999999' }}>
             Double XP · Score 80+ to advance · Combines all 4 worlds
           </p>
         </div>
 
         {/* Progress bar */}
         <div className="my-5">
-          <div className="h-1 rounded-full overflow-hidden" style={{ background: 'rgba(0,0,0,0.04)' }}>
+          <div className="h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(0,0,0,0.08)' }}>
             <div
-              className="h-1 rounded-full transition-all duration-700"
+              className="h-1.5 rounded-full transition-all duration-700"
               style={{
                 width: `${Math.round((completedCount / MASTERY_LEVELS.length) * 100)}%`,
-                background: `linear-gradient(90deg, ${ACCENT}, #ff4477)`,
-                boxShadow: `0 0 8px rgba(155,74,226,0.6)`,
+                background: ACCENT,
               }}
             />
           </div>
