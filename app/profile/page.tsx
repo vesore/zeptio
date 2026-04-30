@@ -117,12 +117,12 @@ export default async function ProfilePage() {
       >
         <Link
           href="/dashboard"
-          className="text-sm transition-colors duration-200 hover:text-[#4A90E2]"
+          className="text-base transition-colors duration-200 hover:text-[#4A90E2]"
           style={{ color: '#888888' }}
         >
           ← Dashboard
         </Link>
-        <span className="fredoka font-bold text-sm uppercase text-[#4A90E2]">
+        <span className="fredoka font-bold text-lg uppercase text-[#4A90E2]">
           Zeptio
         </span>
       </header>
@@ -131,7 +131,7 @@ export default async function ProfilePage() {
 
         {/* ── ROBOT AVATAR ──────────────────────────────────── */}
         <section>
-          <p className="text-xs font-semibold uppercase tracking-widest mb-4" style={{ color: '#4A90E2' }}>
+          <p className="text-sm font-semibold uppercase tracking-widest mb-4" style={{ color: '#4A90E2' }}>
             Your Robot
           </p>
           <RobotCustomizer initialConfig={robotConfig} unlockedParts={unlockedParts} bodyUnlocked={bodyUnlocked} />
@@ -139,17 +139,17 @@ export default async function ProfilePage() {
 
         {/* ── PROFILE ───────────────────────────────────────── */}
         <section className="rounded-3xl glass p-5 sm:p-6 overflow-hidden" style={{ border: '1px solid rgba(0,0,0,0.06)' }}>
-          <p className="text-xs font-semibold uppercase tracking-widest mb-4" style={{ color: '#4A90E2' }}>
+          <p className="text-sm font-semibold uppercase tracking-widest mb-4" style={{ color: '#4A90E2' }}>
             Profile
           </p>
           <div className="flex flex-col gap-4">
             <div>
               <EditNameForm initialName={displayName} />
-              <p className="mt-1 text-sm truncate" style={{ color: '#888888' }}>
+              <p className="mt-1 text-base truncate" style={{ color: '#888888' }}>
                 {user.email}
               </p>
               {memberSince && (
-                <p className="mt-0.5 text-xs" style={{ color: '#999999' }}>
+                <p className="mt-0.5 text-sm" style={{ color: '#999999' }}>
                   Member since {memberSince}
                 </p>
               )}
@@ -165,7 +165,7 @@ export default async function ProfilePage() {
 
         {/* ── BADGES ────────────────────────────────────────── */}
         <section>
-          <p className="text-xs font-semibold uppercase tracking-widest mb-4" style={{ color: '#4A90E2' }}>
+          <p className="text-sm font-semibold uppercase tracking-widest mb-4" style={{ color: '#4A90E2' }}>
             Badges
           </p>
           <div className="grid grid-cols-3 gap-2 sm:gap-3">
@@ -196,8 +196,8 @@ export default async function ProfilePage() {
                     )}
                   </div>
                   <div>
-                    <p className="text-xs font-bold leading-tight">{badge.name}</p>
-                    <p className="text-[10px] mt-0.5 leading-snug" style={{ color: '#888888' }}>
+                    <p className="text-sm font-bold leading-tight">{badge.name}</p>
+                    <p className="text-xs mt-0.5 leading-snug" style={{ color: '#888888' }}>
                       {badge.description}
                     </p>
                   </div>
@@ -211,7 +211,7 @@ export default async function ProfilePage() {
         <form action={signOut}>
           <button
             type="submit"
-            className="w-full rounded-full py-4 font-bold text-sm tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4A90E2] border border-red-400/30 text-red-400/60 hover:border-red-400 hover:text-red-400"
+            className="w-full rounded-full py-4 font-bold text-lg tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4A90E2] border border-red-400/30 text-red-400/60 hover:border-red-400 hover:text-red-400"
           >
             Sign Out
           </button>

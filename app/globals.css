@@ -29,6 +29,12 @@ body {
 h1, h2, h3,
 .fredoka {
   font-family: var(--font-fredoka), Arial, Helvetica, sans-serif;
+  letter-spacing: 0.02em;
+}
+
+.nunito-heading {
+  font-family: var(--font-nunito), Arial, Helvetica, sans-serif;
+  font-weight: 800;
 }
 
 /* Clean surface card */
@@ -44,6 +50,7 @@ h1, h2, h3,
   background-color: #1A1A1A;
   color: #FFFFFF;
   border-radius: 9999px;
+  font-size: 1.125rem;
   font-weight: 700;
   transition: all 0.2s;
 }

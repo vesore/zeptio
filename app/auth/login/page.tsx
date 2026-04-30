@@ -109,20 +109,20 @@ function LoginForm() {
     <main className="min-h-screen w-full max-w-full overflow-x-hidden flex items-center justify-center lime-radial-glow">
       <div className="w-full max-w-md mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <p
-          className="text-center font-mono font-bold tracking-widest text-sm uppercase mb-8"
+          className="text-center font-mono font-bold tracking-widest text-base uppercase mb-8"
           style={{ color: '#4A90E2' }}
         >
           Zeptio
         </p>
 
         <div className="rounded-3xl p-6 sm:p-8 glass">
-          <h1 className="fredoka text-2xl sm:text-3xl font-black tracking-tight text-white mb-1">Let&apos;s play.</h1>
+          <h1 className="fredoka text-4xl sm:text-5xl font-black tracking-tight text-white mb-1">Let&apos;s play.</h1>
           {isWelcomeBack ? (
-            <p className="text-sm mb-6" style={{ color: '#4A90E2' }}>
+            <p className="text-base mb-6" style={{ color: '#4A90E2' }}>
               Welcome back! Sign in to continue.
             </p>
           ) : (
-            <p className="text-sm mb-6" style={{ color: '#666666' }}>
+            <p className="text-base mb-6" style={{ color: '#666666' }}>
               Sign in to your account.
             </p>
           )}
@@ -131,7 +131,7 @@ function LoginForm() {
           <button
             type="button"
             onClick={handleGoogleSignIn}
-            className="w-full flex items-center justify-center gap-3 rounded-full py-4 font-bold text-sm tracking-wide transition-all duration-200 hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4A90E2]"
+            className="w-full flex items-center justify-center gap-3 rounded-full py-4 font-bold text-lg tracking-wide transition-all duration-200 hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4A90E2]"
             style={{ backgroundColor: '#ffffff', color: '#0F0F0F' }}
           >
             <span
@@ -155,7 +155,7 @@ function LoginForm() {
             <div className="flex flex-col gap-1.5">
               <label
                 htmlFor="email"
-                className="text-xs tracking-widest uppercase"
+                className="text-sm tracking-widest uppercase"
                 style={{ color: '#666666' }}
               >
                 Email
@@ -184,7 +184,7 @@ function LoginForm() {
             <div className="flex flex-col gap-1.5">
               <label
                 htmlFor="password"
-                className="text-xs tracking-widest uppercase"
+                className="text-sm tracking-widest uppercase"
                 style={{ color: '#666666' }}
               >
                 Password
@@ -220,7 +220,7 @@ function LoginForm() {
             <button
               type="submit"
               disabled={!ready}
-              className="w-full py-4 text-sm font-bold tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4A90E2] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent btn-primary"
+              className="w-full py-4 text-lg font-bold tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4A90E2] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent btn-primary"
             >
               {state === 'loading' ? (
                 <span className="flex items-center justify-center gap-2">

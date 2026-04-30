@@ -254,13 +254,13 @@ export default function WordBudget({
           }}
         >
           <p
-            className="text-xs font-semibold uppercase tracking-widest mb-6 text-center"
+            className="text-sm font-semibold uppercase tracking-widest mb-6 text-center"
             style={{ color: accent }}
           >
             Key Rule
           </p>
           <p
-            className="fredoka text-2xl sm:text-3xl font-black text-center leading-tight mb-10"
+            className="fredoka text-3xl sm:text-4xl font-black text-center leading-tight mb-10"
             style={{
               color: '#1A1A1A',
               fontFamily: 'var(--font-fredoka)',
@@ -271,7 +271,7 @@ export default function WordBudget({
           </p>
           <button
             onClick={() => setRuleDismissed(true)}
-            className="w-full py-4 font-bold text-sm tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 btn-primary"
+            className="w-full py-4 font-bold text-lg tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 btn-primary"
             style={{ '--tw-ring-color': accent } as React.CSSProperties}
             autoFocus
           >
@@ -369,7 +369,7 @@ export default function WordBudget({
                 border: `1px solid ${accent}30`,
               }}
             >
-              <p className="text-xs font-mono" style={{ color: accent }}>
+              <p className="text-sm font-mono" style={{ color: accent }}>
                 &ldquo;{keyRule}&rdquo;
               </p>
             </div>
@@ -377,12 +377,12 @@ export default function WordBudget({
 
           {/* Goal */}
           <div>
-            <p className="text-xs font-semibold uppercase tracking-widest mb-3"
+            <p className="text-sm font-semibold uppercase tracking-widest mb-3"
               style={{ color: accent }} id="goal-label">
               Goal
             </p>
             <p
-              className={`text-base sm:text-lg font-bold leading-relaxed ${displayedGoal.length < goal.length ? 'typing-cursor' : 'typing-cursor-done'}`}
+              className={`text-lg sm:text-xl font-bold leading-relaxed ${displayedGoal.length < goal.length ? 'typing-cursor' : 'typing-cursor-done'}`}
               style={{ color: '#1A1A1A' }}
               aria-labelledby="goal-label"
               aria-label={goal}
@@ -397,13 +397,13 @@ export default function WordBudget({
           {/* Textarea + word counter */}
           <div className="flex flex-col gap-3">
             <label htmlFor="prompt-textarea"
-              className="text-xs font-semibold uppercase tracking-widest"
+              className="text-sm font-semibold uppercase tracking-widest"
               style={{ color: accent }}>
               Your Prompt
             </label>
             <textarea
               id="prompt-textarea"
-              className="w-full rounded-2xl p-4 text-sm resize-none outline-none transition-all duration-200 focus-visible:ring-2 placeholder:text-black/25"
+              className="w-full rounded-2xl p-4 text-base resize-none outline-none transition-all duration-200 focus-visible:ring-2 placeholder:text-black/25"
               style={{
                 background: '#FAFAFA',
                 border: `1.5px solid ${isOverLimit ? '#E24A4A' : '#E8E8E8'}`,
@@ -426,7 +426,7 @@ export default function WordBudget({
             <div className="flex justify-end">
               <span
                 id="word-counter"
-                className="text-xs font-mono tabular-nums rounded-full px-3 py-1 transition-all duration-200"
+                className="text-sm font-mono tabular-nums rounded-full px-3 py-1 transition-all duration-200"
                 style={{
                   background: isOverLimit ? 'rgba(226,74,74,0.08)' : '#F5F5F5',
                   color: isOverLimit ? '#E24A4A' : '#999999',
@@ -451,7 +451,7 @@ export default function WordBudget({
                 : isOverLimit ? 'Cannot submit: prompt exceeds word limit'
                 : 'Submit your prompt for scoring'
               }
-              className={`w-full py-4 font-bold text-sm tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 btn-primary${!isSubmitDisabled ? ' neon-pulse' : ''}`}
+              className={`w-full py-4 font-bold text-lg tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 btn-primary${!isSubmitDisabled ? ' neon-pulse' : ''}`}
             >
               {isLoading ? (
                 <span className="flex items-center justify-center gap-2">
@@ -469,7 +469,7 @@ export default function WordBudget({
 
           {/* Error */}
           {error && (
-            <p role="alert" className="text-sm text-center rounded-2xl py-3 px-4"
+            <p role="alert" className="text-base text-center rounded-2xl py-3 px-4"
               style={{ background: 'rgba(226,74,74,0.08)', color: '#E24A4A', border: '1px solid rgba(226,74,74,0.2)' }}>
               {error}
             </p>
@@ -482,23 +482,23 @@ export default function WordBudget({
               {/* Score display */}
               <div className="flex flex-col items-center gap-2 py-6" aria-hidden="true">
                 <span
-                  className={`fredoka text-7xl sm:text-8xl font-black tabular-nums leading-none transition-colors duration-300 ${scoreLanded ? 'score-glow' : ''}`}
+                  className={`fredoka text-8xl sm:text-9xl font-black tabular-nums leading-none transition-colors duration-300 ${scoreLanded ? 'score-glow' : ''}`}
                   style={{ color: scoreColor }}
                 >
                   {displayScore}
                 </span>
-                <span className="text-xs uppercase tracking-widest mt-1" style={{ color: '#AAAAAA' }}>
+                <span className="text-sm uppercase tracking-widest mt-1" style={{ color: '#AAAAAA' }}>
                   out of 100
                 </span>
                 {scoreLanded && (
-                  <span className="text-base font-bold mt-1 animate-in fade-in duration-300"
+                  <span className="text-lg font-bold mt-1 animate-in fade-in duration-300"
                     style={{ color: scoreColor }}>
                     {getCongratulatoryMessage(result.score)}
                   </span>
                 )}
                 {scoreLanded && (
                   <span
-                    className="rounded-full px-4 py-1.5 text-xs font-bold mt-1 animate-in fade-in duration-300"
+                    className="rounded-full px-4 py-1.5 text-sm font-bold mt-1 animate-in fade-in duration-300"
                     style={{
                       background: `${accent}18`,
                       color: accent,
@@ -519,11 +519,11 @@ export default function WordBudget({
                   border: '1px solid #EEEEEE',
                 }}
               >
-                <p className="text-xs font-semibold uppercase tracking-widest mb-3"
+                <p className="text-sm font-semibold uppercase tracking-widest mb-3"
                   style={{ color: accent }} id="feedback-label">
                   Feedback
                 </p>
-                <p className="text-sm leading-relaxed" style={{ color: '#555555' }}
+                <p className="text-base leading-relaxed" style={{ color: '#555555' }}
                   aria-labelledby="feedback-label">
                   {result.feedback}
                 </p>
@@ -539,17 +539,17 @@ export default function WordBudget({
                 }}
               >
                 <label htmlFor="reflection-input"
-                  className="text-xs font-semibold uppercase tracking-widest"
+                  className="text-sm font-semibold uppercase tracking-widest"
                   style={{ color: accent }}>
                   Reflection
                 </label>
-                <p className="text-sm" style={{ color: '#777777' }}>
+                <p className="text-base" style={{ color: '#777777' }}>
                   What made your best attempt work better than your first?
                 </p>
                 <div className="flex gap-2 items-start">
                   <textarea
                     id="reflection-input"
-                    className="flex-1 rounded-xl p-3 text-sm resize-none outline-none transition-all duration-200"
+                    className="flex-1 rounded-xl p-3 text-base resize-none outline-none transition-all duration-200"
                     style={{
                       background: '#FFFFFF',
                       border: `1px solid ${accent}30`,
@@ -567,7 +567,7 @@ export default function WordBudget({
                   <button
                     onClick={handleSaveReflection}
                     disabled={!reflection.trim() || reflectionSaved}
-                    className="shrink-0 rounded-xl px-4 py-3 text-xs font-bold transition-all duration-200"
+                    className="shrink-0 rounded-xl px-4 py-3 text-sm font-bold transition-all duration-200"
                     style={{
                       background: reflectionSaved ? '#F0FAF5' : '#F5F5F5',
                       border: `1px solid ${reflectionSaved ? '#4AE27A50' : '#E0E0E0'}`,
@@ -579,7 +579,7 @@ export default function WordBudget({
                     {reflectionSaved ? '✓ Saved' : 'Save'}
                   </button>
                 </div>
-                <p className="text-xs font-mono text-right" style={{ color: '#CCCCCC' }}>
+                <p className="text-sm font-mono text-right" style={{ color: '#CCCCCC' }}>
                   {reflection.length}/100
                 </p>
               </div>
@@ -591,14 +591,14 @@ export default function WordBudget({
                   <>
                     <Link
                       href={nextLevelUrl}
-                      className="w-full py-4 font-bold text-sm tracking-wide text-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 btn-primary"
+                      className="w-full py-4 font-bold text-lg tracking-wide text-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 btn-primary"
                     >
                       Next Level →
                     </Link>
                     <button
                       onClick={handleReset}
                       aria-label="Try again — clear your prompt and start over"
-                      className="w-full rounded-full py-4 font-bold text-sm tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2"
+                      className="w-full rounded-full py-4 font-bold text-lg tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2"
                       style={{
                         border: `1.5px solid #E0E0E0`,
                         color: '#888888',
@@ -614,14 +614,14 @@ export default function WordBudget({
                 ) : (
                   <>
                     {result.score < 60 && (
-                      <p className="text-xs text-center font-mono" style={{ color: '#AAAAAA' }}>
+                      <p className="text-sm text-center font-mono" style={{ color: '#AAAAAA' }}>
                         Score 60 or higher to advance to the next level.
                       </p>
                     )}
                     <button
                       onClick={handleReset}
                       aria-label="Try again — clear your prompt and start over"
-                      className="w-full py-4 font-bold text-sm tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 btn-primary"
+                      className="w-full py-4 font-bold text-lg tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 btn-primary"
                     >
                       Try Again
                     </button>

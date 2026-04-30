@@ -47,12 +47,12 @@ export default async function LandingPage() {
             style={{ borderRadius: '24px', filter: 'drop-shadow(0 0 24px rgba(74,144,226,0.3))' }}
           />
           <p
-            className="fredoka font-black text-7xl"
+            className="fredoka font-black text-8xl"
             style={{ color: '#4A90E2', textShadow: '0 0 32px rgba(74,144,226,0.5), 0 0 64px rgba(74,144,226,0.2)' }}
           >
             ZEPTIO
           </p>
-          <p className="text-lg" style={{ color: '#666666' }}>
+          <p className="text-xl" style={{ color: '#666666' }}>
             Build your robot. Master AI prompting.
           </p>
         </div>
