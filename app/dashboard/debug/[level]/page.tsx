@@ -4,7 +4,8 @@ import { createClient } from '@/src/lib/supabase/server'
 import GameRouter from '@/src/components/game/GameRouter'
 import { DEBUG_LEVELS } from '@/src/lib/game/debug-levels'
 import { DEFAULT_ROBOT_CONFIG, type RobotConfig } from '@/app/profile/_components/RobotSVG'
-import { getGameType } from '@/src/lib/gameRandomizer'
+import { getGameType, type GameType } from '@/src/lib/gameRandomizer'
+import { getOrGenerateLevel, getInfiniteLevelId } from '@/src/lib/levelGenerator'
 
 const DEBUG_KEY_RULES = [
   'Vague prompts get vague answers.',
@@ -41,21 +42,33 @@ function isLevelUnlocked(levelIndex: number, bestScores: Map<number, number>, le
   return true
 }
 
+function isInfiniteLevelUnlocked(levelIndex: number, bestScores: Map<number, number>, infiniteScores: Map<number, number>): boolean {
+  if (levelIndex === DEBUG_LEVELS.length + 1) {
+    const lastId = DEBUG_LEVELS[DEBUG_LEVELS.length - 1].id
+    return (bestScores.get(lastId) ?? 0) >= 60
+  }
+  const prevInfiniteId = getInfiniteLevelId('debug', levelIndex - 1)
+  return (infiniteScores.get(prevInfiniteId) ?? 0) >= 60
+}
+
 export default async function DebugLevelPage({ params }: Props) {
   const { level: levelParam } = await params
   const levelIndex = parseInt(levelParam, 10)
 
-  if (isNaN(levelIndex) || levelIndex < 1 || levelIndex > DEBUG_LEVELS.length) notFound()
+  if (isNaN(levelIndex) || levelIndex < 1) notFound()
 
-  const level = DEBUG_LEVELS[levelIndex - 1]
+  const isInfinite = levelIndex > DEBUG_LEVELS.length
 
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/auth/login')
 
-  const [{ data: scoreRows }, profileResult] = await Promise.all([
+  const [{ data: scoreRows }, { data: allScoreRows }, profileResult] = await Promise.all([
     supabase.from('xp_ledger').select('level, score').eq('user_id', user.id).eq('world', 'debug'),
-    supabase.from('profiles').select('robot_config').eq('id', user.id).maybeSingle(),
+    isInfinite
+      ? supabase.from('xp_ledger').select('level_id, score').eq('user_id', user.id).eq('world', 'debug')
+      : Promise.resolve({ data: null }),
+    supabase.from('profiles').select('robot_config, game_preferences').eq('id', user.id).maybeSingle(),
   ])
 
   const bestScores = new Map<number, number>()
@@ -64,25 +77,95 @@ export default async function DebugLevelPage({ params }: Props) {
     if ((row.score ?? 0) > cur) bestScores.set(row.level, row.score)
   }
 
-  if (!isLevelUnlocked(levelIndex, bestScores, DEBUG_LEVELS)) redirect('/dashboard/debug')
+  const infiniteScores = new Map<number, number>()
+  for (const row of allScoreRows ?? []) {
+    const cur = infiniteScores.get(row.level_id) ?? 0
+    if ((row.score ?? 0) > cur) infiniteScores.set(row.level_id, row.score)
+  }
 
   const rawRobot = (profileResult.data as { robot_config?: unknown } | null)?.robot_config
   const robotConfig: RobotConfig = rawRobot && typeof rawRobot === 'object'
     ? { ...DEFAULT_ROBOT_CONFIG, ...(rawRobot as Partial<RobotConfig>) }
     : DEFAULT_ROBOT_CONFIG
 
-  const { gameType, isFirstVisit } = await getGameType(user.id, 'debug', level.id, supabase)
+  const gamePrefs = (profileResult.data as { game_preferences?: Record<string, string> } | null)?.game_preferences ?? {}
+  const preferredType = (gamePrefs['debug'] as GameType | undefined) ?? null
+
+  // ── Hand-crafted levels 1-10 ────────────────────────────────────────────────
+
+  if (!isInfinite) {
+    if (levelIndex > DEBUG_LEVELS.length) notFound()
+    const level = DEBUG_LEVELS[levelIndex - 1]
+
+    if (!isLevelUnlocked(levelIndex, bestScores, DEBUG_LEVELS)) redirect('/dashboard/debug')
+
+    const { gameType, isFirstVisit } = await getGameType(user.id, 'debug', level.id, supabase)
+
+    const levelConfig = {
+      world: 'debug' as const,
+      level: level.id,
+      challenge: level.goal,
+      criteria: level.criteria,
+      max_xp: level.max_xp,
+    }
+
+    const nextLevelUrl = `/dashboard/debug/${levelIndex + 1}`
+
+    return (
+      <div className="min-h-screen w-full max-w-full overflow-x-hidden" style={{ background: '#EFEFEF' }}>
+        <div className="w-full max-w-2xl mx-auto px-3 sm:px-6 pt-3 sm:pt-6 mt-0 sm:mt-6 flex items-center justify-between">
+          <Link
+            href="/dashboard/debug"
+            className="inline-flex items-center gap-2 text-sm transition-colors duration-200 hover:text-[#E24A4A]"
+            style={{ color: '#888888' }}
+          >
+            ← Debug
+          </Link>
+          <div className="flex items-center gap-2">
+            <span className="hidden sm:inline text-xs font-mono" style={{ color: '#999999' }}>
+              {level.concept}
+            </span>
+            <span className="text-xs font-mono rounded-full px-3 py-1" style={{ background: 'rgba(226,74,74,0.1)', color: '#E24A4A' }}>
+              Level {String(levelIndex).padStart(2, '0')}
+            </span>
+          </div>
+        </div>
+
+        <GameRouter
+          gameType={gameType}
+          wordLimit={level.wordLimit}
+          levelConfig={levelConfig}
+          levelId={level.id}
+          nextLevelUrl={nextLevelUrl}
+          robotConfig={robotConfig}
+          keyRule={DEBUG_KEY_RULES[levelIndex - 1]}
+          isFirstVisit={isFirstVisit}
+        />
+      </div>
+    )
+  }
+
+  // ── Infinite levels 11+ ────────────────────────────────────────────────────
+
+  if (!isInfiniteLevelUnlocked(levelIndex, bestScores, infiniteScores)) {
+    redirect('/dashboard/debug')
+  }
+
+  const resolvedLevelId = getInfiniteLevelId('debug', levelIndex)
+
+  const generated = await getOrGenerateLevel(
+    user.id, 'debug', resolvedLevelId, levelIndex, preferredType, supabase,
+  )
 
   const levelConfig = {
     world: 'debug' as const,
-    level: level.id,
-    challenge: level.goal,
-    criteria: level.criteria,
-    max_xp: level.max_xp,
+    level: resolvedLevelId,
+    challenge: generated.goal,
+    criteria: generated.criteria,
+    max_xp: 100,
   }
 
-  const isLastLevel = levelIndex === DEBUG_LEVELS.length
-  const nextLevelUrl = isLastLevel ? undefined : `/dashboard/debug/${levelIndex + 1}`
+  const nextLevelUrl = `/dashboard/debug/${levelIndex + 1}`
 
   return (
     <div className="min-h-screen w-full max-w-full overflow-x-hidden" style={{ background: '#EFEFEF' }}>
@@ -95,24 +178,26 @@ export default async function DebugLevelPage({ params }: Props) {
           ← Debug
         </Link>
         <div className="flex items-center gap-2">
-          <span className="hidden sm:inline text-xs font-mono" style={{ color: '#999999' }}>
-            {level.concept}
-          </span>
-          <span className="text-xs font-mono rounded-full px-3 py-1" style={{ background: 'rgba(226,74,74,0.1)', color: '#E24A4A' }}>
-            Level {String(levelIndex).padStart(2, '0')}
+          <span
+            className="text-xs font-mono rounded-full px-3 py-1"
+            style={{ background: 'rgba(226,74,74,0.06)', color: 'rgba(226,74,74,0.5)' }}
+          >
+            ∞ Level {levelIndex}
           </span>
         </div>
       </div>
 
       <GameRouter
-        gameType={gameType}
-        wordLimit={level.wordLimit}
+        gameType={generated.gameType}
+        wordLimit={generated.wordLimit}
         levelConfig={levelConfig}
-        levelId={level.id}
+        levelId={resolvedLevelId}
         nextLevelUrl={nextLevelUrl}
         robotConfig={robotConfig}
-        keyRule={DEBUG_KEY_RULES[levelIndex - 1]}
-        isFirstVisit={isFirstVisit}
+        keyRule={generated.keyRule}
+        isFirstVisit={generated.isFirstVisit}
+        fragments={generated.fragments}
+        choices={generated.choices}
       />
     </div>
   )

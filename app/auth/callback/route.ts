@@ -28,6 +28,16 @@ export async function GET(request: NextRequest) {
           return NextResponse.redirect(`${origin}/?error=access_required`)
         }
       }
+      if (user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('calibration_complete')
+          .eq('id', user.id)
+          .maybeSingle()
+        if (!profile?.calibration_complete) {
+          return NextResponse.redirect(`${origin}/calibration`)
+        }
+      }
       return NextResponse.redirect(`${origin}/dashboard`)
     }
   }
@@ -40,7 +50,20 @@ export async function GET(request: NextRequest) {
       token_hash,
       type: type as EmailOtpType,
     })
-    if (!error) return NextResponse.redirect(`${origin}/dashboard`)
+    if (!error) {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('calibration_complete')
+          .eq('id', user.id)
+          .maybeSingle()
+        if (!profile?.calibration_complete) {
+          return NextResponse.redirect(`${origin}/calibration`)
+        }
+      }
+      return NextResponse.redirect(`${origin}/dashboard`)
+    }
   }
 
   return NextResponse.redirect(`${origin}/auth/login?error=auth_callback_failed`)

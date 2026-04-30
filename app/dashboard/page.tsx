@@ -71,8 +71,12 @@ export default async function DashboardPage() {
     supabase.from('xp_ledger').select('level, score').eq('user_id', user.id).eq('world', 'constraints'),
     supabase.from('xp_ledger').select('level, score').eq('user_id', user.id).eq('world', 'structure'),
     supabase.from('xp_ledger').select('level, score').eq('user_id', user.id).eq('world', 'debug'),
-    supabase.from('profiles').select('name, robot_config').eq('id', user.id).maybeSingle(),
+    supabase.from('profiles').select('name, robot_config, calibration_complete').eq('id', user.id).maybeSingle(),
   ])
+
+  if (!(profile as { calibration_complete?: boolean } | null)?.calibration_complete) {
+    redirect('/calibration')
+  }
 
   const rawRobotConfig = (profile as { robot_config?: unknown } | null)?.robot_config
   const robotConfig: RobotConfig = rawRobotConfig && typeof rawRobotConfig === 'object'

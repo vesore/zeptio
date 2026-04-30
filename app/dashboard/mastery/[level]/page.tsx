@@ -8,7 +8,8 @@ import { CONSTRAINTS_LEVELS } from '@/src/lib/game/constraints-levels'
 import { STRUCTURE_LEVELS } from '@/src/lib/game/structure-levels'
 import { DEBUG_LEVELS } from '@/src/lib/game/debug-levels'
 import { DEFAULT_ROBOT_CONFIG, type RobotConfig } from '@/app/profile/_components/RobotSVG'
-import { getGameType } from '@/src/lib/gameRandomizer'
+import { getGameType, type GameType } from '@/src/lib/gameRandomizer'
+import { getOrGenerateLevel, getInfiniteLevelId } from '@/src/lib/levelGenerator'
 
 interface Props {
   params: Promise<{ level: string }>
@@ -55,9 +56,9 @@ export default async function MasteryLevelPage({ params }: Props) {
   const { level: levelParam } = await params
   const levelIndex = parseInt(levelParam, 10)
 
-  if (isNaN(levelIndex) || levelIndex < 1 || levelIndex > MASTERY_LEVELS.length) notFound()
+  if (isNaN(levelIndex) || levelIndex < 1) notFound()
 
-  const level = MASTERY_LEVELS[levelIndex - 1]
+  const isInfinite = levelIndex > MASTERY_LEVELS.length
 
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -69,6 +70,7 @@ export default async function MasteryLevelPage({ params }: Props) {
     { data: structureRows },
     { data: debugRows },
     { data: masteryRows },
+    { data: allMasteryRows },
     profileResult,
   ] = await Promise.all([
     supabase.from('xp_ledger').select('level, score').eq('user_id', user.id).eq('world', 'clarity'),
@@ -76,7 +78,10 @@ export default async function MasteryLevelPage({ params }: Props) {
     supabase.from('xp_ledger').select('level, score').eq('user_id', user.id).eq('world', 'structure'),
     supabase.from('xp_ledger').select('level, score').eq('user_id', user.id).eq('world', 'debug'),
     supabase.from('xp_ledger').select('level, score').eq('user_id', user.id).eq('world', 'mastery'),
-    supabase.from('profiles').select('robot_config').eq('id', user.id).maybeSingle(),
+    isInfinite
+      ? supabase.from('xp_ledger').select('level_id, score').eq('user_id', user.id).eq('world', 'mastery')
+      : Promise.resolve({ data: null }),
+    supabase.from('profiles').select('robot_config, game_preferences').eq('id', user.id).maybeSingle(),
   ])
 
   const clarityBest     = buildBestMap(clarityRows)
@@ -85,8 +90,10 @@ export default async function MasteryLevelPage({ params }: Props) {
   const debugBest       = buildBestMap(debugRows)
   const masteryBest     = buildBestMap(masteryRows)
 
-  if (!isMasteryUnlocked(levelIndex, clarityBest, constraintsBest, structureBest, debugBest, masteryBest)) {
-    redirect('/dashboard/mastery')
+  const infiniteScores = new Map<number, number>()
+  for (const row of allMasteryRows ?? []) {
+    const cur = infiniteScores.get(row.level_id) ?? 0
+    if ((row.score ?? 0) > cur) infiniteScores.set(row.level_id, row.score)
   }
 
   const rawRobot = (profileResult.data as { robot_config?: unknown } | null)?.robot_config
@@ -94,18 +101,95 @@ export default async function MasteryLevelPage({ params }: Props) {
     ? { ...DEFAULT_ROBOT_CONFIG, ...(rawRobot as Partial<RobotConfig>) }
     : DEFAULT_ROBOT_CONFIG
 
-  const { gameType, isFirstVisit } = await getGameType(user.id, 'mastery', level.id, supabase)
+  const gamePrefs = (profileResult.data as { game_preferences?: Record<string, string> } | null)?.game_preferences ?? {}
+  const preferredType = (gamePrefs['mastery'] as GameType | undefined) ?? null
+
+  // ── Hand-crafted mastery levels ────────────────────────────────────────────
+
+  if (!isInfinite) {
+    if (levelIndex > MASTERY_LEVELS.length) notFound()
+    const level = MASTERY_LEVELS[levelIndex - 1]
+
+    if (!isMasteryUnlocked(levelIndex, clarityBest, constraintsBest, structureBest, debugBest, masteryBest)) {
+      redirect('/dashboard/mastery')
+    }
+
+    const { gameType, isFirstVisit } = await getGameType(user.id, 'mastery', level.id, supabase)
+
+    const levelConfig = {
+      world: 'mastery' as const,
+      level: level.id,
+      challenge: level.goal,
+      criteria: level.criteria,
+      max_xp: level.max_xp,
+    }
+
+    const nextLevelUrl = `/dashboard/mastery/${levelIndex + 1}`
+
+    return (
+      <div className="min-h-screen w-full max-w-full overflow-x-hidden" style={{ background: '#EFEFEF' }}>
+        <div className="w-full max-w-2xl mx-auto px-3 sm:px-6 lg:px-8 pt-3 sm:pt-6 mt-0 sm:mt-6 flex items-center justify-between">
+          <Link
+            href="/dashboard/mastery"
+            className="inline-flex items-center gap-2 text-sm transition-colors duration-200 hover:text-[#9B4AE2]"
+            style={{ color: '#888888' }}
+          >
+            ← Mastery
+          </Link>
+          <div className="flex items-center gap-2">
+            <span className="hidden sm:inline text-xs font-mono" style={{ color: '#999999' }}>
+              {level.concept}
+            </span>
+            <span className="text-xs font-mono rounded-full px-3 py-1" style={{ background: 'rgba(155,74,226,0.1)', color: '#9B4AE2' }}>
+              Mastery {String(levelIndex).padStart(2, '0')}
+            </span>
+            <span className="text-xs font-mono rounded-full px-3 py-1" style={{ background: 'rgba(74,144,226,0.1)', color: '#4A90E2' }}>
+              2× XP
+            </span>
+          </div>
+        </div>
+
+        <GameRouter
+          gameType={gameType}
+          wordLimit={level.wordLimit}
+          levelConfig={levelConfig}
+          levelId={level.id}
+          nextLevelUrl={nextLevelUrl}
+          robotConfig={robotConfig}
+          keyRule={level.keyRule}
+          isFirstVisit={isFirstVisit}
+        />
+      </div>
+    )
+  }
+
+  // ── Infinite mastery levels ────────────────────────────────────────────────
+
+  const allMasteryComplete =
+    (masteryBest.get(MASTERY_LEVELS[MASTERY_LEVELS.length - 1].id) ?? 0) >= 80
+
+  if (levelIndex === MASTERY_LEVELS.length + 1) {
+    if (!allMasteryComplete) redirect('/dashboard/mastery')
+  } else {
+    const prevInfiniteId = getInfiniteLevelId('mastery', levelIndex - 1)
+    if ((infiniteScores.get(prevInfiniteId) ?? 0) < 60) redirect('/dashboard/mastery')
+  }
+
+  const resolvedLevelId = getInfiniteLevelId('mastery', levelIndex)
+
+  const generated = await getOrGenerateLevel(
+    user.id, 'mastery', resolvedLevelId, levelIndex, preferredType, supabase,
+  )
 
   const levelConfig = {
     world: 'mastery' as const,
-    level: level.id,
-    challenge: level.goal,
-    criteria: level.criteria,
-    max_xp: level.max_xp,
+    level: resolvedLevelId,
+    challenge: generated.goal,
+    criteria: generated.criteria,
+    max_xp: 100,
   }
 
-  const isLastLevel = levelIndex === MASTERY_LEVELS.length
-  const nextLevelUrl = isLastLevel ? undefined : `/dashboard/mastery/${levelIndex + 1}`
+  const nextLevelUrl = `/dashboard/mastery/${levelIndex + 1}`
 
   return (
     <div className="min-h-screen w-full max-w-full overflow-x-hidden" style={{ background: '#EFEFEF' }}>
@@ -118,11 +202,11 @@ export default async function MasteryLevelPage({ params }: Props) {
           ← Mastery
         </Link>
         <div className="flex items-center gap-2">
-          <span className="hidden sm:inline text-xs font-mono" style={{ color: '#999999' }}>
-            {level.concept}
-          </span>
-          <span className="text-xs font-mono rounded-full px-3 py-1" style={{ background: 'rgba(155,74,226,0.1)', color: '#9B4AE2' }}>
-            Mastery {String(levelIndex).padStart(2, '0')}
+          <span
+            className="text-xs font-mono rounded-full px-3 py-1"
+            style={{ background: 'rgba(155,74,226,0.06)', color: 'rgba(155,74,226,0.5)' }}
+          >
+            ∞ Mastery {levelIndex}
           </span>
           <span className="text-xs font-mono rounded-full px-3 py-1" style={{ background: 'rgba(74,144,226,0.1)', color: '#4A90E2' }}>
             2× XP
@@ -131,14 +215,16 @@ export default async function MasteryLevelPage({ params }: Props) {
       </div>
 
       <GameRouter
-        gameType={gameType}
-        wordLimit={level.wordLimit}
+        gameType={generated.gameType}
+        wordLimit={generated.wordLimit}
         levelConfig={levelConfig}
-        levelId={level.id}
+        levelId={resolvedLevelId}
         nextLevelUrl={nextLevelUrl}
         robotConfig={robotConfig}
-        keyRule={level.keyRule}
-        isFirstVisit={isFirstVisit}
+        keyRule={generated.keyRule}
+        isFirstVisit={generated.isFirstVisit}
+        fragments={generated.fragments}
+        choices={generated.choices}
       />
     </div>
   )

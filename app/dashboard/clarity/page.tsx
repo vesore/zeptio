@@ -4,6 +4,9 @@ import { createClient } from '@/src/lib/supabase/server'
 import { CLARITY_LEVELS } from '@/src/lib/game/clarity-levels'
 import GalaxyMap from './_components/GalaxyMap'
 import { DEFAULT_ROBOT_CONFIG, type RobotConfig } from '@/app/profile/_components/RobotSVG'
+import GameStylePicker from '@/src/components/game/GameStylePicker'
+import { WORLD_GAME_POOLS } from '@/src/lib/levelGenerator'
+import type { GameType } from '@/src/lib/gameRandomizer'
 
 export default async function ClarityPage() {
   const supabase = await createClient()
@@ -12,7 +15,7 @@ export default async function ClarityPage() {
 
   const [{ data: scoreRows }, { data: profileData }] = await Promise.all([
     supabase.from('xp_ledger').select('level, score').eq('user_id', user.id).eq('world', 'clarity'),
-    supabase.from('profiles').select('robot_config').eq('id', user.id).maybeSingle(),
+    supabase.from('profiles').select('robot_config, game_preferences').eq('id', user.id).maybeSingle(),
   ])
 
   const bestScoresMap = new Map<number, number>()
@@ -31,6 +34,13 @@ export default async function ClarityPage() {
   const robotConfig: RobotConfig = rawRobot && typeof rawRobot === 'object'
     ? { ...DEFAULT_ROBOT_CONFIG, ...(rawRobot as Partial<RobotConfig>) }
     : DEFAULT_ROBOT_CONFIG
+
+  const gamePrefs = (profileData as { game_preferences?: Record<string, string> } | null)?.game_preferences ?? {}
+  const preferredType = (gamePrefs['clarity'] as GameType | undefined) ?? null
+  const availableTypes = WORLD_GAME_POOLS['clarity'] ?? []
+
+  const allComplete = completedCount === CLARITY_LEVELS.length
+  const nextInfiniteLevel = CLARITY_LEVELS.length + 1
 
   return (
     <main className="min-h-screen w-full max-w-full overflow-x-hidden pb-24" style={{ background: '#EFEFEF' }}>
@@ -87,6 +97,42 @@ export default async function ClarityPage() {
 
         {/* ── Galaxy map ── */}
         <GalaxyMap bestScores={bestScores} robotConfig={robotConfig} />
+
+        {/* ── Game Style Picker ── */}
+        <div className="mt-8 mb-2">
+          <GameStylePicker
+            world="clarity"
+            accent="#4A90E2"
+            availableTypes={availableTypes}
+            initialPreferred={preferredType}
+          />
+        </div>
+
+        {/* ── Infinite Zone ── */}
+        {allComplete && (
+          <div className="mt-6 mb-4">
+            <div
+              className="rounded-2xl p-5 flex flex-col gap-3"
+              style={{ background: '#FFFFFF', border: '1.5px solid rgba(74,144,226,0.15)', boxShadow: '0 2px 12px rgba(0,0,0,0.04)' }}
+            >
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-mono tracking-widest uppercase" style={{ color: 'rgba(74,144,226,0.5)' }}>
+                  ∞ Infinite Zone
+                </span>
+              </div>
+              <p className="text-sm" style={{ color: '#666666' }}>
+                You&apos;ve mastered all 10 levels. Keep going — AI-generated challenges unlock forever.
+              </p>
+              <Link
+                href={`/dashboard/clarity/${nextInfiniteLevel}`}
+                className="inline-flex items-center gap-2 rounded-full px-5 py-2.5 font-bold text-sm transition-all duration-200 hover:opacity-90 active:scale-95"
+                style={{ background: '#4A90E2', color: '#FFFFFF', alignSelf: 'flex-start' }}
+              >
+                Play Level {nextInfiniteLevel} →
+              </Link>
+            </div>
+          </div>
+        )}
 
       </div>
     </main>

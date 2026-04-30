@@ -14,8 +14,11 @@ import RoleAssignment from './RoleAssignment'
 import HeadToHead from './HeadToHead'
 import ChainPrompting from './ChainPrompting'
 import SpotTheFlaw from './SpotTheFlaw'
+import Reorder from './Reorder'
+import MultipleChoice from './MultipleChoice'
 import { DEFAULT_ROBOT_CONFIG, type RobotConfig } from '@/app/profile/_components/RobotSVG'
 import type { GameType } from '@/src/lib/gameRandomizer'
+import type { GeneratedChoice } from '@/src/lib/levelGenerator'
 
 interface LevelConfig {
   world: 'clarity' | 'constraints' | 'structure' | 'debug' | 'mastery'
@@ -34,6 +37,8 @@ interface GameRouterProps {
   robotConfig?: RobotConfig
   keyRule?: string
   isFirstVisit?: boolean
+  fragments?: string[]
+  choices?: GeneratedChoice[]
 }
 
 export default function GameRouter({
@@ -45,6 +50,8 @@ export default function GameRouter({
   robotConfig = DEFAULT_ROBOT_CONFIG,
   keyRule,
   isFirstVisit = false,
+  fragments,
+  choices,
 }: GameRouterProps) {
   const [ruleDismissed, setRuleDismissed] = useState(!isFirstVisit || !keyRule)
 
@@ -123,6 +130,10 @@ export default function GameRouter({
       return <ChainPrompting {...gameProps} />
     case 'SpotTheFlaw':
       return <SpotTheFlaw {...gameProps} />
+    case 'Reorder':
+      return <Reorder {...gameProps} fragments={fragments} />
+    case 'MultipleChoice':
+      return <MultipleChoice {...gameProps} choices={choices} />
     case 'WordBudget':
     default:
       return (

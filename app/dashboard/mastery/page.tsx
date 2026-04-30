@@ -8,6 +8,9 @@ import { STRUCTURE_LEVELS } from '@/src/lib/game/structure-levels'
 import { DEBUG_LEVELS } from '@/src/lib/game/debug-levels'
 import WorldGalaxyMap from '@/app/dashboard/_components/WorldGalaxyMap'
 import { DEFAULT_ROBOT_CONFIG, type RobotConfig } from '@/app/profile/_components/RobotSVG'
+import GameStylePicker from '@/src/components/game/GameStylePicker'
+import { WORLD_GAME_POOLS } from '@/src/lib/levelGenerator'
+import type { GameType } from '@/src/lib/gameRandomizer'
 
 const ACCENT = '#9B4AE2'
 
@@ -80,7 +83,7 @@ export default async function MasteryPage() {
     supabase.from('xp_ledger').select('level, score').eq('user_id', user.id).eq('world', 'structure'),
     supabase.from('xp_ledger').select('level, score').eq('user_id', user.id).eq('world', 'debug'),
     supabase.from('xp_ledger').select('level, score').eq('user_id', user.id).eq('world', 'mastery'),
-    supabase.from('profiles').select('robot_config').eq('id', user.id).maybeSingle(),
+    supabase.from('profiles').select('robot_config, game_preferences').eq('id', user.id).maybeSingle(),
   ])
 
   const clarityBest     = buildBestMap(clarityRows)
@@ -109,6 +112,13 @@ export default async function MasteryPage() {
   const unlockedOverride: boolean[] = MASTERY_LEVELS.map((_, i) =>
     isMasteryUnlocked(i + 1, clarityBest, constraintsBest, structureBest, debugBest, masteryBest)
   )
+
+  const gamePrefs = (profileData as { game_preferences?: Record<string, string> } | null)?.game_preferences ?? {}
+  const preferredType = (gamePrefs['mastery'] as GameType | undefined) ?? null
+  const availableTypes = WORLD_GAME_POOLS['mastery'] ?? []
+
+  const allComplete = completedCount === MASTERY_LEVELS.length
+  const nextInfiniteLevel = MASTERY_LEVELS.length + 1
 
   return (
     <main className="min-h-screen w-full max-w-full overflow-x-hidden pb-24" style={{ background: '#EFEFEF' }}>
@@ -169,6 +179,40 @@ export default async function MasteryPage() {
           baseLevelHref="/dashboard/mastery"
           unlockedOverride={unlockedOverride}
         />
+
+        {/* Game Style Picker */}
+        <div className="mt-8 mb-2">
+          <GameStylePicker
+            world="mastery"
+            accent={ACCENT}
+            availableTypes={availableTypes}
+            initialPreferred={preferredType}
+          />
+        </div>
+
+        {/* Infinite Zone */}
+        {allComplete && (
+          <div className="mt-6 mb-4">
+            <div
+              className="rounded-2xl p-5 flex flex-col gap-3"
+              style={{ background: '#FFFFFF', border: `1.5px solid ${ACCENT}26`, boxShadow: '0 2px 12px rgba(0,0,0,0.04)' }}
+            >
+              <span className="text-xs font-mono tracking-widest uppercase" style={{ color: `${ACCENT}80` }}>
+                ∞ Infinite Zone
+              </span>
+              <p className="text-sm" style={{ color: '#666666' }}>
+                All mastery levels complete. AI-generated 2× XP challenges unlock forever.
+              </p>
+              <Link
+                href={`/dashboard/mastery/${nextInfiniteLevel}`}
+                className="inline-flex items-center gap-2 rounded-full px-5 py-2.5 font-bold text-sm transition-all duration-200 hover:opacity-90 active:scale-95"
+                style={{ background: ACCENT, color: '#FFFFFF', alignSelf: 'flex-start' }}
+              >
+                Play Mastery {nextInfiniteLevel} →
+              </Link>
+            </div>
+          </div>
+        )}
 
       </div>
     </main>

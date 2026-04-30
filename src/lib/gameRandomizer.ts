@@ -12,6 +12,8 @@ export type GameType =
   | 'HeadToHead'
   | 'ChainPrompting'
   | 'SpotTheFlaw'
+  | 'Reorder'
+  | 'MultipleChoice'
 
 const WORLD_POOLS: Record<string, GameType[]> = {
   clarity:     ['WordBudget', 'FillInTheBlank', 'RewriteChallenge', 'AudienceSwap'],
