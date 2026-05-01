@@ -2,10 +2,8 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/src/lib/supabase/server'
 import { CLARITY_LEVELS } from '@/src/lib/game/clarity-levels'
-import EditNameForm from './_components/EditNameForm'
-import RobotCustomizer from './_components/RobotCustomizer'
-import ProfileExtrasForm from './_components/ProfileExtrasForm'
 import { DEFAULT_ROBOT_CONFIG, type RobotConfig } from './_components/RobotSVG'
+import ProfileTabs from './_components/ProfileTabs'
 
 async function signOut() {
   'use server'
@@ -14,22 +12,7 @@ async function signOut() {
   redirect('/auth/login')
 }
 
-// ─── Badge definitions ────────────────────────────────────────────────────────
-interface BadgeDef {
-  id: string
-  icon: string
-  name: string
-  description: string
-}
-
-const BADGE_DEFS: BadgeDef[] = [
-  { id: 'first_step',     icon: '🎯', name: 'First Step',     description: 'Complete your first level'      },
-  { id: 'getting_warm',   icon: '🔥', name: 'Getting Warm',   description: 'Score 60+ on any level'         },
-  { id: 'sharp_mind',     icon: '🧠', name: 'Sharp Mind',     description: 'Score 80+ on any level'         },
-  { id: 'perfect',        icon: '⭐', name: 'Perfect',        description: 'Score 100 on any level'         },
-  { id: 'on_a_roll',      icon: '🎮', name: 'On a Roll',      description: '3 consecutive levels at 60+'    },
-  { id: 'clarity_master', icon: '🏆', name: 'Clarity Master', description: 'Complete all 10 Clarity levels' },
-]
+// ─── Badge helpers ────────────────────────────────────────────────────────────
 
 function computeEarnedBadges(clarityBest: Map<number, number>, completedCount: number): Set<string> {
   const earned = new Set<string>()
@@ -65,11 +48,15 @@ export default async function ProfilePage() {
     { data: xpRows },
     { data: streakRow },
     { data: clarityScoreRows },
+    { data: worldPointsRows },
+    { data: userPartsRows },
   ] = await Promise.all([
     supabase.from('profiles').select('name, created_at, bio, favorite_world, robot_config').eq('id', user.id).maybeSingle(),
     supabase.from('xp_ledger').select('level_id, amount').eq('user_id', user.id),
     supabase.from('streaks').select('current_streak').eq('user_id', user.id).maybeSingle(),
     supabase.from('xp_ledger').select('level, score').eq('user_id', user.id).eq('world', 'clarity'),
+    supabase.from('world_points').select('world, points').eq('user_id', user.id),
+    supabase.from('user_parts').select('part_id, equipped').eq('user_id', user.id),
   ])
 
   const streak = streakRow?.current_streak ?? 0
@@ -93,19 +80,27 @@ export default async function ProfilePage() {
     crown:       completedCount === CLARITY_LEVELS.length,
   }
 
-  // Parse saved robot config — merge with defaults so missing keys are safe
+  // Parse saved robot config
   const rawConfig = (profile as { robot_config?: unknown })?.robot_config
   const robotConfig: RobotConfig = rawConfig && typeof rawConfig === 'object'
     ? { ...DEFAULT_ROBOT_CONFIG, ...(rawConfig as Partial<RobotConfig>) }
     : DEFAULT_ROBOT_CONFIG
 
-  const displayName = (profile as { name?: string })?.name ?? user.email ?? ''
-  const memberSince = (profile as { created_at?: string })?.created_at
+  const displayName          = (profile as { name?: string })?.name ?? user.email ?? ''
+  const memberSince          = (profile as { created_at?: string })?.created_at
     ? new Date((profile as { created_at: string }).created_at).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
     : null
-
-  const initialBio          = (profile as { bio?: string })?.bio          ?? ''
+  const initialBio           = (profile as { bio?: string })?.bio          ?? ''
   const initialFavoriteWorld = (profile as { favorite_world?: string })?.favorite_world ?? ''
+
+  // Parts tab data
+  const worldPoints: Record<string, number> = {}
+  for (const row of worldPointsRows ?? []) {
+    if (row.world) worldPoints[row.world] = row.points ?? 0
+  }
+
+  const ownedPartIds    = (userPartsRows ?? []).map(r => r.part_id).filter(Boolean) as string[]
+  const equippedPartIds = (userPartsRows ?? []).filter(r => r.equipped).map(r => r.part_id).filter(Boolean) as string[]
 
   return (
     <main className="min-h-screen w-full max-w-full overflow-hidden" style={{ background: '#EFEFEF' }}>
@@ -127,95 +122,23 @@ export default async function ProfilePage() {
         </span>
       </header>
 
-      <div className="w-full max-w-full sm:max-w-lg mx-auto px-3 sm:px-6 py-4 sm:py-10 flex flex-col gap-6 sm:gap-8 overflow-hidden">
+      <div className="w-full max-w-full sm:max-w-lg mx-auto px-3 sm:px-6 py-4 sm:py-10 overflow-hidden">
 
-        {/* ── ROBOT AVATAR ──────────────────────────────────── */}
-        <section>
-          <p className="text-sm font-semibold uppercase tracking-widest mb-4" style={{ color: '#4A90E2' }}>
-            Your Robot
-          </p>
-          <RobotCustomizer initialConfig={robotConfig} unlockedParts={unlockedParts} bodyUnlocked={bodyUnlocked} />
-        </section>
-
-        {/* ── PROFILE ───────────────────────────────────────── */}
-        <section className="rounded-3xl p-5 sm:p-6 overflow-hidden" style={{ background: '#FFFFFF', border: '1px solid #E8E8E8', boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
-          <p className="text-sm font-semibold uppercase tracking-widest mb-4" style={{ color: '#4A90E2' }}>
-            Profile
-          </p>
-          <div className="flex flex-col gap-4">
-            <div>
-              <EditNameForm initialName={displayName} />
-              <p className="mt-1 text-base truncate" style={{ color: '#888888' }}>
-                {user.email}
-              </p>
-              {memberSince && (
-                <p className="mt-0.5 text-sm" style={{ color: '#999999' }}>
-                  Member since {memberSince}
-                </p>
-              )}
-            </div>
-            <div style={{ borderTop: '1px solid #E8E8E8', paddingTop: '1rem' }}>
-              <ProfileExtrasForm
-                initialBio={initialBio}
-                initialFavoriteWorld={initialFavoriteWorld}
-              />
-            </div>
-          </div>
-        </section>
-
-        {/* ── BADGES ────────────────────────────────────────── */}
-        <section>
-          <p className="text-sm font-semibold uppercase tracking-widest mb-4" style={{ color: '#4A90E2' }}>
-            Badges
-          </p>
-          <div className="grid grid-cols-3 gap-2 sm:gap-3">
-            {BADGE_DEFS.map(badge => {
-              const earned = earnedBadges.has(badge.id)
-              return (
-                <div
-                  key={badge.id}
-                  className="rounded-2xl p-3 flex flex-col gap-1.5"
-                  style={{
-                    background: earned ? 'rgba(74,144,226,0.07)' : '#F5F5F5',
-                    border:     earned ? '1px solid rgba(74,144,226,0.25)' : '1px solid #E8E8E8',
-                    boxShadow:  earned ? '0 2px 12px rgba(74,144,226,0.1)' : 'none',
-                    opacity:    earned ? 1 : 0.5,
-                  }}
-                >
-                  <div className="flex items-center justify-between gap-1">
-                    <span className="text-xl" role="img" aria-label={badge.name}>
-                      {earned ? badge.icon : '🔒'}
-                    </span>
-                    {earned && (
-                      <span
-                        className="text-[9px] font-bold rounded-full px-1.5 py-0.5 uppercase tracking-wider shrink-0"
-                        style={{ background: 'rgba(74,144,226,0.15)', color: '#4A90E2' }}
-                      >
-                        ✓
-                      </span>
-                    )}
-                  </div>
-                  <div>
-                    <p className="text-sm font-bold leading-tight">{badge.name}</p>
-                    <p className="text-xs mt-0.5 leading-snug" style={{ color: '#888888' }}>
-                      {badge.description}
-                    </p>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-        </section>
-
-        {/* ── SIGN OUT ──────────────────────────────────────── */}
-        <form action={signOut}>
-          <button
-            type="submit"
-            className="w-full rounded-full py-4 font-bold text-lg tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4A90E2] border border-red-400/30 text-red-400/60 hover:border-red-400 hover:text-red-400"
-          >
-            Sign Out
-          </button>
-        </form>
+        <ProfileTabs
+          displayName={displayName}
+          userEmail={user.email ?? ''}
+          memberSince={memberSince}
+          initialBio={initialBio}
+          initialFavoriteWorld={initialFavoriteWorld}
+          robotConfig={robotConfig}
+          unlockedParts={unlockedParts}
+          bodyUnlocked={bodyUnlocked}
+          earnedBadgeIds={Array.from(earnedBadges)}
+          signOutAction={signOut}
+          worldPoints={worldPoints}
+          ownedPartIds={ownedPartIds}
+          equippedPartIds={equippedPartIds}
+        />
 
       </div>
     </main>

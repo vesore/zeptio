@@ -138,14 +138,14 @@ export default function RobotCustomizer({ initialConfig, unlockedParts, bodyUnlo
             onChange={e => { setConfig(prev => ({ ...prev, name: e.target.value.slice(0, 20) })); setSaved(false) }}
             placeholder="Give your robot a name…"
             maxLength={20}
-            className="w-full rounded-2xl px-4 py-3 pr-14 text-sm font-medium outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#4A90E2] placeholder:text-white/25"
-            style={{ color: '#FFFFFF', background: '#FAFAFA', border: '1.5px solid rgba(0,0,0,0.08)' }}
-            onFocus={e => { e.target.style.borderColor = '#00FF88' }}
+            className="w-full rounded-2xl px-4 py-3 pr-14 text-sm font-medium outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#4A90E2] placeholder:text-[#AAAAAA]"
+            style={{ color: '#1A1A1A', background: '#FAFAFA', border: '1.5px solid rgba(0,0,0,0.08)' }}
+            onFocus={e => { e.target.style.borderColor = '#4A90E2' }}
             onBlur={e  => { e.target.style.borderColor = 'rgba(0,0,0,0.08)' }}
           />
           <span
             className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-mono tabular-nums pointer-events-none"
-            style={{ color: config.name.length >= 17 ? '#f87171' : 'rgba(255,255,255,0.25)' }}
+            style={{ color: config.name.length >= 17 ? '#f87171' : '#BBBBBB' }}
           >
             {config.name.length}/20
           </span>
@@ -167,13 +167,13 @@ export default function RobotCustomizer({ initialConfig, unlockedParts, bodyUnlo
                 className="flex flex-col items-center gap-1.5 rounded-2xl py-2 px-1 transition-all duration-200"
                 style={{
                   background: active ? 'rgba(74,144,226,0.1)' : 'rgba(0,0,0,0.03)',
-                  border: `1.5px solid ${active ? '#00FF88' : 'rgba(0,0,0,0.06)'}`,
+                  border: `1.5px solid ${active ? '#4A90E2' : 'rgba(0,0,0,0.06)'}`,
                 }}
               >
                 <RobotSVG config={{ ...DEFAULT_ROBOT_CONFIG, style }} size={52} headOnly />
                 <span
                   className="text-[10px] font-mono font-semibold"
-                  style={{ color: active ? '#00FF88' : 'rgba(255,255,255,0.4)' }}
+                  style={{ color: active ? '#4A90E2' : '#999999' }}
                 >
                   {STYLE_NAMES[style]}
                 </span>
@@ -185,7 +185,7 @@ export default function RobotCustomizer({ initialConfig, unlockedParts, bodyUnlo
 
       {/* Body unlock hint (shown when body not yet unlocked) */}
       {!bodyUnlocked && (
-        <p className="text-xs font-mono text-center rounded-xl px-3 py-2" style={{ background: 'rgba(0,0,0,0.03)', color: '#999999', border: '1px solid rgba(255,255,255,0.06)' }}>
+        <p className="text-xs font-mono text-center rounded-xl px-3 py-2" style={{ background: 'rgba(0,0,0,0.03)', color: '#999999', border: '1px solid rgba(0,0,0,0.06)' }}>
           🔒 Complete your first Clarity level to unlock the body
         </p>
       )}
@@ -207,7 +207,7 @@ export default function RobotCustomizer({ initialConfig, unlockedParts, bodyUnlo
                   disabled={!unlocked}
                   className="flex items-center gap-3 rounded-2xl px-4 py-3 text-left transition-all duration-200 min-w-0"
                   style={{
-                    background: equipped ? 'rgba(74,144,226,0.1)' : 'rgba(255,255,255,0.04)',
+                    background: equipped ? 'rgba(74,144,226,0.1)' : 'rgba(0,0,0,0.02)',
                     border: `1.5px solid ${equipped ? 'rgba(74,144,226,0.4)' : 'rgba(0,0,0,0.06)'}`,
                     opacity: unlocked ? 1 : 0.45,
                     cursor: unlocked ? 'pointer' : 'not-allowed',
@@ -217,9 +217,9 @@ export default function RobotCustomizer({ initialConfig, unlockedParts, bodyUnlo
                     {unlocked ? icon : '🔒'}
                   </span>
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-bold text-white truncate">{label}</p>
+                    <p className="text-sm font-bold truncate" style={{ color: '#1A1A1A' }}>{label}</p>
                     {unlocked ? (
-                      <p className="text-[10px] font-mono" style={{ color: equipped ? 'rgba(74,144,226,0.7)' : 'rgba(255,255,255,0.3)' }}>
+                      <p className="text-[10px] font-mono" style={{ color: equipped ? 'rgba(74,144,226,0.7)' : '#AAAAAA' }}>
                         {equipped ? 'Equipped' : 'Tap to equip'}
                       </p>
                     ) : (
@@ -248,8 +248,8 @@ export default function RobotCustomizer({ initialConfig, unlockedParts, bodyUnlo
           onClick={() => setIsEditing(false)}
           className="px-5 py-3 rounded-full font-bold text-sm tracking-wide transition-all duration-200"
           style={{ border: '1.5px solid rgba(0,0,0,0.08)', color: '#888888' }}
-          onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = 'white'; (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.3)' }}
-          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.4)'; (e.currentTarget as HTMLElement).style.borderColor = 'rgba(0,0,0,0.08)' }}
+          onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#1A1A1A'; (e.currentTarget as HTMLElement).style.borderColor = 'rgba(0,0,0,0.2)' }}
+          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = '#888888'; (e.currentTarget as HTMLElement).style.borderColor = 'rgba(0,0,0,0.08)' }}
         >
           Done
         </button>

@@ -1,5 +1,6 @@
 import { createClient } from '@/src/lib/supabase/server'
 import { scoreResponse, type LevelConfig } from '@/src/lib/scoring/engine'
+import { checkPartUnlocks } from '@/src/lib/checkPartUnlocks'
 import { NextRequest, NextResponse } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
 
@@ -46,6 +47,9 @@ export async function POST(request: NextRequest) {
     try {
       const resolvedLevelId = typeof level_id === 'number' ? level_id : level
 
+      // level_id 0 = calibration scoring — skip XP/streak persistence
+      if (resolvedLevelId === 0) return NextResponse.json(result)
+
       const [{ data: existingRows }, { data: existing }] = await Promise.all([
         supabase
           .from('xp_ledger')
@@ -76,6 +80,27 @@ export async function POST(request: NextRequest) {
           level_id: resolvedLevelId,
         })
       }
+
+      // Accumulate world points (always, not just on best score)
+      try {
+        const { data: wp } = await supabase
+          .from('world_points')
+          .select('points')
+          .eq('user_id', user.id)
+          .eq('world', world)
+          .maybeSingle()
+        await supabase.from('world_points').upsert(
+          { user_id: user.id, world, points: (wp?.points ?? 0) + result.score },
+          { onConflict: 'user_id,world' }
+        )
+      } catch { /* non-critical */ }
+
+      // Check part unlocks
+      const { newly_unlocked } = await checkPartUnlocks(
+        supabase, user.id, world, resolvedLevelId, result.score
+      ).catch(() => ({ newly_unlocked: [] }));
+      (result as typeof result & { newly_unlocked_parts: string[] }).newly_unlocked_parts =
+        newly_unlocked.map(p => p.id)
 
       let newStreak = 1
       if (existing?.last_activity_date) {

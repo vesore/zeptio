@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import GameRobot, { type RobotExpression } from './GameRobot'
 import { DEFAULT_ROBOT_CONFIG, type RobotConfig } from '@/app/profile/_components/RobotSVG'
+import PartUnlockCelebration from './PartUnlockCelebration'
 
 interface LevelConfig {
   world: 'clarity' | 'constraints' | 'structure' | 'debug' | 'mastery'
@@ -17,6 +18,7 @@ interface ScoreResult {
   score: number
   xp_earned: number
   feedback: string
+  newly_unlocked_parts?: string[]
 }
 
 interface Props {
@@ -71,6 +73,7 @@ export default function RoleAssignment({
   const [reflection, setReflection]           = useState('')
   const [reflectionSaved, setReflectionSaved] = useState(false)
   const [error, setError]                     = useState<string | null>(null)
+  const [unlockedPartIds, setUnlockedPartIds] = useState<string[]>([])
   const animationRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   // Pre-fill textarea when role is selected
@@ -130,7 +133,9 @@ export default function RoleAssignment({
         const data = await res.json().catch(() => ({}))
         throw new Error((data as { error?: string }).error ?? `Request failed (${res.status})`)
       }
-      setResult(await res.json())
+      const data: ScoreResult = await res.json()
+      setResult(data)
+      setUnlockedPartIds(data.newly_unlocked_parts ?? [])
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong.')
     } finally {
@@ -154,12 +159,13 @@ export default function RoleAssignment({
     setSelectedRole(null); setPrompt(''); setResult(null); setError(null)
     setDisplayScore(0); setScoreLanded(false); setFeedbackVisible(false)
     setShowCelebration(false); setReflection(''); setReflectionSaved(false)
+    setUnlockedPartIds([])
   }
 
   const isSubmitDisabled = !selectedRole || !prompt.trim() || prompt.trim() === `You are a ${selectedRole}.` || isLoading
 
   const scoreColor =
-    displayScore >= 80 ? '#1A1A1A' : displayScore >= 60 ? '#00FF88' : displayScore >= 40 ? '#B87333' : '#E24A4A'
+    displayScore >= 80 ? '#1A1A1A' : displayScore >= 60 ? '#22a85e' : displayScore >= 40 ? '#B87333' : '#E24A4A'
 
   const robotExpression: RobotExpression =
     isLoading ? 'loading'
@@ -193,6 +199,11 @@ export default function RoleAssignment({
         </div>
       )}
 
+      <PartUnlockCelebration
+        unlockedPartIds={unlockedPartIds}
+        onDismiss={() => setUnlockedPartIds([])}
+      />
+
       <div className="w-full max-w-2xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
         <div className="w-full rounded-3xl p-5 sm:p-8 flex flex-col gap-5 sm:gap-6" style={{ background: '#FAFAFA', border: '1.5px solid #E8E8E8',  }}>
 
@@ -220,7 +231,7 @@ export default function RoleAssignment({
                       key={r}
                       onClick={() => setSelectedRole(r)}
                       className="rounded-full px-4 py-2 text-sm font-bold transition-all duration-200"
-                      style={{ background: isSelected ? 'rgba(226,160,74,0.15)' : 'rgba(255,255,255,0.04)', border: `1.5px solid ${isSelected ? '#B87333' : 'rgba(255,255,255,0.1)'}`, color: isSelected ? '#B87333' : 'rgba(255,255,255,0.6)', cursor: 'pointer' }}
+                      style={{ background: isSelected ? 'rgba(226,160,74,0.15)' : 'rgba(0,0,0,0.02)', border: `1.5px solid ${isSelected ? '#B87333' : 'rgba(0,0,0,0.08)'}`, color: isSelected ? '#B87333' : '#666666', cursor: 'pointer' }}
                       aria-pressed={isSelected}
                     >
                       {r}
@@ -248,8 +259,8 @@ export default function RoleAssignment({
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
                 disabled={isLoading}
-                onFocus={(e) => { e.target.style.borderColor = '#00FF88' }}
-                onBlur={(e) => { e.target.style.borderColor = 'rgba(255,255,255,0.1)' }}
+                onFocus={(e) => { e.target.style.borderColor = '#4A90E2' }}
+                onBlur={(e) => { e.target.style.borderColor = 'rgba(0,0,0,0.08)' }}
               />
             </div>
           )}
@@ -280,8 +291,8 @@ export default function RoleAssignment({
                 <label className="text-xs font-semibold uppercase tracking-widest" style={{ color: '#E2A04A' }}>Reflection</label>
                 <p className="text-sm" style={{ color: '#666666' }}>How did the {selectedRole} role shape the response you expected?</p>
                 <div className="flex gap-2 items-start">
-                  <textarea className="flex-1 rounded-xl p-3 text-sm resize-none outline-none focus-visible:ring-1 focus-visible:ring-[#B87333]" style={{ background: '#FAFAFA', border: '1px solid rgba(226,160,74,0.2)', color: 'rgba(255,255,255,0.8)', minHeight: '60px', caretColor: '#E2A04A' }} placeholder="Type your reflection…" value={reflection} onChange={(e) => setReflection(e.target.value.slice(0, 100))} disabled={reflectionSaved} />
-                  <button onClick={handleSaveReflection} disabled={!reflection.trim() || reflectionSaved} className="shrink-0 rounded-xl px-4 py-3 text-xs font-bold" style={{ background: reflectionSaved ? 'rgba(74,144,226,0.1)' : 'rgba(226,160,74,0.15)', border: `1px solid ${reflectionSaved ? 'rgba(74,144,226,0.3)' : 'rgba(226,160,74,0.3)'}`, color: reflectionSaved ? '#00FF88' : '#E2A04A', cursor: reflectionSaved ? 'default' : 'pointer' }}>
+                  <textarea className="flex-1 rounded-xl p-3 text-sm resize-none outline-none focus-visible:ring-1 focus-visible:ring-[#B87333]" style={{ background: '#FAFAFA', border: '1px solid rgba(226,160,74,0.2)', color: '#1A1A1A', minHeight: '60px', caretColor: '#E2A04A' }} placeholder="Type your reflection…" value={reflection} onChange={(e) => setReflection(e.target.value.slice(0, 100))} disabled={reflectionSaved} />
+                  <button onClick={handleSaveReflection} disabled={!reflection.trim() || reflectionSaved} className="shrink-0 rounded-xl px-4 py-3 text-xs font-bold" style={{ background: reflectionSaved ? 'rgba(74,144,226,0.1)' : 'rgba(226,160,74,0.15)', border: `1px solid ${reflectionSaved ? 'rgba(74,144,226,0.3)' : 'rgba(226,160,74,0.3)'}`, color: reflectionSaved ? '#4A90E2' : '#E2A04A', cursor: reflectionSaved ? 'default' : 'pointer' }}>
                     {reflectionSaved ? '✓ Saved' : 'Save'}
                   </button>
                 </div>

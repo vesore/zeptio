@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import GameRobot, { type RobotExpression } from './GameRobot'
 import { DEFAULT_ROBOT_CONFIG, type RobotConfig } from '@/app/profile/_components/RobotSVG'
+import PartUnlockCelebration from './PartUnlockCelebration'
 
 interface LevelConfig {
   world: 'clarity' | 'constraints' | 'structure' | 'debug' | 'mastery'
@@ -17,6 +18,7 @@ interface ScoreResult {
   score: number
   xp_earned: number
   feedback: string
+  newly_unlocked_parts?: string[]
 }
 
 interface Props {
@@ -73,6 +75,7 @@ export default function ChainPrompting({
   const [reflection, setReflection]       = useState('')
   const [reflectionSaved, setReflectionSaved] = useState(false)
   const [error, setError]                 = useState<string | null>(null)
+  const [unlockedPartIds, setUnlockedPartIds] = useState<string[]>([])
   const animationRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   // Score animation when all done
@@ -146,6 +149,7 @@ export default function ChainPrompting({
         setStep(3)
         // trigger score animation
         setFinalScore(syntheticResult.score)
+        setUnlockedPartIds(stepResult.newly_unlocked_parts ?? [])
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong.')
@@ -170,11 +174,12 @@ export default function ChainPrompting({
     setStep(0); setPrompts(['', '', '']); setStepResults([null, null, null])
     setFinalScore(null); setDisplayScore(0); setScoreLanded(false); setFeedbackVisible(false)
     setShowCelebration(false); setReflection(''); setReflectionSaved(false); setError(null)
+    setUnlockedPartIds([])
     if (animationRef.current) clearInterval(animationRef.current)
   }
 
   const scoreColor =
-    displayScore >= 80 ? '#1A1A1A' : displayScore >= 60 ? '#00FF88' : displayScore >= 40 ? '#B87333' : '#E24A4A'
+    displayScore >= 80 ? '#1A1A1A' : displayScore >= 60 ? '#22a85e' : displayScore >= 40 ? '#B87333' : '#E24A4A'
 
   const robotExpression: RobotExpression =
     currentStepLoading ? 'loading'
@@ -206,6 +211,11 @@ export default function ChainPrompting({
         </div>
       )}
 
+      <PartUnlockCelebration
+        unlockedPartIds={unlockedPartIds}
+        onDismiss={() => setUnlockedPartIds([])}
+      />
+
       <div className="w-full max-w-2xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
         <div className="w-full rounded-3xl p-5 sm:p-8 flex flex-col gap-5 sm:gap-6" style={{ background: '#FAFAFA', border: '1.5px solid #E8E8E8',  }}>
 
@@ -227,15 +237,15 @@ export default function ChainPrompting({
                 <div
                   className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0"
                   style={{
-                    background: i < step ? 'rgba(74,144,226,0.2)' : i === step ? 'rgba(74,144,226,0.1)' : 'rgba(255,255,255,0.05)',
-                    border: `1.5px solid ${i < step ? '#00FF88' : i === step ? 'rgba(74,144,226,0.5)' : 'rgba(255,255,255,0.1)'}`,
-                    color: i < step ? '#00FF88' : i === step ? 'rgba(74,144,226,0.7)' : 'rgba(255,255,255,0.3)',
+                    background: i < step ? 'rgba(74,144,226,0.2)' : i === step ? 'rgba(74,144,226,0.1)' : 'rgba(0,0,0,0.02)',
+                    border: `1.5px solid ${i < step ? '#22a85e' : i === step ? 'rgba(74,144,226,0.5)' : 'rgba(0,0,0,0.08)'}`,
+                    color: i < step ? '#22a85e' : i === step ? 'rgba(74,144,226,0.7)' : '#AAAAAA',
                   }}
                 >
                   {i < step ? '✓' : i + 1}
                 </div>
-                <span className="text-xs font-mono hidden sm:block" style={{ color: i === step ? 'rgba(255,255,255,0.6)' : 'rgba(255,255,255,0.25)' }}>{STEP_LABELS[i]}</span>
-                {i < 2 && <div className="flex-1 h-px mx-1" style={{ background: i < step ? 'rgba(74,144,226,0.3)' : 'rgba(255,255,255,0.08)' }} />}
+                <span className="text-xs font-mono hidden sm:block" style={{ color: i === step ? '#666666' : '#BBBBBB' }}>{STEP_LABELS[i]}</span>
+                {i < 2 && <div className="flex-1 h-px mx-1" style={{ background: i < step ? 'rgba(74,144,226,0.3)' : 'rgba(0,0,0,0.06)' }} />}
               </div>
             ))}
           </div>
@@ -252,7 +262,7 @@ export default function ChainPrompting({
               {step > 0 && (
                 <div className="flex flex-col gap-2">
                   {prompts.slice(0, step).map((p, i) => (
-                    <div key={i} className="rounded-xl px-3 py-2 flex gap-2" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
+                    <div key={i} className="rounded-xl px-3 py-2 flex gap-2" style={{ background: 'rgba(0,0,0,0.02)', border: '1px solid rgba(0,0,0,0.06)' }}>
                       <span className="text-xs font-mono shrink-0 mt-0.5" style={{ color: '#4A90E2' }}>↳ Step {i + 1}</span>
                       <span className="text-xs" style={{ color: '#888888' }}>{p}</span>
                     </div>
@@ -271,8 +281,8 @@ export default function ChainPrompting({
                   setPrompts(updated)
                 }}
                 disabled={currentStepLoading}
-                onFocus={(e) => { e.target.style.borderColor = '#00FF88' }}
-                onBlur={(e) => { e.target.style.borderColor = 'rgba(255,255,255,0.1)' }}
+                onFocus={(e) => { e.target.style.borderColor = '#4A90E2' }}
+                onBlur={(e) => { e.target.style.borderColor = 'rgba(0,0,0,0.08)' }}
               />
 
               <button onClick={handleStepSubmit} disabled={!prompts[step].trim() || currentStepLoading} className={`w-full py-4 font-bold text-sm tracking-wide transition-all duration-200 btn-primary${prompts[step].trim() && !currentStepLoading ? ' neon-pulse' : ''}`}>
@@ -306,10 +316,10 @@ export default function ChainPrompting({
               <div className="flex flex-col gap-2">
                 <p className="text-xs font-semibold uppercase tracking-widest" style={{ color: '#4A90E2' }}>Chain Scores</p>
                 {stepResults.map((r, i) => r && (
-                  <div key={i} className="flex items-center gap-3 rounded-xl px-4 py-2" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
+                  <div key={i} className="flex items-center gap-3 rounded-xl px-4 py-2" style={{ background: 'rgba(0,0,0,0.02)', border: '1px solid rgba(0,0,0,0.06)' }}>
                     <span className="text-xs font-mono" style={{ color: '#999999' }}>Step {i + 1}</span>
                     <span className="flex-1 text-xs" style={{ color: '#888888' }}>{STEP_LABELS[i]}</span>
-                    <span className="text-xs font-mono font-bold" style={{ color: r.score >= 60 ? '#00FF88' : '#E2A04A' }}>{r.score}</span>
+                    <span className="text-xs font-mono font-bold" style={{ color: r.score >= 60 ? '#22a85e' : '#E2A04A' }}>{r.score}</span>
                   </div>
                 ))}
               </div>
@@ -333,8 +343,8 @@ export default function ChainPrompting({
                 <label className="text-xs font-semibold uppercase tracking-widest" style={{ color: '#E2A04A' }}>Reflection</label>
                 <p className="text-sm" style={{ color: '#666666' }}>How did each step build on the previous one?</p>
                 <div className="flex gap-2 items-start">
-                  <textarea className="flex-1 rounded-xl p-3 text-sm resize-none outline-none focus-visible:ring-1 focus-visible:ring-[#B87333]" style={{ background: '#FAFAFA', border: '1px solid rgba(226,160,74,0.2)', color: 'rgba(255,255,255,0.8)', minHeight: '60px', caretColor: '#E2A04A' }} placeholder="Type your reflection…" value={reflection} onChange={(e) => setReflection(e.target.value.slice(0, 100))} disabled={reflectionSaved} />
-                  <button onClick={handleSaveReflection} disabled={!reflection.trim() || reflectionSaved} className="shrink-0 rounded-xl px-4 py-3 text-xs font-bold" style={{ background: reflectionSaved ? 'rgba(74,144,226,0.1)' : 'rgba(226,160,74,0.15)', border: `1px solid ${reflectionSaved ? 'rgba(74,144,226,0.3)' : 'rgba(226,160,74,0.3)'}`, color: reflectionSaved ? '#00FF88' : '#E2A04A', cursor: reflectionSaved ? 'default' : 'pointer' }}>
+                  <textarea className="flex-1 rounded-xl p-3 text-sm resize-none outline-none focus-visible:ring-1 focus-visible:ring-[#B87333]" style={{ background: '#FAFAFA', border: '1px solid rgba(226,160,74,0.2)', color: '#1A1A1A', minHeight: '60px', caretColor: '#E2A04A' }} placeholder="Type your reflection…" value={reflection} onChange={(e) => setReflection(e.target.value.slice(0, 100))} disabled={reflectionSaved} />
+                  <button onClick={handleSaveReflection} disabled={!reflection.trim() || reflectionSaved} className="shrink-0 rounded-xl px-4 py-3 text-xs font-bold" style={{ background: reflectionSaved ? 'rgba(74,144,226,0.1)' : 'rgba(226,160,74,0.15)', border: `1px solid ${reflectionSaved ? 'rgba(74,144,226,0.3)' : 'rgba(226,160,74,0.3)'}`, color: reflectionSaved ? '#4A90E2' : '#E2A04A', cursor: reflectionSaved ? 'default' : 'pointer' }}>
                     {reflectionSaved ? '✓ Saved' : 'Save'}
                   </button>
                 </div>

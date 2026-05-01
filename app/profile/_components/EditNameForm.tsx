@@ -43,16 +43,16 @@ export default function EditNameForm({ initialName }: { initialName: string }) {
     return (
       <div className="flex flex-col gap-1.5">
         <div className="flex items-center gap-3 flex-wrap">
-          <span className="text-3xl sm:text-4xl font-black tracking-tight text-white">{name || '—'}</span>
+          <span className="text-3xl sm:text-4xl font-black tracking-tight" style={{ color: '#1A1A1A' }}>{name || '—'}</span>
           <button
             onClick={() => { setDraft(name); setEditing(true); setSaved(false) }}
-            className="rounded-full px-3 py-1 text-xs font-bold font-mono border border-[#00FF88]/25 bg-[#00FF88]/10 text-[#00FF88] hover:bg-[#00FF88]/20 hover:border-[#00FF88] transition-all duration-200"
+            className="rounded-full px-3 py-1 text-xs font-bold font-mono border border-[#4A90E2]/25 bg-[#4A90E2]/10 text-[#4A90E2] hover:bg-[#4A90E2]/20 hover:border-[#4A90E2] transition-all duration-200"
           >
             Edit
           </button>
         </div>
         {saved && (
-          <p className="text-xs font-mono animate-in fade-in duration-300" style={{ color: '#4ade80' }}>
+          <p className="text-xs font-mono animate-in fade-in duration-300" style={{ color: '#4A90E2' }}>
             ✓ Name updated
           </p>
         )}
@@ -71,7 +71,7 @@ export default function EditNameForm({ initialName }: { initialName: string }) {
           onKeyDown={e => { if (e.key === 'Enter') handleSave(); if (e.key === 'Escape') handleCancel() }}
           disabled={saving}
           className="w-full min-w-0 rounded-2xl px-4 py-2 text-lg font-bold outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#4A90E2] glass"
-          style={{ color: '#4A90E2', border: '1.5px solid #00FF88' }}
+          style={{ color: '#1A1A1A', border: '1.5px solid #4A90E2' }}
         />
         <button
           onClick={handleSave}
@@ -83,7 +83,7 @@ export default function EditNameForm({ initialName }: { initialName: string }) {
         </button>
         <button
           onClick={handleCancel}
-          className="rounded-full px-4 py-2 text-xs font-bold transition-all duration-200 border border-white/10 hover:border-white/25"
+          className="rounded-full px-4 py-2 text-xs font-bold transition-all duration-200 border border-black/10 hover:border-black/25"
           style={{ background: '#F5F5F5', color: '#666666' }}
         >
           Cancel

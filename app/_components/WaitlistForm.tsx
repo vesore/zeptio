@@ -7,12 +7,12 @@ import { createClient } from '@/src/lib/supabase/client'
 type State = 'idle' | 'loading' | 'error'
 
 const inputBase =
-  'w-full rounded-xl px-4 py-3.5 text-base font-bold placeholder:text-white/25 outline-none transition-all duration-200'
+  'w-full rounded-xl px-4 py-3.5 text-base font-bold placeholder:text-[#AAAAAA] outline-none transition-all duration-200'
 
 function inputStyle(focused: boolean): React.CSSProperties {
   return {
     background: '#FAFAFA',
-    border: `1.5px solid ${focused ? '#00FF88' : 'rgba(232,232,232,0.12)'}`,
+    border: `1.5px solid ${focused ? '#4A90E2' : 'rgba(0,0,0,0.1)'}`,
     color: '#1A1A1A',
   }
 }
@@ -139,18 +139,18 @@ export default function WaitlistForm() {
           <div
             className="w-5 h-5 rounded-md flex items-center justify-center transition-all duration-200"
             style={{
-              background: agreed ? '#00FF88' : 'rgba(255,255,255,0.04)',
-              border: `1.5px solid ${agreed ? '#00FF88' : 'rgba(232,232,232,0.2)'}`,
+              background: agreed ? '#4A90E2' : 'rgba(0,0,0,0.02)',
+              border: `1.5px solid ${agreed ? '#4A90E2' : 'rgba(0,0,0,0.12)'}`,
             }}
           >
             {agreed && (
               <svg width="11" height="8" viewBox="0 0 11 8" fill="none">
-                <path d="M1 4L4 7L10 1" stroke="#0F0F0F" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M1 4L4 7L10 1" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             )}
           </div>
         </div>
-        <span className="text-sm" style={{ color: 'rgba(232,232,232,0.55)' }}>
+        <span className="text-sm" style={{ color: '#666666' }}>
           I agree to keep Zeptio beta confidential
         </span>
       </label>
@@ -172,8 +172,8 @@ export default function WaitlistForm() {
         disabled={!formReady || state === 'loading'}
         className="w-full py-4 rounded-xl text-sm font-black tracking-widest uppercase transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4A90E2]"
         style={{
-          background: formReady ? '#00FF88' : 'rgba(74,144,226,0.08)',
-          color: formReady ? '#0F0F0F' : 'rgba(74,144,226,0.3)',
+          background: formReady ? '#1A1A1A' : 'rgba(0,0,0,0.05)',
+          color: formReady ? '#FFFFFF' : 'rgba(0,0,0,0.25)',
           border: '1.5px solid rgba(74,144,226,0.3)',
           cursor: formReady ? 'pointer' : 'not-allowed',
         }}

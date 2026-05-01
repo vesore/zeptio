@@ -5,6 +5,7 @@ import Link from 'next/link'
 import GameRobot, { type RobotExpression } from './GameRobot'
 import { DEFAULT_ROBOT_CONFIG, type RobotConfig } from '@/app/profile/_components/RobotSVG'
 import { assembleSound, levelCompleteSound, scoreRevealSound } from '@/src/lib/sounds'
+import PartUnlockCelebration from './PartUnlockCelebration'
 
 interface LevelConfig {
   world: 'clarity' | 'constraints' | 'structure' | 'debug' | 'mastery'
@@ -18,6 +19,7 @@ interface ScoreResult {
   score: number
   xp_earned: number
   feedback: string
+  newly_unlocked_parts?: string[]
 }
 
 interface WordBudgetProps {
@@ -83,6 +85,7 @@ export default function WordBudget({
   const [showCelebration, setShowCelebration]     = useState(false)
   const [reflection, setReflection]               = useState('')
   const [reflectionSaved, setReflectionSaved]     = useState(false)
+  const [unlockedPartIds, setUnlockedPartIds]     = useState<string[]>([])
   const animationRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   useEffect(() => {
@@ -180,6 +183,7 @@ export default function WordBudget({
 
       const data: ScoreResult = await res.json()
       setResult(data)
+      setUnlockedPartIds(data.newly_unlocked_parts ?? [])
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.')
     } finally {
@@ -216,6 +220,7 @@ export default function WordBudget({
     setShowCelebration(false)
     setReflection('')
     setReflectionSaved(false)
+    setUnlockedPartIds([])
   }
 
   const wordCount = countWords(prompt)
@@ -353,6 +358,11 @@ export default function WordBudget({
         </div>
       )}
 
+      <PartUnlockCelebration
+        unlockedPartIds={unlockedPartIds}
+        onDismiss={() => setUnlockedPartIds([])}
+      />
+
       <div className="w-full max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         <div
           className="w-full rounded-3xl p-5 sm:p-8 flex flex-col gap-5 sm:gap-6"
@@ -464,7 +474,7 @@ export default function WordBudget({
               {isLoading ? (
                 <span className="flex items-center justify-center gap-2">
                   <span aria-hidden="true" className="inline-block w-4 h-4 rounded-full border-2 animate-spin"
-                    style={{ borderColor: 'rgba(255,255,255,0.3)', borderTopColor: '#FFFFFF' }} />
+                    style={{ borderColor: 'rgba(0,0,0,0.12)', borderTopColor: '#4A90E2' }} />
                   Scoring…
                 </span>
               ) : isOverLimit ? (

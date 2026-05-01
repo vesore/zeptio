@@ -7,8 +7,8 @@ const WORLD_OPTIONS = [
   { value: '',            label: 'None selected',          disabled: false },
   { value: 'clarity',    label: '◎ Clarity',              disabled: false },
   { value: 'constraints', label: '⬡ Constraints',         disabled: false },
-  { value: 'structure',  label: '▦ Structure (coming soon)', disabled: true },
-  { value: 'debug',      label: '⟁ Debug (coming soon)',  disabled: true },
+  { value: 'structure',  label: '▦ Structure',              disabled: false },
+  { value: 'debug',      label: '⟁ Debug',                 disabled: false },
 ]
 
 interface ProfileExtrasFormProps {
@@ -65,14 +65,14 @@ export default function ProfileExtrasForm({ initialBio, initialFavoriteWorld }: 
             onChange={e => { setBio(e.target.value.slice(0, 60)); setSaved(false) }}
             placeholder="Describe yourself in one line…"
             maxLength={60}
-            className="w-full rounded-2xl px-4 py-3 pr-14 text-sm font-medium outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#4A90E2] glass placeholder:text-white/25"
-            style={{ color: '#FFFFFF', border: '1.5px solid rgba(0,0,0,0.08)' }}
-            onFocus={e => { e.target.style.borderColor = '#00FF88' }}
+            className="w-full rounded-2xl px-4 py-3 pr-14 text-sm font-medium outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#4A90E2] glass placeholder:text-[#AAAAAA]"
+            style={{ color: '#1A1A1A', border: '1.5px solid rgba(0,0,0,0.08)' }}
+            onFocus={e => { e.target.style.borderColor = '#4A90E2' }}
             onBlur={e  => { e.target.style.borderColor = 'rgba(0,0,0,0.08)' }}
           />
           <span
             className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-mono tabular-nums pointer-events-none"
-            style={{ color: bio.length >= 55 ? '#f87171' : 'rgba(255,255,255,0.25)' }}
+            style={{ color: bio.length >= 55 ? '#f87171' : '#BBBBBB' }}
           >
             {bio.length}/60
           </span>
@@ -94,9 +94,9 @@ export default function ProfileExtrasForm({ initialBio, initialFavoriteWorld }: 
           onChange={e => { setFavoriteWorld(e.target.value); setSaved(false) }}
           className="w-full rounded-2xl px-4 py-3 text-sm font-medium outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#4A90E2] glass appearance-none"
           style={{
-            color: favoriteWorld ? 'white' : 'rgba(255,255,255,0.4)',
+            color: favoriteWorld ? '#1A1A1A' : '#AAAAAA',
             border: '1.5px solid rgba(0,0,0,0.08)',
-            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='rgba(176,224,32,0.6)' d='M6 8L1 3h10z'/%3E%3C/svg%3E")`,
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='rgba(0,0,0,0.4)' d='M6 8L1 3h10z'/%3E%3C/svg%3E")`,
             backgroundRepeat: 'no-repeat',
             backgroundPosition: 'right 1rem center',
           }}
@@ -106,7 +106,7 @@ export default function ProfileExtrasForm({ initialBio, initialFavoriteWorld }: 
               key={opt.value}
               value={opt.value}
               disabled={opt.disabled}
-              style={{ background: '#FFFFFF', color: opt.disabled ? 'rgba(255,255,255,0.3)' : 'white' }}
+              style={{ background: '#FFFFFF', color: opt.disabled ? '#CCCCCC' : '#1A1A1A' }}
             >
               {opt.label}
             </option>

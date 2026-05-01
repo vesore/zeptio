@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import GameRobot, { type RobotExpression } from './GameRobot'
 import { DEFAULT_ROBOT_CONFIG, type RobotConfig } from '@/app/profile/_components/RobotSVG'
+import PartUnlockCelebration from './PartUnlockCelebration'
 
 interface LevelConfig {
   world: 'clarity' | 'constraints' | 'structure' | 'debug' | 'mastery'
@@ -17,6 +18,7 @@ interface ScoreResult {
   score: number
   xp_earned: number
   feedback: string
+  newly_unlocked_parts?: string[]
 }
 
 interface Props {
@@ -66,6 +68,7 @@ export default function SpeedRound({
   const [reflection, setReflection]   = useState('')
   const [reflectionSaved, setReflectionSaved] = useState(false)
   const [error, setError]             = useState<string | null>(null)
+  const [unlockedPartIds, setUnlockedPartIds] = useState<string[]>([])
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const animationRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
@@ -136,6 +139,7 @@ export default function SpeedRound({
       const valid = results.filter(Boolean) as ScoreResult[]
       const best = valid.reduce((b, r) => r.score > (b?.score ?? -1) ? r : b, null as ScoreResult | null)
       setBestResult(best)
+      setUnlockedPartIds(best?.newly_unlocked_parts ?? [])
       setPhase('done')
     }
     scoreAll()
@@ -160,6 +164,7 @@ export default function SpeedRound({
     setScores([null, null, null]); setBestResult(null); setDisplayScore(0)
     setScoreLanded(false); setFeedbackVisible(false); setShowCelebration(false)
     setReflection(''); setReflectionSaved(false); setError(null)
+    setUnlockedPartIds([])
   }
 
   function advanceRound() {
@@ -183,7 +188,7 @@ export default function SpeedRound({
     : 'idle'
 
   const scoreColor =
-    displayScore >= 80 ? '#1A1A1A' : displayScore >= 60 ? '#00FF88' : displayScore >= 40 ? '#B87333' : '#E24A4A'
+    displayScore >= 80 ? '#1A1A1A' : displayScore >= 60 ? '#22a85e' : displayScore >= 40 ? '#B87333' : '#E24A4A'
 
   return (
     <div className="min-h-screen w-full max-w-full overflow-x-hidden flex items-center justify-center" style={{ background: '#FFFFFF' }}>
@@ -205,6 +210,11 @@ export default function SpeedRound({
           ))}
         </div>
       )}
+
+      <PartUnlockCelebration
+        unlockedPartIds={unlockedPartIds}
+        onDismiss={() => setUnlockedPartIds([])}
+      />
 
       <div className="w-full max-w-2xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
         <div className="w-full rounded-3xl p-5 sm:p-8 flex flex-col gap-5 sm:gap-6" style={{ background: '#FAFAFA', border: '1.5px solid #E8E8E8',  }}>
@@ -258,7 +268,7 @@ export default function SpeedRound({
                   <div
                     key={n}
                     className="h-1.5 flex-1 rounded-full"
-                    style={{ background: n < currentRound ? '#00FF88' : n === currentRound ? 'rgba(74,144,226,0.4)' : 'rgba(255,255,255,0.1)' }}
+                    style={{ background: n < currentRound ? '#22a85e' : n === currentRound ? 'rgba(74,144,226,0.4)' : 'rgba(0,0,0,0.1)' }}
                   />
                 ))}
               </div>
@@ -274,8 +284,8 @@ export default function SpeedRound({
                   setPrompts(updated)
                 }}
                 autoFocus
-                onFocus={(e) => { e.target.style.borderColor = '#00FF88' }}
-                onBlur={(e) => { e.target.style.borderColor = 'rgba(255,255,255,0.1)' }}
+                onFocus={(e) => { e.target.style.borderColor = '#4A90E2' }}
+                onBlur={(e) => { e.target.style.borderColor = 'rgba(0,0,0,0.08)' }}
               />
 
               <button
@@ -302,11 +312,11 @@ export default function SpeedRound({
               <div className="flex flex-col gap-2">
                 <p className="text-xs font-semibold uppercase tracking-widest" style={{ color: '#4A90E2' }}>Round Scores</p>
                 {scores.map((s, i) => (
-                  <div key={i} className="flex items-center gap-3 rounded-xl px-4 py-2" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
+                  <div key={i} className="flex items-center gap-3 rounded-xl px-4 py-2" style={{ background: 'rgba(0,0,0,0.02)', border: '1px solid rgba(0,0,0,0.06)' }}>
                     <span className="text-xs font-mono" style={{ color: '#999999' }}>Round {i + 1}</span>
                     <div className="flex-1 text-xs" style={{ color: '#666666' }}>{prompts[i] ? `"${prompts[i].substring(0, 40)}${prompts[i].length > 40 ? '…' : ''}"` : '(skipped)'}</div>
                     {s ? (
-                      <span className="text-xs font-mono font-bold" style={{ color: s.score >= 60 ? '#00FF88' : '#E2A04A' }}>{s.score}</span>
+                      <span className="text-xs font-mono font-bold" style={{ color: s.score >= 60 ? '#22a85e' : '#E2A04A' }}>{s.score}</span>
                     ) : (
                       <span className="text-xs font-mono" style={{ color: '#BBBBBB' }}>—</span>
                     )}
@@ -333,8 +343,8 @@ export default function SpeedRound({
                     <label className="text-xs font-semibold uppercase tracking-widest" style={{ color: '#E2A04A' }}>Reflection</label>
                     <p className="text-sm" style={{ color: '#666666' }}>What made your best prompt stronger than the others?</p>
                     <div className="flex gap-2 items-start">
-                      <textarea className="flex-1 rounded-xl p-3 text-sm resize-none outline-none focus-visible:ring-1 focus-visible:ring-[#B87333]" style={{ background: '#FAFAFA', border: '1px solid rgba(226,160,74,0.2)', color: 'rgba(255,255,255,0.8)', minHeight: '60px', caretColor: '#E2A04A' }} placeholder="Type your reflection…" value={reflection} onChange={(e) => setReflection(e.target.value.slice(0, 100))} disabled={reflectionSaved} />
-                      <button onClick={handleSaveReflection} disabled={!reflection.trim() || reflectionSaved} className="shrink-0 rounded-xl px-4 py-3 text-xs font-bold" style={{ background: reflectionSaved ? 'rgba(74,144,226,0.1)' : 'rgba(226,160,74,0.15)', border: `1px solid ${reflectionSaved ? 'rgba(74,144,226,0.3)' : 'rgba(226,160,74,0.3)'}`, color: reflectionSaved ? '#00FF88' : '#E2A04A', cursor: reflectionSaved ? 'default' : 'pointer' }}>
+                      <textarea className="flex-1 rounded-xl p-3 text-sm resize-none outline-none focus-visible:ring-1 focus-visible:ring-[#B87333]" style={{ background: '#FAFAFA', border: '1px solid rgba(226,160,74,0.2)', color: '#1A1A1A', minHeight: '60px', caretColor: '#E2A04A' }} placeholder="Type your reflection…" value={reflection} onChange={(e) => setReflection(e.target.value.slice(0, 100))} disabled={reflectionSaved} />
+                      <button onClick={handleSaveReflection} disabled={!reflection.trim() || reflectionSaved} className="shrink-0 rounded-xl px-4 py-3 text-xs font-bold" style={{ background: reflectionSaved ? 'rgba(74,144,226,0.1)' : 'rgba(226,160,74,0.15)', border: `1px solid ${reflectionSaved ? 'rgba(74,144,226,0.3)' : 'rgba(226,160,74,0.3)'}`, color: reflectionSaved ? '#4A90E2' : '#E2A04A', cursor: reflectionSaved ? 'default' : 'pointer' }}>
                         {reflectionSaved ? '✓ Saved' : 'Save'}
                       </button>
                     </div>
