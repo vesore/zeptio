@@ -214,6 +214,51 @@ export default async function DashboardPage() {
         .wii-tile:active { transform: scale(0.97) translateY(0px) !important; transition: transform 0.07s ease !important; }
       `}</style>
 
+      {/* ── TOP NAV ──────────────────────────────── */}
+      <div
+        className="relative z-10 shrink-0 flex items-center justify-between px-4 pt-3 pb-2"
+      >
+        {/* Left: Zeptio wordmark */}
+        <span className="fredoka font-black text-2xl" style={{ color: '#1A1A1A' }}>
+          Zeptio
+        </span>
+
+        {/* Right: score corner + streak + sound + journal + profile */}
+        <div className="flex items-center gap-2">
+          <div
+            className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-bold"
+            style={{ background: '#F0F0F0', border: '1px solid #E0E0E0', color: '#1A1A1A' }}
+          >
+            <span style={{ color: '#AAAAAA' }}>XP</span>
+            <span className="tabular-nums">{totalXp}</span>
+          </div>
+          <div
+            className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-bold"
+            style={{ background: '#F0F0F0', border: '1px solid #E0E0E0', color: '#1A1A1A' }}
+          >
+            <span>🔥</span>
+            <span className="tabular-nums">{streak}</span>
+          </div>
+          <SoundToggle />
+          <Link
+            href="/journal"
+            className="text-sm font-semibold transition-colors duration-200"
+            style={{ color: '#BBBBBB' }}
+            aria-label="Learning Journal"
+          >
+            Journal
+          </Link>
+          <Link
+            href="/profile"
+            aria-label="View your profile"
+            className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center transition-all duration-200 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4A90E2] focus-visible:ring-offset-2"
+            style={{ background: '#F5F5F5', border: '1.5px solid #E0E0E0' }}
+          >
+            <RobotSVG config={robotConfig} size={32} headOnly />
+          </Link>
+        </div>
+      </div>
+
       {/* ── ROBOT ASSEMBLY ───────────────────────── */}
       <div
         className="relative z-10 shrink-0 flex flex-col items-center pt-3 pb-0"
@@ -453,75 +498,19 @@ export default async function DashboardPage() {
         )}
       </div>
 
-      {/* ── BOTTOM STATUS BAR ────────────────────── */}
-      <div
-        className="relative z-10 shrink-0"
-        style={{
-          background: '#FFFFFF',
-          borderRadius: '22px 22px 0 0',
-          boxShadow: '0 -5px 24px rgba(0,0,0,0.09), 0 -1px 0 rgba(0,0,0,0.05)',
-        }}
-      >
-        <div className="flex items-center justify-between px-4 pt-3 pb-1 gap-2">
-
-          {/* Left: Zeptio wordmark */}
-          <span className="fredoka font-black text-2xl shrink-0" style={{ color: '#1A1A1A' }}>
-            Zeptio
-          </span>
-
-          {/* Center: Score + Streak */}
-          <div className="flex items-center gap-2 flex-1 justify-center">
-            <div
-              className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-bold whitespace-nowrap"
-              style={{ background: '#F5F5F5', border: '1px solid #E8E8E8' }}
-            >
-              <span style={{ color: '#999999' }}>Score</span>
-              <span className="tabular-nums" style={{ color: '#1A1A1A' }}>{totalXp}</span>
-            </div>
-            <div
-              className="inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-sm font-bold whitespace-nowrap"
-              style={{ background: '#F5F5F5', border: '1px solid #E8E8E8' }}
-            >
-              <span>🔥</span>
-              <span className="tabular-nums" style={{ color: '#1A1A1A' }}>{streak}</span>
-            </div>
-          </div>
-
-          {/* Right: Controls */}
-          <div className="flex items-center gap-2 shrink-0">
-            <SoundToggle />
-            <Link
-              href="/journal"
-              className="text-sm font-semibold transition-colors duration-200 text-[#BBBBBB] hover:text-[#1A1A1A]"
-              aria-label="Learning Journal"
-            >
-              Journal
-            </Link>
-            <Link
-              href="/profile"
-              aria-label="View your profile"
-              className="w-9 h-9 rounded-full overflow-hidden flex items-center justify-center transition-all duration-200 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4A90E2] focus-visible:ring-offset-2"
-              style={{ background: '#F5F5F5', border: '1.5px solid #E0E0E0' }}
-            >
-              <RobotSVG config={robotConfig} size={36} headOnly />
-            </Link>
-          </div>
-        </div>
-
-        {/* Footer links */}
-        <div className="flex items-center justify-center text-xs pb-3" style={{ color: '#CCCCCC' }}>
-          <a href="/privacy" className="transition-colors hover:text-[#1A1A1A] px-2">Privacy</a>
-          <span aria-hidden="true">·</span>
-          <a href="/terms"   className="transition-colors hover:text-[#1A1A1A] px-2">Terms</a>
-          <span aria-hidden="true">·</span>
-          <a href="/support" className="transition-colors hover:text-[#1A1A1A] px-2">Support</a>
-          {user.email === 'vesorestyle@gmail.com' && (
-            <>
-              <span aria-hidden="true">·</span>
-              <a href="/admin" className="transition-colors hover:text-[#1A1A1A] px-2">Admin</a>
-            </>
-          )}
-        </div>
+      {/* ── FOOTER LINKS ─────────────────────────── */}
+      <div className="relative z-10 shrink-0 flex items-center justify-center text-xs pb-3 pt-1" style={{ color: '#CCCCCC' }}>
+        <a href="/privacy" className="transition-colors hover:text-[#1A1A1A] px-2">Privacy</a>
+        <span aria-hidden="true">·</span>
+        <a href="/terms"   className="transition-colors hover:text-[#1A1A1A] px-2">Terms</a>
+        <span aria-hidden="true">·</span>
+        <a href="/support" className="transition-colors hover:text-[#1A1A1A] px-2">Support</a>
+        {user.email === 'vesorestyle@gmail.com' && (
+          <>
+            <span aria-hidden="true">·</span>
+            <a href="/admin" className="transition-colors hover:text-[#1A1A1A] px-2">Admin</a>
+          </>
+        )}
       </div>
 
     </main>
