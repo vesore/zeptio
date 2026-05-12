@@ -498,6 +498,27 @@ export default async function DashboardPage() {
         )}
       </div>
 
+      {/* ── PROMPT BUILDER TILE ──────────────────── */}
+      <div className="relative z-10 shrink-0 px-4 pb-2">
+        <Link
+          href="/play/builder"
+          className="wii-tile items-center gap-4 rounded-3xl px-5 py-3 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/70"
+          style={{
+            background: 'linear-gradient(135deg, #C9874A 0%, #B87333 55%, #7A4F22 100%)',
+            boxShadow: 'inset 0 1.5px 0 rgba(255,255,255,0.25), inset 0 -2.5px 0 rgba(0,0,0,0.2), 0 6px 22px rgba(184,115,51,0.5)',
+          }}
+          role="listitem"
+          aria-label="Prompt Builder — Block Blast drag-and-drop game mode"
+        >
+          <span className="text-3xl leading-none">🧱</span>
+          <div className="flex-1">
+            <h2 className="fredoka text-xl font-black text-white">PROMPT BUILDER</h2>
+            <p className="text-sm font-medium" style={{ color: 'rgba(255,255,255,0.72)' }}>Block Blast Mode · Drag & Drop</p>
+          </div>
+          <span className="text-3xl font-thin leading-none" style={{ color: 'rgba(255,255,255,0.4)' }}>›</span>
+        </Link>
+      </div>
+
       {/* ── FOOTER LINKS ─────────────────────────── */}
       <div className="relative z-10 shrink-0 flex items-center justify-center text-xs pb-3 pt-1" style={{ color: '#CCCCCC' }}>
         <a href="/privacy" className="transition-colors hover:text-[#1A1A1A] px-2">Privacy</a>
