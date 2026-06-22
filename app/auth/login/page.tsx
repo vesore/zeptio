@@ -1,20 +1,8 @@
 'use client'
 
-import { Suspense, useState } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/src/lib/supabase/client'
 
-type State = 'idle' | 'loading' | 'error'
-
-function LoginForm() {
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const isWelcomeBack = searchParams.get('welcome') === '1'
-  const [email, setEmail]       = useState('')
-  const [password, setPassword] = useState('Zeptio2026')
-  const [state, setState]       = useState<State>('idle')
-  const [errMsg, setErrMsg]     = useState('')
-
+export default function LoginPage() {
   async function handleGoogleSignIn() {
     const supabase = createClient()
     await supabase.auth.signInWithOAuth({
@@ -23,116 +11,23 @@ function LoginForm() {
     })
   }
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    if (!email.trim() || !password || state === 'loading') return
-
-    setState('loading')
-    setErrMsg('')
-
-    const supabase = createClient()
-    const normalizedEmail = email.trim().toLowerCase()
-
-    // Try signing in first
-    const { error: signInError } = await supabase.auth.signInWithPassword({
-      email: normalizedEmail,
-      password,
-    })
-
-    if (!signInError) {
-      router.push('/dashboard')
-      return
-    }
-
-    // Sign-in failed — only attempt sign-up for "Invalid login credentials"
-    if (!signInError.message.toLowerCase().includes('invalid login credentials')) {
-      setErrMsg(signInError.message)
-      setState('error')
-      return
-    }
-
-    // Check if this email already has a profile (i.e. user exists in auth.users)
-    const { data: existingProfile } = await supabase
-      .from('profiles')
-      .select('id')
-      .eq('email', normalizedEmail)
-      .maybeSingle()
-
-    if (existingProfile) {
-      setErrMsg('Invalid login credentials')
-      setState('error')
-      return
-    }
-
-    // New user — attempt sign-up
-    const { data, error: signUpError } = await supabase.auth.signUp({
-      email: normalizedEmail,
-      password,
-    })
-
-    if (signUpError) {
-      setErrMsg(signUpError.message)
-      setState('error')
-      return
-    }
-
-    // Seed profile + streak rows for the new user
-    if (data.user?.id) {
-      await Promise.all([
-        supabase
-          .from('profiles')
-          .upsert({ id: data.user.id, email: normalizedEmail }, { onConflict: 'id' }),
-        supabase
-          .from('streaks')
-          .upsert({ user_id: data.user.id }, { onConflict: 'user_id' }),
-      ])
-    }
-
-    // Sign in with the newly created account
-    const { error: finalSignInError } = await supabase.auth.signInWithPassword({
-      email: normalizedEmail,
-      password,
-    })
-
-    if (finalSignInError) {
-      setErrMsg(finalSignInError.message)
-      setState('error')
-      return
-    }
-
-    router.push('/dashboard')
-  }
-
-  const ready = !!email.trim() && !!password && state !== 'loading'
-
   return (
-    <main className="min-h-screen w-full max-w-full overflow-x-hidden flex items-center justify-center" style={{ background: '#EFEFEF' }}>
-      <div className="w-full max-w-md mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <p
-          className="text-center font-mono font-bold tracking-widest text-base uppercase mb-8"
-          style={{ color: '#4A90E2' }}
-        >
+    <main className="min-h-screen w-full flex items-center justify-center" style={{ background: '#EFEFEF' }}>
+      <div className="w-full max-w-md mx-auto px-4 py-8 flex flex-col items-center gap-8">
+        <p className="font-mono font-bold tracking-widest text-base uppercase" style={{ color: '#4A90E2' }}>
           Zeptio
         </p>
 
-        <div className="rounded-3xl p-6 sm:p-8" style={{ background: '#FFFFFF', boxShadow: '0 4px 24px rgba(0,0,0,0.08)' }}>
-          <h1 className="fredoka text-4xl sm:text-5xl font-black tracking-tight mb-1" style={{ color: '#1A1A1A' }}>Let&apos;s play.</h1>
-          {isWelcomeBack ? (
-            <p className="text-base mb-6" style={{ color: '#4A90E2' }}>
-              Welcome back! Sign in to continue.
-            </p>
-          ) : (
-            <p className="text-base mb-6" style={{ color: '#666666' }}>
-              Sign in to your account.
-            </p>
-          )}
+        <div className="w-full rounded-3xl p-8 flex flex-col items-center gap-6" style={{ background: '#FFFFFF', boxShadow: '0 4px 24px rgba(0,0,0,0.08)' }}>
+          <h1 className="fredoka text-5xl font-black tracking-tight" style={{ color: '#1A1A1A' }}>
+            Let&apos;s play.
+          </h1>
 
-          {/* Google Sign In */}
           <button
             type="button"
             onClick={handleGoogleSignIn}
             className="w-full flex items-center justify-center gap-3 rounded-full py-4 font-bold text-lg tracking-wide transition-all duration-200 hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4A90E2]"
-            style={{ backgroundColor: '#ffffff', color: '#0F0F0F' }}
+            style={{ backgroundColor: '#ffffff', color: '#0F0F0F', border: '1.5px solid #E0E0E0' }}
           >
             <span
               className="w-5 h-5 rounded-full flex items-center justify-center text-xs font-black"
@@ -140,114 +35,10 @@ function LoginForm() {
             >
               G
             </span>
-            Continue with Google
+            Sign in with Google
           </button>
-
-          {/* Divider */}
-          <div className="flex items-center gap-3">
-            <div className="flex-1 h-px" style={{ backgroundColor: 'rgba(0,0,0,0.08)' }} />
-            <span className="text-xs tracking-widest uppercase" style={{ color: '#999999' }}>or</span>
-            <div className="flex-1 h-px" style={{ backgroundColor: 'rgba(0,0,0,0.08)' }} />
-          </div>
-
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
-            {/* Email */}
-            <div className="flex flex-col gap-1.5">
-              <label
-                htmlFor="email"
-                className="text-sm tracking-widest uppercase"
-                style={{ color: '#666666' }}
-              >
-                Email
-              </label>
-              <input
-                id="email"
-                type="email"
-                autoComplete="off"
-                autoFocus
-                placeholder="you@example.com"
-                value={email}
-                onChange={(e) => { setEmail(e.target.value); if (state === 'error') setState('idle') }}
-                disabled={state === 'loading'}
-                className="w-full rounded-2xl px-4 py-3.5 text-base placeholder:text-black/25 outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#4A90E2]"
-                style={{
-                  background: '#F5F5F5',
-                  border: `1.5px solid ${state === 'error' ? '#f87171' : '#E0E0E0'}`,
-                  color: '#1A1A1A',
-                  fontWeight: 700,
-                }}
-                onFocus={(e) => { if (state !== 'error') e.target.style.borderColor = '#4A90E2' }}
-                onBlur={(e)  => { if (state !== 'error') e.target.style.borderColor = '#E0E0E0' }}
-              />
-            </div>
-
-            {/* Password */}
-            <div className="flex flex-col gap-1.5">
-              <label
-                htmlFor="password"
-                className="text-sm tracking-widest uppercase"
-                style={{ color: '#666666' }}
-              >
-                Password
-              </label>
-              <input
-                id="password"
-                type="password"
-                autoComplete="new-password"
-                value={password}
-                onChange={(e) => { setPassword(e.target.value); if (state === 'error') setState('idle') }}
-                disabled={state === 'loading'}
-                className="w-full rounded-2xl px-4 py-3.5 text-base placeholder:text-black/25 outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#4A90E2]"
-                style={{
-                  background: '#F5F5F5',
-                  border: `1.5px solid ${state === 'error' ? '#f87171' : '#E0E0E0'}`,
-                  color: '#1A1A1A',
-                  fontWeight: 700,
-                }}
-                onFocus={(e) => { if (state !== 'error') e.target.style.borderColor = '#4A90E2' }}
-                onBlur={(e)  => { if (state !== 'error') e.target.style.borderColor = '#E0E0E0' }}
-              />
-            </div>
-
-            {state === 'error' && (
-              <p
-                role="alert"
-                className="text-xs rounded-2xl px-4 py-3 font-mono break-all"
-                style={{ backgroundColor: 'rgba(226,74,74,0.1)', color: '#E24A4A', border: '1px solid rgba(226,74,74,0.2)' }}
-              >
-                {errMsg}
-              </p>
-            )}
-
-            <button
-              type="submit"
-              disabled={!ready}
-              className="w-full py-4 text-lg font-bold tracking-wide transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4A90E2] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent btn-primary"
-            >
-              {state === 'loading' ? (
-                <span className="flex items-center justify-center gap-2">
-                  <span
-                    aria-hidden="true"
-                    className="inline-block w-4 h-4 rounded-full border-2 animate-spin"
-                    style={{ borderColor: 'rgba(74,144,226,0.15)', borderTopColor: 'rgba(74,144,226,0.65)' }}
-                  />
-                  Signing in…
-                </span>
-              ) : (
-                'Start Playing'
-              )}
-            </button>
-          </form>
         </div>
       </div>
     </main>
-  )
-}
-
-export default function LoginPage() {
-  return (
-    <Suspense>
-      <LoginForm />
-    </Suspense>
   )
 }

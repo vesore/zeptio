@@ -1,67 +1,14 @@
 import { createClient } from '@/src/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
-import { type EmailOtpType } from '@supabase/supabase-js'
-
-async function checkWaitlistApproval(supabase: Awaited<ReturnType<typeof createClient>>, email: string): Promise<boolean> {
-  const { data } = await supabase
-    .from('waitlist')
-    .select('accepted_nda')
-    .eq('email', email.toLowerCase())
-    .maybeSingle()
-  return !!(data?.accepted_nda)
-}
 
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = request.nextUrl
-  const supabase = await createClient()
-
-  // PKCE flow: email confirmation / OAuth
   const code = searchParams.get('code')
+
   if (code) {
+    const supabase = await createClient()
     const { error } = await supabase.auth.exchangeCodeForSession(code)
     if (!error) {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (user?.email) {
-        const approved = await checkWaitlistApproval(supabase, user.email)
-        if (!approved) {
-          await supabase.auth.signOut()
-          return NextResponse.redirect(`${origin}/?error=access_required`)
-        }
-      }
-      if (user) {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('calibration_complete')
-          .eq('id', user.id)
-          .maybeSingle()
-        if (!profile?.calibration_complete) {
-          return NextResponse.redirect(`${origin}/calibration`)
-        }
-      }
-      return NextResponse.redirect(`${origin}/dashboard`)
-    }
-  }
-
-  // OTP / magic-link flow
-  const token_hash = searchParams.get('token_hash')
-  const type = searchParams.get('type')
-  if (token_hash && type) {
-    const { error } = await supabase.auth.verifyOtp({
-      token_hash,
-      type: type as EmailOtpType,
-    })
-    if (!error) {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (user) {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('calibration_complete')
-          .eq('id', user.id)
-          .maybeSingle()
-        if (!profile?.calibration_complete) {
-          return NextResponse.redirect(`${origin}/calibration`)
-        }
-      }
       return NextResponse.redirect(`${origin}/dashboard`)
     }
   }
