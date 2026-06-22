@@ -33,16 +33,16 @@ export default function LoginPage() {
           <button
             type="button"
             onClick={handleGoogleSignIn}
-            className="w-full flex items-center justify-center gap-3 rounded-full py-4 font-bold text-lg tracking-wide transition-all duration-200 hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4A90E2]"
-            style={{ backgroundColor: '#ffffff', color: '#0F0F0F', border: '1.5px solid #E0E0E0' }}
+            className="w-full flex items-center justify-center gap-3 rounded-full py-5 font-black text-xl tracking-wide transition-all duration-200 hover:scale-[1.02] hover:shadow-lg active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4A90E2]"
+            style={{ backgroundColor: '#4A90E2', color: '#FFFFFF', boxShadow: '0 4px 20px rgba(74,144,226,0.45)' }}
           >
             <span
-              className="w-5 h-5 rounded-full flex items-center justify-center text-xs font-black"
-              style={{ backgroundColor: '#4285F4', color: '#ffffff' }}
+              className="w-6 h-6 rounded-full flex items-center justify-center text-sm font-black flex-shrink-0"
+              style={{ backgroundColor: '#FFFFFF', color: '#4285F4' }}
             >
               G
             </span>
-            Sign in with Google
+            Continue with Google
           </button>
         </div>
       </div>

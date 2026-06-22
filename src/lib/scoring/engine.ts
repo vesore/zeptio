@@ -13,6 +13,7 @@ export interface ScoreResult {
   score: number      // 0–100
   xp_earned: number
   feedback: string
+  ideal_prompt: string
 }
 
 const client = new Anthropic({
@@ -29,6 +30,7 @@ Your job is to evaluate a player's response to a challenge and return a JSON obj
 - "score": integer from 0 to 100
 - "xp_earned": integer (set this equal to the score)
 - "feedback": string (2–4 sentences explaining what worked and what to improve)
+- "ideal_prompt": string (a concise example of a high-scoring prompt for this exact challenge — 1–3 sentences, written as if a skilled player submitted it)
 
 Scoring criteria for the ${level_config.world} world:
 ${level_config.criteria.map((c, i) => `${i + 1}. ${c}`).join('\n')}
