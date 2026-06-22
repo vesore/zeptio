@@ -23,6 +23,13 @@ export default function LoginPage() {
             Let&apos;s play.
           </h1>
 
+          <p
+            className="text-sm font-medium text-center px-4 py-2 rounded-full"
+            style={{ background: '#F0F7FF', color: '#4A90E2', border: '1px solid #D0E6FF' }}
+          >
+            🎉 Free access — just leave us a review after you play.
+          </p>
+
           <button
             type="button"
             onClick={handleGoogleSignIn}
