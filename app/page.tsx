@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/src/lib/supabase/server'
 import GoogleSignInButton from './_components/GoogleSignInButton'
+import BrandAboutSection from '@/src/components/landing/BrandAboutSection'
 
 export default async function LandingPage() {
   const supabase = await createClient()
@@ -65,6 +66,9 @@ export default async function LandingPage() {
             </div>
           ))}
         </div>
+
+        {/* Brand about section */}
+        <BrandAboutSection />
 
         {/* Free access pill */}
         <p
