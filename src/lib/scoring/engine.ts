@@ -42,8 +42,8 @@ Be encouraging but honest. Reward clear thinking over perfect answers.`
 Player's response: ${user_prompt}`
 
   const response = await client.messages.create({
-    model: 'claude-sonnet-4-20250514',
-    max_tokens: 1024,
+    model: 'claude-sonnet-4-6',
+    max_tokens: 2048,
     system: systemPrompt,
     messages: [{ role: 'user', content: userMessage }],
   })
@@ -63,6 +63,7 @@ Player's response: ${user_prompt}`
   // Clamp score and set xp_earned equal to score (1:1)
   parsed.score = Math.max(0, Math.min(100, Math.round(parsed.score)))
   parsed.xp_earned = parsed.score
+  parsed.ideal_prompt = parsed.ideal_prompt ?? ''
 
   return parsed
 }

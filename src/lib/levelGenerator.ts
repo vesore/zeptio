@@ -107,7 +107,7 @@ Return ONLY a valid JSON object with exactly these fields:
 Make challenges creative, practical, and grounded in real-world AI use cases.`
 
   const response = await client.messages.create({
-    model: 'claude-sonnet-4-20250514',
+    model: 'claude-sonnet-4-6',
     max_tokens: 1200,
     system,
     messages: [{ role: 'user', content: `Generate level ${levelNumber} for the ${world} world.` }],
