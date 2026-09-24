@@ -96,7 +96,7 @@ export default async function ClarityLevelPage({ params }: Props) {
 
     if (!isLevelUnlocked(levelId, bestScores)) redirect('/dashboard/clarity')
 
-    const { gameType, isFirstVisit } = await getGameType(user.id, 'clarity', level.id, supabase)
+    const { gameType, isFirstVisit } = await getGameType(user.id, 'clarity', level.id)
 
     const levelConfig = {
       world: 'clarity' as const,
@@ -151,7 +151,7 @@ export default async function ClarityLevelPage({ params }: Props) {
   const resolvedLevelId = getInfiniteLevelId('clarity', levelId)
 
   const generated = await getOrGenerateLevel(
-    user.id, 'clarity', resolvedLevelId, levelId, preferredType, supabase,
+    user.id, 'clarity', resolvedLevelId, levelId, preferredType,
   )
 
   const levelConfig = {

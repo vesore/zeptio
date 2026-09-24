@@ -99,7 +99,7 @@ export default async function StructureLevelPage({ params }: Props) {
 
     if (!isLevelUnlocked(levelIndex, bestScores, STRUCTURE_LEVELS)) redirect('/dashboard/structure')
 
-    const { gameType, isFirstVisit } = await getGameType(user.id, 'structure', level.id, supabase)
+    const { gameType, isFirstVisit } = await getGameType(user.id, 'structure', level.id)
 
     const levelConfig = {
       world: 'structure' as const,
@@ -154,7 +154,7 @@ export default async function StructureLevelPage({ params }: Props) {
   const resolvedLevelId = getInfiniteLevelId('structure', levelIndex)
 
   const generated = await getOrGenerateLevel(
-    user.id, 'structure', resolvedLevelId, levelIndex, preferredType, supabase,
+    user.id, 'structure', resolvedLevelId, levelIndex, preferredType,
   )
 
   const levelConfig = {

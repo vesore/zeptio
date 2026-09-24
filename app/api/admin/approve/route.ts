@@ -1,15 +1,14 @@
 import { createClient } from '@/src/lib/supabase/server'
 import { createAdminClient } from '@/src/lib/supabase/admin'
+import { isAdmin } from '@/src/lib/auth/isAdmin'
 import { NextRequest, NextResponse } from 'next/server'
-
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL
 
 export async function POST(request: NextRequest) {
   // Auth check — only admin can call this
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  if (!user || user.email !== ADMIN_EMAIL) {
+  if (!isAdmin(user)) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
 
@@ -37,7 +36,7 @@ export async function POST(request: NextRequest) {
   }
 
   // Mark as approved in waitlist
-  const { error: updateError } = await supabase
+  const { error: updateError } = await adminClient
     .from('waitlist')
     .update({ status: 'approved' })
     .eq('email', email)

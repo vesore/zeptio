@@ -2,6 +2,7 @@ import 'server-only'
 import Anthropic from '@anthropic-ai/sdk'
 import type { GameType } from './gameRandomizer'
 import { INFINITE_WORLD_BASE } from './scoring/levelConfig'
+import { createAdminClient } from './supabase/admin'
 
 export interface GeneratedChoice {
   id: 'A' | 'B' | 'C' | 'D'
@@ -132,15 +133,17 @@ Make challenges creative, practical, and grounded in real-world AI use cases.`
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// userId must come from an authenticated session: game_assignments is
+// read-only for users under RLS, so this reads and writes with the service role.
 export async function getOrGenerateLevel(
   userId: string,
   world: string,
   levelId: number,
   levelNumber: number,
   preferred: GameType | null,
-  supabase: any,
 ): Promise<GeneratedLevel> {
+  const supabase = createAdminClient()
+
   // Try to load from cache
   try {
     const { data: existing } = await supabase

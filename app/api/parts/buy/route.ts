@@ -1,4 +1,5 @@
 import { createClient } from '@/src/lib/supabase/server'
+import { createAdminClient } from '@/src/lib/supabase/admin'
 import { PART_BY_ID } from '@/src/lib/seedParts'
 import { NextRequest, NextResponse } from 'next/server'
 
@@ -22,8 +23,11 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Part not buyable' }, { status: 400 })
   }
 
+  // Game-state tables are read-only for users under RLS; write with the service role.
+  const admin = createAdminClient()
+
   // Check not already owned
-  const { data: existing } = await supabase
+  const { data: existing } = await admin
     .from('user_parts')
     .select('id')
     .eq('user_id', user.id)
@@ -33,7 +37,7 @@ export async function POST(request: NextRequest) {
   if (existing) return NextResponse.json({ error: 'Already owned' }, { status: 409 })
 
   // Check balance
-  const { data: wp } = await supabase
+  const { data: wp } = await admin
     .from('world_points')
     .select('points')
     .eq('user_id', user.id)
@@ -47,11 +51,11 @@ export async function POST(request: NextRequest) {
 
   // Deduct points and grant part
   await Promise.all([
-    supabase.from('world_points').upsert(
+    admin.from('world_points').upsert(
       { user_id: user.id, world: part.world, points: balance - (part.cost ?? 0) },
       { onConflict: 'user_id,world' }
     ),
-    supabase.from('user_parts').insert({
+    admin.from('user_parts').insert({
       user_id: user.id,
       part_id,
       equipped: false,

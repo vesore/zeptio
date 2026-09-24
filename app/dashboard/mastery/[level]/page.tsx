@@ -114,7 +114,7 @@ export default async function MasteryLevelPage({ params }: Props) {
       redirect('/dashboard/mastery')
     }
 
-    const { gameType, isFirstVisit } = await getGameType(user.id, 'mastery', level.id, supabase)
+    const { gameType, isFirstVisit } = await getGameType(user.id, 'mastery', level.id)
 
     const levelConfig = {
       world: 'mastery' as const,
@@ -178,7 +178,7 @@ export default async function MasteryLevelPage({ params }: Props) {
   const resolvedLevelId = getInfiniteLevelId('mastery', levelIndex)
 
   const generated = await getOrGenerateLevel(
-    user.id, 'mastery', resolvedLevelId, levelIndex, preferredType, supabase,
+    user.id, 'mastery', resolvedLevelId, levelIndex, preferredType,
   )
 
   const levelConfig = {

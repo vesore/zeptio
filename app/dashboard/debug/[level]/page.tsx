@@ -99,7 +99,7 @@ export default async function DebugLevelPage({ params }: Props) {
 
     if (!isLevelUnlocked(levelIndex, bestScores, DEBUG_LEVELS)) redirect('/dashboard/debug')
 
-    const { gameType, isFirstVisit } = await getGameType(user.id, 'debug', level.id, supabase)
+    const { gameType, isFirstVisit } = await getGameType(user.id, 'debug', level.id)
 
     const levelConfig = {
       world: 'debug' as const,
@@ -154,7 +154,7 @@ export default async function DebugLevelPage({ params }: Props) {
   const resolvedLevelId = getInfiniteLevelId('debug', levelIndex)
 
   const generated = await getOrGenerateLevel(
-    user.id, 'debug', resolvedLevelId, levelIndex, preferredType, supabase,
+    user.id, 'debug', resolvedLevelId, levelIndex, preferredType,
   )
 
   const levelConfig = {

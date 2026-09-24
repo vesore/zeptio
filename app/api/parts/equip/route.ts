@@ -1,4 +1,5 @@
 import { createClient } from '@/src/lib/supabase/server'
+import { createAdminClient } from '@/src/lib/supabase/admin'
 import { PART_BY_ID } from '@/src/lib/seedParts'
 import { NextRequest, NextResponse } from 'next/server'
 
@@ -23,8 +24,11 @@ export async function POST(request: NextRequest) {
   const part = PART_BY_ID[part_id]
   if (!part) return NextResponse.json({ error: 'Unknown part' }, { status: 404 })
 
+  // Game-state tables are read-only for users under RLS; write with the service role.
+  const admin = createAdminClient()
+
   // Must own the part
-  const { data: owned } = await supabase
+  const { data: owned } = await admin
     .from('user_parts')
     .select('id')
     .eq('user_id', user.id)
@@ -33,7 +37,7 @@ export async function POST(request: NextRequest) {
 
   if (!owned) return NextResponse.json({ error: 'Part not owned' }, { status: 403 })
 
-  await supabase
+  await admin
     .from('user_parts')
     .update({ equipped })
     .eq('user_id', user.id)

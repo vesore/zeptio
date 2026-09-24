@@ -99,7 +99,7 @@ export default async function ConstraintsLevelPage({ params }: Props) {
 
     if (!isLevelUnlocked(levelIndex, bestScores, CONSTRAINTS_LEVELS)) redirect('/dashboard/constraints')
 
-    const { gameType, isFirstVisit } = await getGameType(user.id, 'constraints', level.id, supabase)
+    const { gameType, isFirstVisit } = await getGameType(user.id, 'constraints', level.id)
 
     const levelConfig = {
       world: 'constraints' as const,
@@ -154,7 +154,7 @@ export default async function ConstraintsLevelPage({ params }: Props) {
   const resolvedLevelId = getInfiniteLevelId('constraints', levelIndex)
 
   const generated = await getOrGenerateLevel(
-    user.id, 'constraints', resolvedLevelId, levelIndex, preferredType, supabase,
+    user.id, 'constraints', resolvedLevelId, levelIndex, preferredType,
   )
 
   const levelConfig = {

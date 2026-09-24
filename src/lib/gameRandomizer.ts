@@ -1,3 +1,6 @@
+import 'server-only'
+import { createAdminClient } from './supabase/admin'
+
 export type GameType =
   | 'WordBudget'
   | 'FillInTheBlank'
@@ -27,13 +30,15 @@ const WORLD_POOLS: Record<string, GameType[]> = {
   ],
 }
 
+// userId must come from an authenticated session: game_assignments is
+// read-only for users under RLS, so this reads and writes with the service role.
 export async function getGameType(
   userId: string,
   world: string,
   levelId: number,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  supabase: any,
 ): Promise<{ gameType: GameType; isFirstVisit: boolean }> {
+  const supabase = createAdminClient()
+
   try {
     const { data: existing } = await supabase
       .from('game_assignments')

@@ -1,18 +1,19 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/src/lib/supabase/server'
+import { createAdminClient } from '@/src/lib/supabase/admin'
+import { isAdmin } from '@/src/lib/auth/isAdmin'
 import WaitlistTable from './_components/WaitlistTable'
-
-const ADMIN_EMAIL = 'vesorestyle@gmail.com'
 
 export default async function AdminPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  if (!user || user.email !== ADMIN_EMAIL) {
+  if (!isAdmin(user)) {
     redirect('/dashboard')
   }
 
-  const { data: rows } = await supabase
+  // waitlist has no user-facing RLS policies; read it with the service role.
+  const { data: rows } = await createAdminClient()
     .from('waitlist')
     .select('id, name, email, created_at, accepted_nda, status')
     .order('created_at', { ascending: false })

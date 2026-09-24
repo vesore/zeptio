@@ -1,4 +1,5 @@
 import { createClient } from '@/src/lib/supabase/server'
+import { createAdminClient } from '@/src/lib/supabase/admin'
 import { scoreResponse, MAX_USER_PROMPT_CHARS } from '@/src/lib/scoring/engine'
 import { resolveLevelConfig } from '@/src/lib/scoring/levelConfig'
 import { applyGameContext, parseGameContext } from '@/src/lib/scoring/gameContext'
@@ -62,14 +63,16 @@ export async function POST(request: NextRequest) {
 
     try {
       const resolvedLevelId = level_id
+      // Game-state tables are read-only for users under RLS; write with the service role.
+      const admin = createAdminClient()
 
       const [{ data: existingRows }, { data: existing }] = await Promise.all([
-        supabase
+        admin
           .from('xp_ledger')
           .select('amount')
           .eq('user_id', user.id)
           .eq('level_id', resolvedLevelId),
-        supabase
+        admin
           .from('streaks')
           .select('current_streak, last_activity_date')
           .eq('user_id', user.id)
@@ -81,7 +84,7 @@ export async function POST(request: NextRequest) {
         : null
 
       if (existingMax === null || result.score > existingMax) {
-        await supabase.from('xp_ledger').insert({
+        await admin.from('xp_ledger').insert({
           user_id: user.id,
           xp_earned: result.xp_earned,
           score: result.score,
@@ -94,13 +97,13 @@ export async function POST(request: NextRequest) {
 
       // Accumulate world points (always, not just on best score)
       try {
-        const { data: wp } = await supabase
+        const { data: wp } = await admin
           .from('world_points')
           .select('points')
           .eq('user_id', user.id)
           .eq('world', world)
           .maybeSingle()
-        await supabase.from('world_points').upsert(
+        await admin.from('world_points').upsert(
           { user_id: user.id, world, points: (wp?.points ?? 0) + result.score },
           { onConflict: 'user_id,world' }
         )
@@ -108,7 +111,7 @@ export async function POST(request: NextRequest) {
 
       // Check part unlocks
       const { newly_unlocked } = await checkPartUnlocks(
-        supabase, user.id, world, resolvedLevelId, result.score
+        admin, user.id, world, resolvedLevelId, result.score
       ).catch(() => ({ newly_unlocked: [] }));
       (result as typeof result & { newly_unlocked_parts: string[] }).newly_unlocked_parts =
         newly_unlocked.map(p => p.id)
@@ -128,7 +131,7 @@ export async function POST(request: NextRequest) {
         }
       }
 
-      await supabase.from('streaks').upsert(
+      await admin.from('streaks').upsert(
         {
           user_id: user.id,
           current_streak: newStreak,

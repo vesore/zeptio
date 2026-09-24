@@ -6,10 +6,12 @@ import { MASTERY_LEVELS } from '@/src/lib/game/mastery-levels'
 
 const mocks = vi.hoisted(() => ({
   createClient: vi.fn(),
+  createAdminClient: vi.fn(),
   scoreResponse: vi.fn(),
 }))
 
 vi.mock('@/src/lib/supabase/server', () => ({ createClient: mocks.createClient }))
+vi.mock('@/src/lib/supabase/admin', () => ({ createAdminClient: mocks.createAdminClient }))
 vi.mock('@/src/lib/scoring/engine', async (importOriginal) => ({
   ...(await importOriginal<typeof import('@/src/lib/scoring/engine')>()),
   scoreResponse: mocks.scoreResponse,
@@ -27,12 +29,16 @@ function post(body: unknown) {
   }))
 }
 
+// db = the user's session client; admin = the service-role client
 let db: ReturnType<typeof fakeSupabase>
+let admin: ReturnType<typeof fakeSupabase>
 
 beforeEach(() => {
   vi.clearAllMocks()
   db = fakeSupabase()
+  admin = fakeSupabase()
   mocks.createClient.mockResolvedValue(db.client)
+  mocks.createAdminClient.mockReturnValue(admin.client)
   mocks.scoreResponse.mockImplementation(async () => ({ score: 70, xp_earned: 70, feedback: 'ok', ideal_prompt: 'x' }))
 })
 
@@ -83,8 +89,21 @@ describe('POST /api/score', () => {
 
     // No mastery double-XP for a clarity level
     expect((await res.json()).xp_earned).toBe(70)
-    const ledger = db.writes.find(w => w.table === 'xp_ledger')
+    const ledger = admin.writes.find(w => w.table === 'xp_ledger')
     expect(ledger?.payload).toMatchObject({ world: 'clarity', level_id: 1, score: 70, xp_earned: 70 })
+  })
+
+  it('persists game state with the service role, never the user session', async () => {
+    await post({ user_prompt: 'hi', level_id: 1 })
+    expect(db.writes).toEqual([])
+    expect(admin.writes.map(w => w.table).sort()).toEqual(['streaks', 'world_points', 'xp_ledger'])
+    for (const w of admin.writes) expect(w.payload).toMatchObject({ user_id: 'user-1' })
+  })
+
+  it('does not write anything when the request is rejected', async () => {
+    await post({ user_prompt: 'hi', level_id: 999 })
+    expect(db.writes).toEqual([])
+    expect(admin.writes).toEqual([])
   })
 
   it('doubles XP only for real mastery levels', async () => {
