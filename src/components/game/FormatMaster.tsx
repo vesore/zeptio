@@ -5,6 +5,7 @@ import Link from 'next/link'
 import GameRobot, { type RobotExpression } from './GameRobot'
 import { DEFAULT_ROBOT_CONFIG, type RobotConfig } from '@/app/profile/_components/RobotSVG'
 import PartUnlockCelebration from './PartUnlockCelebration'
+import { FORMATS } from '@/src/lib/scoring/gameContext'
 
 interface LevelConfig {
   world: 'clarity' | 'constraints' | 'structure' | 'debug' | 'mastery'
@@ -28,7 +29,6 @@ interface Props {
   robotConfig?: RobotConfig
 }
 
-const FORMATS = ['Bullet Points', 'Paragraph', 'Table'] as const
 type Format = typeof FORMATS[number]
 
 const CONFETTI = Array.from({ length: 32 }, (_, i) => ({
@@ -123,15 +123,10 @@ export default function FormatMaster({
     setShowCelebration(false); setReflection(''); setReflectionSaved(false)
 
     try {
-      const contextConfig = {
-        ...levelConfig,
-        challenge: `${levelConfig.challenge}\n\nRequired output format: ${selectedFormat}`,
-        criteria: [...levelConfig.criteria, `The prompt must explicitly request ${selectedFormat.toLowerCase()} format`],
-      }
       const res = await fetch('/api/score', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user_prompt: prompt, level_config: contextConfig, level_id: levelConfig.level }),
+        body: JSON.stringify({ user_prompt: prompt, level_id: levelConfig.level, game_context: { type: 'FormatMaster', format: selectedFormat } }),
       })
       if (!res.ok) {
         const data = await res.json().catch(() => ({}))

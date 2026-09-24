@@ -88,7 +88,6 @@ export default function MultipleChoice({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           user_prompt: choiceText,
-          level_config: levelConfig,
           level_id: levelId,
         }),
       })

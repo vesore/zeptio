@@ -5,6 +5,7 @@ import Link from 'next/link'
 import GameRobot, { type RobotExpression } from './GameRobot'
 import { DEFAULT_ROBOT_CONFIG, type RobotConfig } from '@/app/profile/_components/RobotSVG'
 import PartUnlockCelebration from './PartUnlockCelebration'
+import { CHAIN_STEP_LABELS, CHAIN_STEP_DESCRIPTIONS } from '@/src/lib/scoring/gameContext'
 
 interface LevelConfig {
   world: 'clarity' | 'constraints' | 'structure' | 'debug' | 'mastery'
@@ -28,17 +29,8 @@ interface Props {
   robotConfig?: RobotConfig
 }
 
-const STEP_LABELS = [
-  'Set the Context',
-  'Define the Format',
-  'Add Precision',
-] as const
-
-const STEP_DESCRIPTIONS = [
-  'Who needs this, what is the goal, and why does it matter?',
-  'How should the response be structured — length, format, tone?',
-  'What specific details, constraints, or edge cases are critical?',
-]
+const STEP_LABELS = CHAIN_STEP_LABELS
+const STEP_DESCRIPTIONS = CHAIN_STEP_DESCRIPTIONS
 
 const CONFETTI = Array.from({ length: 32 }, (_, i) => ({
   x:        ((i * 47 + 11) % 90) + 5,
@@ -110,20 +102,10 @@ export default function ChainPrompting({
     setCurrentStepLoading(true); setError(null)
 
     try {
-      const prevContext = step > 0
-        ? `\n\nPrevious chain steps:\nStep 1: ${prompts[0]}${step > 1 ? `\nStep 2: ${prompts[1]}` : ''}`
-        : ''
-
-      const contextConfig = {
-        ...levelConfig,
-        challenge: `${levelConfig.challenge}${prevContext}\n\nChain step ${step + 1} of 3 — ${STEP_LABELS[step]}: ${STEP_DESCRIPTIONS[step]}`,
-        criteria: [...levelConfig.criteria, `This is chain step ${step + 1}: ${STEP_LABELS[step]}`, STEP_DESCRIPTIONS[step]],
-      }
-
       const res = await fetch('/api/score', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user_prompt: currentPrompt, level_config: contextConfig, level_id: levelConfig.level }),
+        body: JSON.stringify({ user_prompt: currentPrompt, level_id: levelConfig.level, game_context: { type: 'ChainPrompting', step, previous: prompts.slice(0, step) } }),
       })
       if (!res.ok) {
         const data = await res.json().catch(() => ({}))

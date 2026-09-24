@@ -138,7 +138,7 @@ export default function FillInTheBlank({
       const res = await fetch('/api/score', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user_prompt: completedPrompt, level_config: levelConfig, level_id: levelConfig.level }),
+        body: JSON.stringify({ user_prompt: completedPrompt, level_id: levelConfig.level }),
       })
       if (!res.ok) {
         const data = await res.json().catch(() => ({}))

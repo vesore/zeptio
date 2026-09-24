@@ -5,6 +5,7 @@ import Link from 'next/link'
 import GameRobot, { type RobotExpression } from './GameRobot'
 import { DEFAULT_ROBOT_CONFIG, type RobotConfig } from '@/app/profile/_components/RobotSVG'
 import PartUnlockCelebration from './PartUnlockCelebration'
+import { ROLES } from '@/src/lib/scoring/gameContext'
 
 interface LevelConfig {
   world: 'clarity' | 'constraints' | 'structure' | 'debug' | 'mastery'
@@ -28,7 +29,6 @@ interface Props {
   robotConfig?: RobotConfig
 }
 
-const ROLES = ['Expert', 'Teacher', 'Child', 'CEO', 'Creative'] as const
 type Role = typeof ROLES[number]
 
 const CONFETTI = Array.from({ length: 32 }, (_, i) => ({
@@ -119,15 +119,10 @@ export default function RoleAssignment({
     setShowCelebration(false); setReflection(''); setReflectionSaved(false)
 
     try {
-      const contextConfig = {
-        ...levelConfig,
-        challenge: `${levelConfig.challenge}\n\nAssigned AI role: ${selectedRole}`,
-        criteria: [...levelConfig.criteria, `Prompt must assign the role "${selectedRole}" to the AI clearly`],
-      }
       const res = await fetch('/api/score', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user_prompt: finalPrompt, level_config: contextConfig, level_id: levelConfig.level }),
+        body: JSON.stringify({ user_prompt: finalPrompt, level_id: levelConfig.level, game_context: { type: 'RoleAssignment', role: selectedRole } }),
       })
       if (!res.ok) {
         const data = await res.json().catch(() => ({}))

@@ -1,6 +1,7 @@
 import 'server-only'
 import Anthropic from '@anthropic-ai/sdk'
 import type { GameType } from './gameRandomizer'
+import { INFINITE_WORLD_BASE } from './scoring/levelConfig'
 
 export interface GeneratedChoice {
   id: 'A' | 'B' | 'C' | 'D'
@@ -18,13 +19,8 @@ export interface GeneratedLevel {
   isFirstVisit: boolean
 }
 
-// Level IDs for infinite levels per world (avoids collision with hand-crafted IDs 1-50)
-const INFINITE_WORLD_BASE: Record<string, number> = {
-  clarity: 10000, constraints: 20000, structure: 30000, debug: 40000, mastery: 50000,
-}
-
 export function getInfiniteLevelId(world: string, levelNumber: number): number {
-  return (INFINITE_WORLD_BASE[world] ?? 10000) + levelNumber
+  return ((INFINITE_WORLD_BASE as Record<string, number>)[world] ?? 10000) + levelNumber
 }
 
 const WORLD_SYSTEM_PROMPTS: Record<string, string> = {

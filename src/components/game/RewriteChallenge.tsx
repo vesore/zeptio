@@ -5,6 +5,7 @@ import Link from 'next/link'
 import GameRobot, { type RobotExpression } from './GameRobot'
 import { DEFAULT_ROBOT_CONFIG, type RobotConfig } from '@/app/profile/_components/RobotSVG'
 import PartUnlockCelebration from './PartUnlockCelebration'
+import { REWRITE_ORIGINAL_SCORE } from '@/src/lib/scoring/gameContext'
 
 interface LevelConfig {
   world: 'clarity' | 'constraints' | 'structure' | 'debug' | 'mastery'
@@ -50,7 +51,7 @@ function makeWeakPrompt(challenge: string): string {
   return `Write something about this topic. ${firstWords}... make it decent somehow. You know what I mean.`
 }
 
-const ORIGINAL_SCORE = 30
+const ORIGINAL_SCORE = REWRITE_ORIGINAL_SCORE
 
 export default function RewriteChallenge({
   levelConfig,
@@ -105,14 +106,10 @@ export default function RewriteChallenge({
     setShowCelebration(false); setReflection(''); setReflectionSaved(false)
 
     try {
-      const contextConfig = {
-        ...levelConfig,
-        criteria: [...levelConfig.criteria, `Score must beat the original weak prompt score of ${ORIGINAL_SCORE}`],
-      }
       const res = await fetch('/api/score', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user_prompt: rewrite, level_config: contextConfig, level_id: levelConfig.level }),
+        body: JSON.stringify({ user_prompt: rewrite, level_id: levelConfig.level, game_context: { type: 'RewriteChallenge' } }),
       })
       if (!res.ok) {
         const data = await res.json().catch(() => ({}))

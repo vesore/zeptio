@@ -171,7 +171,6 @@ export default function WordBudget({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           user_prompt: prompt,
-          level_config: levelConfig,
           level_id: levelConfig.level,
         }),
       })

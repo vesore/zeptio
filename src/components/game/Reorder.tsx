@@ -146,7 +146,7 @@ export default function Reorder({
       const res = await fetch('/api/score', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user_prompt: userPrompt, level_config: levelConfig, level_id: levelId }),
+        body: JSON.stringify({ user_prompt: userPrompt, level_id: levelId }),
       })
       if (!res.ok) throw new Error()
       const data: ScoreResult = await res.json()

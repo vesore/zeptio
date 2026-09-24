@@ -135,19 +135,10 @@ export default function SpotTheFlaw({
     const composedPrompt = `Flaws I identified: ${selectedFlaws}\n\nMy corrected version: ${rewrite}`
 
     try {
-      const contextConfig = {
-        ...levelConfig,
-        criteria: [
-          ...levelConfig.criteria,
-          'Correctly identifies multiple specific prompt flaws',
-          'Corrected version fixes all identified flaws',
-          'Rewrite is clear, specific, and actionable',
-        ],
-      }
       const res = await fetch('/api/score', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user_prompt: composedPrompt, level_config: contextConfig, level_id: levelConfig.level }),
+        body: JSON.stringify({ user_prompt: composedPrompt, level_id: levelConfig.level, game_context: { type: 'SpotTheFlaw' } }),
       })
       if (!res.ok) {
         const data = await res.json().catch(() => ({}))

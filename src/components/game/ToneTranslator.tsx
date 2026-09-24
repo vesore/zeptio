@@ -5,6 +5,7 @@ import Link from 'next/link'
 import GameRobot, { type RobotExpression } from './GameRobot'
 import { DEFAULT_ROBOT_CONFIG, type RobotConfig } from '@/app/profile/_components/RobotSVG'
 import PartUnlockCelebration from './PartUnlockCelebration'
+import { TONES } from '@/src/lib/scoring/gameContext'
 
 interface LevelConfig {
   world: 'clarity' | 'constraints' | 'structure' | 'debug' | 'mastery'
@@ -28,7 +29,6 @@ interface Props {
   robotConfig?: RobotConfig
 }
 
-const TONES = ['Professional', 'Casual', 'Urgent'] as const
 type Tone = typeof TONES[number]
 
 const CONFETTI = Array.from({ length: 32 }, (_, i) => ({
@@ -112,15 +112,10 @@ export default function ToneTranslator({
     setShowCelebration(false); setReflection(''); setReflectionSaved(false)
 
     try {
-      const contextConfig = {
-        ...levelConfig,
-        challenge: `${levelConfig.challenge}\n\nRequired tone: ${selectedTone}`,
-        criteria: [...levelConfig.criteria, `The prompt must clearly convey a ${selectedTone.toLowerCase()} tone`],
-      }
       const res = await fetch('/api/score', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user_prompt: prompt, level_config: contextConfig, level_id: levelConfig.level }),
+        body: JSON.stringify({ user_prompt: prompt, level_id: levelConfig.level, game_context: { type: 'ToneTranslator', tone: selectedTone } }),
       })
       if (!res.ok) {
         const data = await res.json().catch(() => ({}))

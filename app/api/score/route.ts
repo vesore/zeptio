@@ -1,5 +1,7 @@
 import { createClient } from '@/src/lib/supabase/server'
-import { scoreResponse, type LevelConfig } from '@/src/lib/scoring/engine'
+import { scoreResponse, MAX_USER_PROMPT_CHARS } from '@/src/lib/scoring/engine'
+import { resolveLevelConfig } from '@/src/lib/scoring/levelConfig'
+import { applyGameContext, parseGameContext } from '@/src/lib/scoring/gameContext'
 import { checkPartUnlocks } from '@/src/lib/checkPartUnlocks'
 import { NextRequest, NextResponse } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
@@ -13,42 +15,53 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  // Parse and validate body
-  let body: { user_prompt?: unknown; level_config?: unknown; level_id?: unknown }
+  // Parse and validate body. The level's challenge and criteria are looked up
+  // server-side from level_id — never taken from the client.
+  let body: { user_prompt?: unknown; level_id?: unknown; game_context?: unknown }
   try {
     body = await request.json()
   } catch {
     return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 })
   }
 
-  const { user_prompt, level_config, level_id } = body
+  const { user_prompt, level_id } = body
 
   if (typeof user_prompt !== 'string' || !user_prompt.trim()) {
     return NextResponse.json({ error: 'user_prompt must be a non-empty string' }, { status: 400 })
   }
+  if (user_prompt.length > MAX_USER_PROMPT_CHARS) {
+    return NextResponse.json({ error: `user_prompt must be at most ${MAX_USER_PROMPT_CHARS} characters` }, { status: 400 })
+  }
+  if (typeof level_id !== 'number' || !Number.isInteger(level_id)) {
+    return NextResponse.json({ error: 'level_id must be an integer' }, { status: 400 })
+  }
 
-  if (!level_config || typeof level_config !== 'object') {
-    return NextResponse.json({ error: 'level_config must be an object' }, { status: 400 })
+  const gameContext = parseGameContext(body.game_context)
+  if (gameContext === null) {
+    return NextResponse.json({ error: 'Invalid game_context' }, { status: 400 })
   }
 
   // Call the scoring engine
   try {
-    const result = await scoreResponse(user_prompt, level_config as LevelConfig)
+    const baseConfig = await resolveLevelConfig(supabase, user.id, level_id)
+    if (!baseConfig) {
+      return NextResponse.json({ error: 'Unknown level' }, { status: 404 })
+    }
+    const { config: levelConfig, priorSteps } = applyGameContext(baseConfig, gameContext)
+
+    const result = await scoreResponse(user_prompt, levelConfig, priorSteps)
 
     // Double XP for Mastery world
-    if ((level_config as LevelConfig).world === 'mastery') {
+    if (levelConfig.world === 'mastery') {
       result.xp_earned = result.score * 2
     }
 
     // Persist XP and update streak — non-blocking; never fail the score response
-    const { world, level } = level_config as LevelConfig
+    const { world, level } = levelConfig
     const todayUTC = new Date().toISOString().split('T')[0]
 
     try {
-      const resolvedLevelId = typeof level_id === 'number' ? level_id : level
-
-      // level_id 0 = calibration scoring — skip XP/streak persistence
-      if (resolvedLevelId === 0) return NextResponse.json(result)
+      const resolvedLevelId = level_id
 
       const [{ data: existingRows }, { data: existing }] = await Promise.all([
         supabase
@@ -66,8 +79,6 @@ export async function POST(request: NextRequest) {
       const existingMax = existingRows && existingRows.length > 0
         ? Math.max(...existingRows.map((r) => r.amount ?? 0))
         : null
-
-      console.log('[score] existing max:', existingMax, '| new score:', result.score)
 
       if (existingMax === null || result.score > existingMax) {
         await supabase.from('xp_ledger').insert({
@@ -142,6 +153,7 @@ export async function POST(request: NextRequest) {
       console.error('[score] Anthropic.APIError', error.status, error.message, error.error)
       return NextResponse.json({ error: 'Scoring service error' }, { status: 502 })
     }
+    console.error('[score] Unexpected error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

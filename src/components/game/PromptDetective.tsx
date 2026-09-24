@@ -5,6 +5,7 @@ import Link from 'next/link'
 import GameRobot, { type RobotExpression } from './GameRobot'
 import { DEFAULT_ROBOT_CONFIG, type RobotConfig } from '@/app/profile/_components/RobotSVG'
 import PartUnlockCelebration from './PartUnlockCelebration'
+import { makeAIOutput } from '@/src/lib/scoring/gameContext'
 
 interface LevelConfig {
   world: 'clarity' | 'constraints' | 'structure' | 'debug' | 'mastery'
@@ -46,20 +47,6 @@ function getCongratulatoryMessage(score: number): string {
 }
 
 // Generate a plausible AI output based on the challenge
-function makeAIOutput(challenge: string): string {
-  const lowerChallenge = challenge.toLowerCase()
-  const isAboutWriting = lowerChallenge.includes('write') || lowerChallenge.includes('prompt')
-  const isAboutAnalysis = lowerChallenge.includes('analys') || lowerChallenge.includes('evaluat')
-
-  if (isAboutWriting) {
-    return `To craft an effective response, begin by identifying the core objective and target audience. Structure your content with a clear opening that states the purpose, followed by specific supporting points that build toward the goal. Use precise language rather than vague qualifiers, and include actionable details that guide implementation. Conclude by confirming the desired outcome or format. This approach ensures clarity, reduces ambiguity, and produces consistently useful results across different contexts and use cases.`
-  }
-  if (isAboutAnalysis) {
-    return `The analysis reveals several key patterns worth examining. First, the primary variable shows a consistent relationship with the outcome measure across all tested conditions. Second, contextual factors account for approximately one-third of the observed variance, suggesting they cannot be ignored in any comprehensive model. Third, the data supports a structured, stepwise approach rather than a holistic one. Recommendations include refining the input parameters, establishing clear success criteria upfront, and building in iterative checkpoints to validate progress against the stated objectives.`
-  }
-  return `Based on a careful review of the requirements, here is a structured approach to addressing the objective effectively. The key considerations fall into three categories: clarity of purpose, specificity of constraints, and alignment with the desired output format. Each element plays a distinct role in shaping the final result. When the purpose is clearly stated, the model can prioritize relevant information. When constraints are explicit, unnecessary content is filtered out naturally. When the format is defined, the response structure follows without additional guidance. Together, these three factors produce consistently high-quality, actionable results.`
-}
-
 export default function PromptDetective({
   levelConfig,
   levelId,
@@ -113,15 +100,10 @@ export default function PromptDetective({
     setShowCelebration(false); setReflection(''); setReflectionSaved(false)
 
     try {
-      const contextConfig = {
-        ...levelConfig,
-        challenge: `${levelConfig.challenge}\n\nContext: The user is reverse-engineering a prompt that produced the following AI output. Their goal is to reconstruct the original prompt as closely as possible.\n\nAI Output to reverse-engineer:\n${aiOutput}`,
-        criteria: [...levelConfig.criteria, 'Reconstructed prompt should logically produce the given AI output', 'Prompt should capture the topic, format, and intent of the output'],
-      }
       const res = await fetch('/api/score', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user_prompt: prompt, level_config: contextConfig, level_id: levelConfig.level }),
+        body: JSON.stringify({ user_prompt: prompt, level_id: levelConfig.level, game_context: { type: 'PromptDetective' } }),
       })
       if (!res.ok) {
         const data = await res.json().catch(() => ({}))

@@ -5,6 +5,7 @@ import Link from 'next/link'
 import GameRobot, { type RobotExpression } from './GameRobot'
 import { DEFAULT_ROBOT_CONFIG, type RobotConfig } from '@/app/profile/_components/RobotSVG'
 import PartUnlockCelebration from './PartUnlockCelebration'
+import { HEAD_TO_HEAD_CORRECT_ANSWER } from '@/src/lib/scoring/gameContext'
 
 interface LevelConfig {
   world: 'clarity' | 'constraints' | 'structure' | 'debug' | 'mastery'
@@ -59,7 +60,7 @@ export default function HeadToHead({
   const strongPrompt = levelConfig.challenge
   const weakPrompt   = makeWeakPrompt(levelConfig.challenge)
   // Correct answer is always 'A' (strong = Prompt A)
-  const CORRECT_ANSWER = 'A'
+  const CORRECT_ANSWER = HEAD_TO_HEAD_CORRECT_ANSWER
 
   const [selection, setSelection]         = useState<'A' | 'B' | null>(null)
   const [explanation, setExplanation]     = useState('')
@@ -107,23 +108,13 @@ export default function HeadToHead({
     setDisplayScore(0); setScoreLanded(false); setFeedbackVisible(false)
     setShowCelebration(false); setReflection(''); setReflectionSaved(false)
 
-    const isCorrect = selection === CORRECT_ANSWER
     const composedPrompt = `I identified Prompt ${selection} as stronger because: ${explanation}\n\nMy improved version of the weaker prompt:\n${improved}`
 
     try {
-      const contextConfig = {
-        ...levelConfig,
-        criteria: [
-          ...levelConfig.criteria,
-          isCorrect ? 'Correctly identified the stronger prompt' : 'Incorrectly identified which prompt is stronger — partial credit only',
-          'Explanation shows understanding of what makes prompts effective',
-          'Improved version is meaningfully better than the weak original',
-        ],
-      }
       const res = await fetch('/api/score', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user_prompt: composedPrompt, level_config: contextConfig, level_id: levelConfig.level }),
+        body: JSON.stringify({ user_prompt: composedPrompt, level_id: levelConfig.level, game_context: { type: 'HeadToHead', selection } }),
       })
       if (!res.ok) {
         const data = await res.json().catch(() => ({}))

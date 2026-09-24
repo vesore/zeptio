@@ -5,6 +5,7 @@ import Link from 'next/link'
 import GameRobot, { type RobotExpression } from './GameRobot'
 import { DEFAULT_ROBOT_CONFIG, type RobotConfig } from '@/app/profile/_components/RobotSVG'
 import PartUnlockCelebration from './PartUnlockCelebration'
+import { SHRINK_WORD_LIMIT } from '@/src/lib/scoring/gameContext'
 
 interface LevelConfig {
   world: 'clarity' | 'constraints' | 'structure' | 'debug' | 'mastery'
@@ -28,7 +29,7 @@ interface Props {
   robotConfig?: RobotConfig
 }
 
-const WORD_LIMIT = 10
+const WORD_LIMIT = SHRINK_WORD_LIMIT
 const BONUS_THRESHOLD = 8
 
 const CONFETTI = Array.from({ length: 32 }, (_, i) => ({
@@ -117,15 +118,10 @@ export default function TheShrink({
     setShowCelebration(false); setReflection(''); setReflectionSaved(false)
 
     try {
-      const contextConfig = {
-        ...levelConfig,
-        challenge: `${levelConfig.challenge}\n\nConstraint: Rewrite in ${WORD_LIMIT} words or fewer without losing the core meaning.`,
-        criteria: [...levelConfig.criteria, `Prompt must be ${WORD_LIMIT} words or fewer`, 'Must preserve the core meaning of the original'],
-      }
       const res = await fetch('/api/score', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user_prompt: shrunk, level_config: contextConfig, level_id: levelConfig.level }),
+        body: JSON.stringify({ user_prompt: shrunk, level_id: levelConfig.level, game_context: { type: 'TheShrink' } }),
       })
       if (!res.ok) {
         const data = await res.json().catch(() => ({}))

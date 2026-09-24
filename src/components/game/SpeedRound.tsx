@@ -130,7 +130,7 @@ export default function SpeedRound({
           const res = await fetch('/api/score', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ user_prompt: p, level_config: levelConfig, level_id: levelConfig.level }),
+            body: JSON.stringify({ user_prompt: p, level_id: levelConfig.level }),
           })
           if (res.ok) results[i] = await res.json()
         } catch { /* continue to next */ }

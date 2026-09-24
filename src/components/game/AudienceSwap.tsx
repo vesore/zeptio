@@ -5,6 +5,7 @@ import Link from 'next/link'
 import GameRobot, { type RobotExpression } from './GameRobot'
 import { DEFAULT_ROBOT_CONFIG, type RobotConfig } from '@/app/profile/_components/RobotSVG'
 import PartUnlockCelebration from './PartUnlockCelebration'
+import { AUDIENCES } from '@/src/lib/scoring/gameContext'
 
 interface LevelConfig {
   world: 'clarity' | 'constraints' | 'structure' | 'debug' | 'mastery'
@@ -28,7 +29,6 @@ interface Props {
   robotConfig?: RobotConfig
 }
 
-const AUDIENCES = ['5 year old', 'Business Executive', 'Expert in the field'] as const
 type Audience = typeof AUDIENCES[number]
 
 const CONFETTI = Array.from({ length: 32 }, (_, i) => ({
@@ -111,15 +111,10 @@ export default function AudienceSwap({
     setShowCelebration(false); setReflection(''); setReflectionSaved(false)
 
     try {
-      const contextConfig = {
-        ...levelConfig,
-        challenge: `${levelConfig.challenge}\n\nTarget audience: ${selectedAudience}`,
-        criteria: [...levelConfig.criteria, `Prompt must be clearly tailored for a ${selectedAudience}`],
-      }
       const res = await fetch('/api/score', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user_prompt: prompt, level_config: contextConfig, level_id: levelConfig.level }),
+        body: JSON.stringify({ user_prompt: prompt, level_id: levelConfig.level, game_context: { type: 'AudienceSwap', audience: selectedAudience } }),
       })
       if (!res.ok) {
         const data = await res.json().catch(() => ({}))
